@@ -119,47 +119,30 @@
   const welcome = document.getElementById('welcome');
   const gallery = document.getElementById('gallery');
 
-  async function loadImages() {
-    const res = await fetch('/api/images');
-    const images = await res.json();
+  fetch('images.json')
+    .then(res => res.json())
+    .then(images => {
+      heroImg.src = images[0];
 
-    if (images.length === 0) return;
-
-    heroImg.src = images[0].url;
-    images.forEach(img => {
-      const el = document.createElement('img');
-      el.src = img.url;
-      gallery.appendChild(el);
+      images.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        gallery.appendChild(img);
+      });
     });
-  }
 
-  function updateTextColor(img) {
+  heroImg.onload = () => {
     const c = document.createElement('canvas');
     const x = c.getContext('2d');
-    c.width = img.naturalWidth;
-    c.height = img.naturalHeight;
-    x.drawImage(img, 0, 0);
+    c.width = heroImg.naturalWidth;
+    c.height = heroImg.naturalHeight;
+    x.drawImage(heroImg, 0, 0);
     const d = x.getImageData(0, 0, c.width, c.height).data;
     let t = 0;
-    for (let i = 0; i < d.length; i += 4) t += (d[i] + d[i+1] + d[i+2]) / 3;
+    for (let i = 0; i < d.length; i += 4)
+      t += (d[i] + d[i+1] + d[i+2]) / 3;
     welcome.style.color = (t / (d.length / 4)) < 128 ? '#fff' : '#000';
-  }
-
-  heroImg.onload = () => updateTextColor(heroImg);
-
-  document.getElementById('upload').addEventListener('change', async e => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const form = new FormData();
-    form.append('file', file);
-
-    await fetch('/api/upload', { method: 'POST', body: form });
-    location.reload();
-  });
-
-  document.getElementById('year').textContent = new Date().getFullYear();
-  loadImages();
+  };
 </script>
 
 </body>

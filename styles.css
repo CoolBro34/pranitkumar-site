@@ -146,6 +146,19 @@ footer {
   transform: scale(1.045);
   filter: contrast(1.05);
 }
+/* Blocker overlay (prevents right-click / drag) */
+.blocker {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+/* Ensure the wrapper can hold the blocker */
+.grid-item,
+.hero-wrap {
+  position: relative;
+}
 
 /* Disable hover effects on touch devices */
 @media (hover: none) {

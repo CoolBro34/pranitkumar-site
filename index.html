@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<!--
+  Pranit Kumar Photography Portfolio
+  Hosting: Cloudflare Pages
+  Repo: Private GitHub
+
+  IMPORTANT:
+  - Image uploads are handled via Cloudflare Pages Functions + R2
+  - This file is frontend only (index.html)
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pranit Kumar | Photography</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Playfair Display', serif;
+      background: #f5f5f5;
+      color: #111;
+    }
+
+    @media (min-width: 900px) {
+      .layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        min-height: 100vh;
+      }
+
+      aside {
+        padding: 2rem;
+        border-right: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .hero {
+        position: relative;
+        height: 100vh;
+      }
+
+      .hero img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .welcome {
+        position: absolute;
+        bottom: 3rem;
+        left: 3rem;
+        font-size: clamp(3rem, 6vw, 6rem);
+        letter-spacing: 0.15em;
+      }
+
+      section { padding: 4rem 3rem; }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .grid img { width: 100%; border-radius: 10px; }
+
+    footer { text-align: center; padding: 2rem; color: #777; }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+  <aside>
+    <div>
+      <h1>PRANIT<br>KUMAR</h1>
+      <nav>
+        <p><a href="#work">Work</a></p>
+        <p><a href="#about">About</a></p>
+        <p><a href="#contact">Contact</a></p>
+      </nav>
+    </div>
+
+    <div>
+      <input type="file" id="upload" accept="image/*" />
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero">
+      <img id="hero-img" />
+      <div class="welcome" id="welcome">WELCOME</div>
+    </section>
+
+    <section id="work">
+      <div class="grid" id="gallery"></div>
+    </section>
+
+    <section id="about">
+      <h2>About</h2>
+      <p>I’m Pranit, focused on landscapes and night skies.</p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>hello@pranitkumar.com</p>
+    </section>
+
+    <footer>© <span id="year"></span> Pranit Kumar</footer>
+  </main>
+</div>
+
+<script>
+  const heroImg = document.getElementById('hero-img');
+  const welcome = document.getElementById('welcome');
+  const gallery = document.getElementById('gallery');
+
+  async function loadImages() {
+    const res = await fetch('/api/images');
+    const images = await res.json();
+
+    if (images.length === 0) return;
+
+    heroImg.src = images[0].url;
+    images.forEach(img => {
+      const el = document.createElement('img');
+      el.src = img.url;
+      gallery.appendChild(el);
+    });
+  }
+
+  function updateTextColor(img) {
+    const c = document.createElement('canvas');
+    const x = c.getContext('2d');
+    c.width = img.naturalWidth;
+    c.height = img.naturalHeight;
+    x.drawImage(img, 0, 0);
+    const d = x.getImageData(0, 0, c.width, c.height).data;
+    let t = 0;
+    for (let i = 0; i < d.length; i += 4) t += (d[i] + d[i+1] + d[i+2]) / 3;
+    welcome.style.color = (t / (d.length / 4)) < 128 ? '#fff' : '#000';
+  }
+
+  heroImg.onload = () => updateTextColor(heroImg);
+
+  document.getElementById('upload').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const form = new FormData();
+    form.append('file', file);
+
+    await fetch('/api/upload', { method: 'POST', body: form });
+    location.reload();
+  });
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+  loadImages();
+</script>
+
+</body>
+</html>

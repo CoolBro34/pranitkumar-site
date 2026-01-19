@@ -3,128 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pranit Kumar | Photography</title>
+  <title>Gallery | Pranit Kumar</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Playfair Display', serif;
-      background: #f5f5f5;
-      color: #111;
-      overflow-x: hidden;
-    }
-
-    /* Anti-download overlay */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 999;
-      pointer-events: none;
-      background: repeating-linear-gradient(
-        45deg,
-        rgba(255,255,255,0.02),
-        rgba(255,255,255,0.02) 1px,
-        transparent 1px,
-        transparent 6px
-      );
-    }
-
-    @media (min-width: 900px) {
-      .layout {
-        display: grid;
-        grid-template-columns: 220px 1fr;
-        min-height: 100vh;
-      }
-
-      aside {
-        padding: 2rem;
-        border-right: 1px solid #ddd;
-      }
-
-      .hero {
-        position: relative;
-        height: 100vh;
-      }
-
-      .hero img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .welcome {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: clamp(3rem, 7vw, 6rem);
-        letter-spacing: 0.2em;
-      }
-    }
-
-    nav a {
-      display: block;
-      margin-top: 1rem;
-      text-decoration: none;
-      color: #555;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #777;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
 <div class="overlay"></div>
 
-<div class="layout">
-  <aside>
-    <h1>PRANIT<br>KUMAR</h1>
-    <nav>
-      <a href="gallery.html">Gallery</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </aside>
+<header>
+  <a class="back" href="index.html">← BACK</a>
+  <h1>Gallery</h1>
+</header>
 
-  <main>
-    <section class="hero">
-      <img id="hero-img" alt="Latest photograph">
-      <div class="welcome" id="welcome">WELCOME</div>
-    </section>
+<main class="grid" id="grid"></main>
 
-    <section id="contact" style="padding:4rem">
-      <p>pranit@pranitkumar.com</p>
-    </section>
-
-    <footer>© <span id="year"></span> Pranit Kumar</footer>
-  </main>
-</div>
+<footer>© <span id="year"></span> Pranit Kumar</footer>
 
 <script>
-  const heroImg = document.getElementById('hero-img');
-  const welcome = document.getElementById('welcome');
-
   fetch('images.json')
     .then(r => r.json())
-    .then(images => heroImg.src = images[0]);
-
-  heroImg.onload = () => {
-    const c = document.createElement('canvas');
-    const x = c.getContext('2d');
-    c.width = heroImg.naturalWidth;
-    c.height = heroImg.naturalHeight;
-    x.drawImage(heroImg, 0, 0);
-    const d = x.getImageData(0, 0, c.width, c.height).data;
-    let t = 0;
-    for (let i = 0; i < d.length; i += 4)
-      t += (d[i] + d[i+1] + d[i+2]) / 3;
-    welcome.style.color = (t / (d.length / 4)) < 128 ? '#fff' : '#000';
-  };
+    .then(images => {
+      const grid = document.getElementById('grid');
+      images.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.loading = 'lazy';
+        grid.appendChild(img);
+      });
+    });
 
   document.getElementById('year').textContent = new Date().getFullYear();
 </script>

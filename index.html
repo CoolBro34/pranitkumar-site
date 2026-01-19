@@ -1,13 +1,4 @@
 <!DOCTYPE html>
-<!--
-  Pranit Kumar Photography Portfolio
-  Hosting: Cloudflare Pages
-  Repo: Private GitHub
-
-  IMPORTANT:
-  - Image uploads are handled via Cloudflare Pages Functions + R2
-  - This file is frontend only (index.html)
--->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -22,6 +13,22 @@
       font-family: 'Playfair Display', serif;
       background: #f5f5f5;
       color: #111;
+      overflow-x: hidden;
+    }
+
+    /* Anti-download overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.02),
+        rgba(255,255,255,0.02) 1px,
+        transparent 1px,
+        transparent 6px
+      );
     }
 
     @media (min-width: 900px) {
@@ -34,9 +41,6 @@
       aside {
         padding: 2rem;
         border-right: 1px solid #ddd;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
       }
 
       .hero {
@@ -52,61 +56,48 @@
 
       .welcome {
         position: absolute;
-        bottom: 3rem;
-        left: 3rem;
-        font-size: clamp(3rem, 6vw, 6rem);
-        letter-spacing: 0.15em;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: clamp(3rem, 7vw, 6rem);
+        letter-spacing: 0.2em;
       }
-
-      section { padding: 4rem 3rem; }
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+    nav a {
+      display: block;
+      margin-top: 1rem;
+      text-decoration: none;
+      color: #555;
     }
 
-    .grid img { width: 100%; border-radius: 10px; }
-
-    footer { text-align: center; padding: 2rem; color: #777; }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #777;
+    }
   </style>
 </head>
 <body>
 
+<div class="overlay"></div>
+
 <div class="layout">
   <aside>
-    <div>
-      <h1>PRANIT<br>KUMAR</h1>
-      <nav>
-        <p><a href="#work">Work</a></p>
-        <p><a href="#about">About</a></p>
-        <p><a href="#contact">Contact</a></p>
-      </nav>
-    </div>
-
-    <div>
-      <input type="file" id="upload" accept="image/*" />
-    </div>
+    <h1>PRANIT<br>KUMAR</h1>
+    <nav>
+      <a href="gallery.html">Gallery</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </aside>
 
   <main>
     <section class="hero">
-      <img id="hero-img" />
+      <img id="hero-img" alt="Latest photograph">
       <div class="welcome" id="welcome">WELCOME</div>
     </section>
 
-    <section id="work">
-      <div class="grid" id="gallery"></div>
-    </section>
-
-    <section id="about">
-      <h2>About</h2>
-      <p>I’m Pranit, focused on landscapes and night skies.</p>
-    </section>
-
-    <section id="contact">
-      <h2>Contact</h2>
+    <section id="contact" style="padding:4rem">
       <p>hello@pranitkumar.com</p>
     </section>
 
@@ -117,19 +108,10 @@
 <script>
   const heroImg = document.getElementById('hero-img');
   const welcome = document.getElementById('welcome');
-  const gallery = document.getElementById('gallery');
 
   fetch('images.json')
-    .then(res => res.json())
-    .then(images => {
-      heroImg.src = images[0];
-
-      images.forEach(src => {
-        const img = document.createElement('img');
-        img.src = src;
-        gallery.appendChild(img);
-      });
-    });
+    .then(r => r.json())
+    .then(images => heroImg.src = images[0]);
 
   heroImg.onload = () => {
     const c = document.createElement('canvas');
@@ -143,6 +125,8 @@
       t += (d[i] + d[i+1] + d[i+2]) / 3;
     welcome.style.color = (t / (d.length / 4)) < 128 ? '#fff' : '#000';
   };
+
+  document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
 </body>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gallery | Pranit Kumar</title>
+  <title>Pranit Kumar | Photography</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
@@ -12,26 +12,36 @@
 
 <div class="overlay"></div>
 
-<header>
-  <a class="back" href="index.html">← BACK</a>
-  <h1>Gallery</h1>
-</header>
+<div class="layout">
+  <aside>
+    <h1>PRANIT<br>KUMAR</h1>
+    <nav>
+      <a href="gallery.html">GALLERY</a>
+      <a href="#contact">CONTACT</a>
+    </nav>
+  </aside>
 
-<main class="grid" id="grid"></main>
+  <main>
+    <section class="hero">
+      <img id="hero-img" alt="Latest photograph" />
+      <div class="welcome">WELCOME</div>
+    </section>
 
-<footer>© <span id="year"></span> Pranit Kumar</footer>
+    <section id="contact" style="padding:4rem">
+      <p>hello@pranitkumar.com</p>
+    </section>
+
+    <footer>© <span id="year"></span> Pranit Kumar</footer>
+  </main>
+</div>
 
 <script>
+  const heroImg = document.getElementById('hero-img');
+
   fetch('images.json')
     .then(r => r.json())
     .then(images => {
-      const grid = document.getElementById('grid');
-      images.forEach(src => {
-        const img = document.createElement('img');
-        img.src = src;
-        img.loading = 'lazy';
-        grid.appendChild(img);
-      });
+      if (images.length > 0) heroImg.src = images[0];
     });
 
   document.getElementById('year').textContent = new Date().getFullYear();

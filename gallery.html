@@ -14,7 +14,7 @@
 
 <div class="gallery-layout">
   <header class="gallery-header">
-    <a href="https://coolbro34.github.io/pranitkumar-site/" class="back">← Back</a>
+    <a href="index.html" class="back">← Back</a>
     <h1>Gallery</h1>
   </header>
 
@@ -40,7 +40,11 @@
         img.loading = 'lazy';
         img.alt = 'Photograph by Pranit Kumar';
 
+        const blocker = document.createElement('div');
+        blocker.className = 'blocker';
+
         wrapper.appendChild(img);
+        wrapper.appendChild(blocker);
         grid.appendChild(wrapper);
       });
     });

@@ -72,10 +72,24 @@ main {
   overflow: hidden;
 }
 
-.hero img {
+.hero-wrap {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+}
+
+.pixel-output {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 1rem;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.7rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .welcome {
@@ -134,18 +148,10 @@ footer {
   overflow: hidden;
 }
 
-.grid-item img {
-  width: 100%;
-  height: auto;
-  display: block;
-  transform: scale(1);
-  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+.grid-item .pixel-output {
+  min-height: 260px;
 }
 
-.grid-item:hover img {
-  transform: scale(1.045);
-  filter: contrast(1.05);
-}
 /* Blocker overlay (prevents right-click / drag) */
 .blocker {
   position: absolute;
@@ -162,7 +168,7 @@ footer {
 
 /* Disable hover effects on touch devices */
 @media (hover: none) {
-  .grid-item img {
+  .grid-item .pixel-output {
     transition: none;
   }
 }

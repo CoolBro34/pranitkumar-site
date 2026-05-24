@@ -75,7 +75,7 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:#9ca3af;font-size:.75rem}
   .topbar{padding:1rem}
   main{padding-left:1.5rem;padding-right:1.5rem}
   .site-nav a{display:none}
-  #nav-hamburger{display:flex;flex-direction:column;justify-content:space-between;width:28px;height:20px;background:none;border:none;padding:0;cursor:none;z-index:100001;margin-left:auto}
+  #nav-hamburger{display:flex;flex-direction:column;justify-content:space-between;width:28px;height:20px;background:none;border:none;padding:0;cursor:none;position:relative;z-index:100001;margin-left:auto}
   #nav-hamburger span{display:block;width:100%;height:2px;background:#0d0d0d;border-radius:2px;transform-origin:center;transition:transform .25s ease,opacity .2s ease}
   #nav-hamburger.is-open span:nth-child(1){transform:rotate(45deg) translateY(6px)}
   #nav-hamburger.is-open span:nth-child(2){opacity:0}

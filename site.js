@@ -67,26 +67,32 @@ if (grid) {
 (function () {
   const hamburger = document.getElementById('nav-hamburger');
   const overlay = document.getElementById('mobile-nav-overlay');
-  const closeBtn = document.getElementById('mobile-nav-close');
 
-  if (!hamburger || !overlay || !closeBtn) return;
+  if (!hamburger || !overlay) return;
 
   function openMenu() {
-    overlay.style.display = 'flex';
+    overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
     hamburger.setAttribute('aria-expanded', 'true');
+    hamburger.classList.add('is-open');
     document.body.style.overflow = 'hidden';
   }
 
   function closeMenu() {
-    overlay.style.display = 'none';
+    overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden', 'true');
     hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.classList.remove('is-open');
     document.body.style.overflow = '';
   }
 
-  hamburger.addEventListener('click', openMenu);
-  closeBtn.addEventListener('click', closeMenu);
+  hamburger.addEventListener('click', () => {
+    if (overlay.classList.contains('open')) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
 
   overlay.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', closeMenu);

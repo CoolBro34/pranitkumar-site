@@ -72,14 +72,14 @@ if (grid) {
   if (!hamburger || !overlay || !closeBtn) return;
 
   function openMenu() {
-    overlay.classList.add('open');
+    overlay.style.display = 'flex';
     overlay.setAttribute('aria-hidden', 'false');
     hamburger.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
   }
 
   function closeMenu() {
-    overlay.classList.remove('open');
+    overlay.style.display = 'none';
     overlay.setAttribute('aria-hidden', 'true');
     hamburger.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';

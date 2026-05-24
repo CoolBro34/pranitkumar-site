@@ -84,6 +84,7 @@ if (grid) {
     hamburger.setAttribute('aria-expanded', 'false');
     hamburger.classList.remove('is-open');
     document.body.style.overflow = '';
+    setTimeout(() => { overlay.style.display = 'none'; }, 300);
   }
 
   hamburger.addEventListener('click', () => {
@@ -98,9 +99,8 @@ if (grid) {
     link.addEventListener('click', closeMenu);
   });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeMenu();
-  });
+  overlay.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 })();
 
 window.addEventListener('hashchange', () => {

@@ -1,54 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gallery | Pranit Kumar</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-
-<div class="gallery-layout">
-  <header class="gallery-header">
-    <a href="index.html" class="back">← Back</a>
-    <h1>Gallery</h1>
+<body data-page="gallery">
+  <header class="topbar" id="topbar">
+    <a class="brand" href="index.html#about">PK</a>
+    <button class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="index.html#about">About</a>
+      <a href="index.html#education">Education</a>
+      <a href="index.html#experience">Experience</a>
+      <a href="index.html#distinctions">Distinctions</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="gallery.html">Gallery</a>
+    </nav>
+    <a class="contact-rail" href="index.html#contact">Contact <span>↗</span></a>
   </header>
 
-  <main class="grid" id="grid"></main>
+  <main class="section">
+    <p class="section-label">// GALLERY</p>
+    <h1 class="gallery-title">Photography & Projects.</h1>
+    <div class="grid" id="grid"></div>
+  </main>
 
-  <footer class="gallery-footer">
-    © <span id="year"></span> Pranit Kumar
-  </footer>
-</div>
-
-<script>
-  fetch('images.json')
-    .then(response => response.json())
-    .then(images => {
-      const grid = document.getElementById('grid');
-
-      images.forEach(src => {
-        const wrapper = document.createElement('figure');
-        wrapper.className = 'grid-item';
-
-        const image = document.createElement('img');
-        image.className = 'gallery-image';
-        image.src = src;
-        image.alt = 'Gallery photograph';
-        image.loading = 'lazy';
-
-        wrapper.appendChild(image);
-        grid.appendChild(wrapper);
-      });
-    })
-    .catch(() => {
-      document.getElementById('grid').textContent = 'Unable to load gallery images.';
-    });
-
-  document.getElementById('year').textContent = new Date().getFullYear();
-</script>
-
+  <footer>© 2025 Pranit Kumar</footer>
+  <script src="site.js"></script>
 </body>
 </html>

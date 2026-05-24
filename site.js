@@ -67,28 +67,36 @@ if (grid) {
 (function () {
   const hamburger = document.getElementById('nav-hamburger');
   const overlay = document.getElementById('mobile-nav-overlay');
+
   if (!hamburger || !overlay) return;
 
   function openMenu() {
-    overlay.style.display = 'flex';
-    requestAnimationFrame(() => overlay.classList.add('open'));
-    hamburger.classList.add('is-open');
-    hamburger.setAttribute('aria-expanded', 'true');
+    overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
+    hamburger.setAttribute('aria-expanded', 'true');
+    hamburger.classList.add('is-open');
     document.body.style.overflow = 'hidden';
   }
 
   function closeMenu() {
     overlay.classList.remove('open');
-    hamburger.classList.remove('is-open');
-    hamburger.setAttribute('aria-expanded', 'false');
     overlay.setAttribute('aria-hidden', 'true');
+    hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.classList.remove('is-open');
     document.body.style.overflow = '';
     setTimeout(() => { overlay.style.display = 'none'; }, 300);
   }
 
   hamburger.addEventListener('click', () => {
-    overlay.classList.contains('open') ? closeMenu() : openMenu();
+    if (overlay.classList.contains('open')) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  overlay.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', closeMenu);
   });
 
   overlay.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));

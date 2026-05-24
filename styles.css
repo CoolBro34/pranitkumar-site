@@ -81,11 +81,11 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:#9ca3af;font-size:.75rem}
   #nav-hamburger.is-open span:nth-child(2){opacity:0}
   #nav-hamburger.is-open span:nth-child(3){transform:rotate(-45deg) translateY(-6px)}
   #mobile-nav-overlay{position:fixed;inset:0;width:100vw;height:100vh;background:#ffffff;z-index:100000;display:none;flex-direction:column;align-items:center;justify-content:center}
-  #mobile-nav-overlay.open{opacity:1;animation:overlayIn .3s cubic-bezier(0.22,1,0.36,1) forwards}
+  #mobile-nav-overlay.open{display:flex;animation:overlayIn .28s cubic-bezier(0.22,1,0.36,1) forwards}
   @keyframes overlayIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
   @keyframes overlayOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-12px)}}
   #mobile-nav-overlay nav{display:flex;flex-direction:column;align-items:center;gap:2rem}
-  #mobile-nav-overlay nav a{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#0d0d0d;text-decoration:none;letter-spacing:.04em;text-transform:uppercase;opacity:0;animation:overlayIn .3s cubic-bezier(0.22,1,0.36,1) forwards}
+  #mobile-nav-overlay nav a{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#0d0d0d;text-decoration:none;letter-spacing:.04em;text-transform:uppercase;opacity:0;animation:overlayIn .28s cubic-bezier(0.22,1,0.36,1) forwards}
   #mobile-nav-overlay.open nav a:nth-child(1){animation-delay:.04s}
   #mobile-nav-overlay.open nav a:nth-child(2){animation-delay:.08s}
   #mobile-nav-overlay.open nav a:nth-child(3){animation-delay:.12s}

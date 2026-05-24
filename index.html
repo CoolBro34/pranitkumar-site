@@ -1,48 +1,70 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pranit Kumar | Photography</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <!-- Add your own GA tag here -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pranit Kumar</title>
+  <meta name="description" content="High school senior at BASIS Phoenix — aerospace engineer passionate about spacecraft design, planetary exploration, and space systems.">
+  <meta property="og:title" content="Pranit Kumar">
+  <meta property="og:description" content="High school senior at BASIS Phoenix — aerospace engineer passionate about spacecraft design, planetary exploration, and space systems.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<div class="layout">
-  <aside>
-    <h1>PRANIT<br>KUMAR</h1>
-    <nav>
-      <a href="gallery.html">GALLERY</a>
+  <header class="topbar">
+    <a class="brand" href="#about">PK</a>
+    <button class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#education">Education</a>
+      <a href="#experience">Experience</a>
+      <a href="#distinctions">Distinctions</a>
+      <a href="#projects">Projects</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#contact">Contact</a>
     </nav>
-  </aside>
+  </header>
 
   <main>
-    <section class="hero">
-      <img id="hero-image" class="hero-image" alt="Featured photograph" />
-      <div class="welcome">WELCOME</div>
+    <section id="about" class="hero-grid section-pad">
+      <article class="surface">
+        <h1>Pranit Kumar</h1>
+        <p class="lede">High school senior at BASIS Phoenix — aerospace engineer in training, obsessed with spacecraft design, planetary exploration, and the systems that get us there.</p>
+        <div class="chip-row"><span class="chip">Aerospace Engineering</span><span class="chip">Spacecraft Design</span><span class="chip">Planetary Exploration</span><span class="chip">Astrophysics</span></div>
+        <ul class="contact-list compact">
+          <li><span>LinkedIn</span><a href="https://linkedin.com/in/pranitkumar1" target="_blank" rel="noopener">linkedin.com/in/pranitkumar1</a></li>
+          <li><span>Email</span><a href="mailto:pranit@pranitkumar.com">pranit@pranitkumar.com</a></li>
+          <li><span>Website</span><span>pranitkumar.com</span></li>
+        </ul>
+      </article>
+      <aside class="surface">
+        <div class="fact"><span>NASA TechRise</span><strong>Arizona State Winner / $1,500 Grant / Suborbital payload flown</strong></div>
+        <div class="fact"><span>Focus</span><strong>Space Systems, Rovers &amp; Probes, Microcontroller Engineering</strong></div>
+        <div class="fact"><span>Phoenix Youth Symphony</span><strong>Most Senior Percussionist, Philharmonic</strong></div>
+      </aside>
     </section>
 
-    <footer>© <span id="year"></span> Pranit Kumar</footer>
+    <section id="education" class="section-pad"><h2>Education</h2><div class="grid-two"><article class="surface card"><h3>BASIS Phoenix</h3><p class="mono">GPA: 3.91 / 4.0 (2020 – Present)</p><p><strong>AP Scores:</strong> Physics 1 – 5, English Language – 5, Calculus AB – 4, European History – 4, Physics C: Mechanics – 4, U.S. Government – 4, AP Precalculus – 4</p><p><strong>Current enrollment:</strong> AP Chemistry, AP Calculus BC, AP U.S. History, AP English Literature, AP Latin (V)</p></article><article class="surface card"><h3>Embry-Riddle Aeronautical University</h3><p class="mono">PS110 · Summer 2024</p><p>GPA: 4.0 / 4.0</p></article></div></section>
+
+    <section id="experience" class="section-pad"><h2>Experience</h2><div class="stack"><article class="surface card"><div class="card-head"><h3>Drippy.ai — Data Science Intern</h3><p class="mono">Sep 2022 – Dec 2022</p></div><ul><li>Analyzed datasets with Python and Excel to derive real-world conclusions</li><li>Communicated data-driven findings to non-technical stakeholders</li></ul></article><article class="surface card"><div class="card-head"><h3>Arizona Science Center — Volunteer</h3><p class="mono">Oct 2024 – Present</p></div><ul><li>Explained complex scientific concepts to museum guests of all ages</li><li>Diagnosed and repaired exhibit computers and technology for staff</li></ul></article><article class="surface card"><div class="card-head"><h3>Phoenix Public Library — Volunteer</h3><p class="mono">Summer 2024 &amp; 2025</p></div><ul><li>Assisted librarians with shelving, indexing, and guest services</li></ul></article><article class="surface card"><div class="card-head"><h3>Python Bootcamp — Instructor (Self-employed)</h3><p class="mono">Jun – Jul 2024</p></div><ul><li>Designed and delivered a 2-month Python curriculum for neighborhood children</li><li>Managed enrollment, class operations, and payment tracking independently</li></ul></article></div></section>
+
+    <section id="distinctions" class="section-pad"><h2>Distinctions</h2><article class="surface card"><ul><li>Arizona State Winner — NASA TechRise Student Challenge ($1,500 NASA grant; suborbital payload flown)</li><li>George Eastman Young Leaders Award</li><li>Co-founder — BASIS Phoenix FTC Robotics Team (First Tech Challenge)</li><li>Co-founder — Aerospace Engineering Club (designs and launches rockets in-house)</li><li>Phoenix Youth Symphony Philharmonic — Percussionist, most senior section member</li><li>Band Council Chair</li><li>Science National Honor Society</li><li>Tri-M Music Honor Society (performs at hospitals and schools)</li><li>Embry-Riddle Aeronautical University PS110 — 4.0 GPA (Summer 2024)</li></ul></article></section>
+
+    <section id="projects" class="section-pad"><h2>Projects</h2><div class="grid-two"><article class="surface card"><h3>NASA TechRise Payload</h3><p class="mono">Sep 2024 – May 2025</p><ul><li>Led Arizona's state-winning team in the NASA TechRise Student Challenge</li><li>Designed, built, launched, and analyzed data from a suborbital payload</li><li>Earned $1,500 NASA grant; experiment documentation linked below</li></ul><div class="pill-row"><a class="pill" href="https://festorage.blob.core.windows.net/nasatechrise/files/teamprogress/74100-progress.pdf" target="_blank" rel="noopener">Experiment PDF</a></div></article><article class="surface card"><h3>Custom I2C Breakout PCB</h3><ul><li>Designed a custom PCB to streamline I2C prototyping for students and hobbyists</li><li>Maintains full microcontroller compatibility; currently in user trials</li></ul></article><article class="surface card"><h3>Latin Vocabulary Study App (PyQt6)</h3><ul><li>Desktop app with Kahoot-style timed quizzes, frequency-weighted word selection</li><li>Spaced repetition tracking, configurable number-key bindings, principal parts display</li><li>Sortable vocabulary browser with per-word frequency analytics and a progress dashboard</li></ul></article></div></section>
+
+    <section id="gallery" class="section-pad"><h2>Gallery</h2><main class="grid" id="grid"></main></section>
+
+    <section id="resume" class="section-pad" style="display:none"><!-- Resume PDF: add Pranit_Kumar_Resume.pdf to repo root to enable --></section>
+
+    <section id="contact" class="section-pad"><h2>Contact</h2><article class="surface card"><ul class="contact-list"><li><span>Email</span><a href="mailto:pranit@pranitkumar.com">pranit@pranitkumar.com</a></li><li><span>LinkedIn</span><a href="https://linkedin.com/in/pranitkumar1" target="_blank" rel="noopener">linkedin.com/in/pranitkumar1</a></li><li><span>Website</span><span>pranitkumar.com</span></li></ul></article></section>
   </main>
-</div>
 
-<script>
-  const heroImage = document.getElementById('hero-image');
-
-  fetch('images.json')
-    .then(response => response.json())
-    .then(images => {
-      if (!images.length) return;
-      heroImage.src = images[0];
-    })
-    .catch(() => {
-      heroImage.remove();
-    });
-
-  document.getElementById('year').textContent = new Date().getFullYear();
-</script>
-
+  <footer>© <span id="year"></span> Pranit Kumar</footer>
+  <script src="site.js"></script>
 </body>
 </html>

@@ -1,7 +1,5 @@
 const body = document.body;
 const topbar = document.getElementById('topbar');
-const nav = document.querySelector('.site-nav');
-const toggle = document.querySelector('.menu-toggle');
 const navLinks = Array.from(document.querySelectorAll('.site-nav a'));
 
 const syncBar = () => {
@@ -10,20 +8,6 @@ const syncBar = () => {
 };
 window.addEventListener('scroll', syncBar);
 syncBar();
-
-if (toggle && nav) {
-  toggle.addEventListener('click', () => {
-    const open = nav.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', String(open));
-  });
-
-  navLinks.forEach((link) => {
-    link.addEventListener('click', () => {
-      nav.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    });
-  });
-}
 
 if (body.dataset.page === 'home') {
   const anchors = navLinks.filter((link) => link.getAttribute('href').startsWith('#'));
@@ -79,9 +63,48 @@ if (grid) {
     });
 }
 
-if (!('ontouchstart' in window)) {
+
+(function () {
+  const hamburger = document.getElementById('nav-hamburger');
+  const overlay = document.getElementById('mobile-nav-overlay');
+  const closeBtn = document.getElementById('mobile-nav-close');
+
+  if (!hamburger || !overlay || !closeBtn) return;
+
+  function openMenu() {
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    hamburger.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    hamburger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', closeMenu);
+
+  overlay.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+})();
+
+window.addEventListener('hashchange', () => {
+  document.body.style.overflow = '';
+});
+
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   const orb = document.getElementById('cursor-orb');
   if (orb) {
+    orb.style.display = 'block';
     let mouseX = 0;
     let mouseY = 0;
 

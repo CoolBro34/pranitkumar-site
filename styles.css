@@ -1,7 +1,11 @@
 *{box-sizing:border-box}
+*,*::before,*::after{cursor:none!important}
 html{scroll-behavior:smooth}
 body{margin:0;background:#fff;color:#0d0d0d;font-family:'Space Grotesk',sans-serif}
 a{color:inherit}
+
+#cursor-orb{position:fixed;top:0;left:0;width:14px;height:14px;background:#2563eb;border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s ease,height .2s ease,opacity .2s ease;will-change:transform}
+#cursor-orb.expanded{width:40px;height:40px;opacity:.6}
 
 .topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:transparent}
 .topbar.scrolled{border-bottom:1px solid #e5e7eb;backdrop-filter:blur(8px);background:rgba(255,255,255,.92)}
@@ -16,41 +20,51 @@ a{color:inherit}
 main{max-width:1200px;margin:0 auto;padding:0 1.5rem}
 .section{padding:6rem 0}
 .hero{min-height:calc(100vh - 4.2rem);display:grid;grid-template-columns:1.65fr 1fr;gap:2rem;align-items:start;position:relative}
-.hero h1{font-size:clamp(4rem,10vw,9rem);line-height:.95;margin:0 0 1.25rem;font-weight:800;letter-spacing:-.03em}
-.tagline{font-size:clamp(1rem,2vw,1.15rem);max-width:480px;color:#6b7280}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(4rem,10vw,9rem);line-height:.95;margin:0 0 1.25rem;font-weight:900;letter-spacing:-.03em}
+.tagline{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:clamp(1.1rem,2.2vw,1.2rem);max-width:480px;color:#6b7280}
 .social-row{display:flex;gap:1rem;margin:1.4rem 0}.social-row a{font-weight:500;text-decoration:none}.social-row a:hover{color:#2563eb}
 .chip-row{display:flex;flex-wrap:wrap;gap:.55rem}
 .chip{border:1px solid #2563eb;border-radius:999px;padding:.35rem .7rem;font-family:'IBM Plex Mono',monospace;font-size:.74rem;color:#1f2937}
 .hero-side{display:grid;gap:1rem}
 .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 20px rgba(17,24,39,.05);padding:1.1rem 1.2rem}
-.label,.meta,.section-label,.scroll-indicator{font-family:'IBM Plex Mono',monospace}
+.label,.meta,.section-label,.scroll-indicator,.ap-year,.ap-row,.skills-grid span,.role,footer{font-family:'IBM Plex Mono',monospace}
 .label{font-size:.7rem;color:#6b7280;letter-spacing:.11em}
 .card h3{margin:.35rem 0 .45rem;font-size:clamp(1rem,2.5vw,1.2rem)}
+.hero-side .card h3{font-family:'Playfair Display',serif}
 .card p,.card li{color:#374151}
 .scroll-indicator{position:absolute;right:0;bottom:1.1rem;font-size:.7rem;color:#9ca3af}
 
 .section-label{font-size:.78rem;color:#2563eb;letter-spacing:.12em;margin:0 0 .6rem}
+h1,h2{font-family:'Playfair Display',serif}
 h2{font-size:clamp(2rem,4vw,3rem);margin:0 0 1.5rem}
 .grid-two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .stack{display:grid;gap:1rem}
 .card-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start}
 .meta{font-size:.76rem;color:#6b7280;margin:.2rem 0 0}
 ul{margin:.5rem 0 0 1.1rem;padding:0;display:grid;gap:.4rem}
+.ap-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:.9rem}
+.ap-year{font-size:.7rem;letter-spacing:.1em;color:#6b7280;margin:.3rem 0}
+.ap-row{display:flex;justify-content:space-between;gap:.8rem;font-size:.75rem;margin:.2rem 0}
+.role{font-size:.72rem;letter-spacing:.08em;color:#6b7280;text-transform:uppercase;margin-top:0}
 
 .grid-projects{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .project-wide{grid-column:1/-1}
 .link-pill{display:inline-flex;border:1px solid #d1d5db;border-radius:999px;padding:.4rem .75rem;font-family:'IBM Plex Mono',monospace;font-size:.76rem;text-decoration:none}
 .link-pill:hover{border-color:#2563eb;color:#2563eb}
 .section-gallery-cta{background:#f9fafb;text-align:center;border-radius:12px;padding:5rem 1rem}
+.section-gallery-cta h2,.gallery-title{font-family:'Playfair Display',serif}
 .gallery-cta{font-size:clamp(1.2rem,3.5vw,2rem);font-weight:700;text-decoration:none}
 .gallery-cta:hover{color:#2563eb}
 .gallery-title{font-size:clamp(2.8rem,6vw,5rem);margin:0 0 1.2rem}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem 1rem}
+.skills-grid p{display:grid;grid-template-columns:170px 1fr;gap:.8rem;align-items:start;margin:0;padding:1rem;border:1px solid #e5e7eb;border-radius:12px}
+.skills-grid span{font-size:.75rem;color:#6b7280;letter-spacing:.08em}
 
 .contact-list{list-style:none;margin:0;padding:0;max-width:680px}
 .contact-list li{display:grid;grid-template-columns:130px 1fr;padding:1rem 0;border-bottom:1px solid #e5e7eb}
 .contact-list span,.contact-list a{font-size:clamp(1rem,2.2vw,1.1rem);text-decoration:none}
 .contact-list a:hover{color:#2563eb}
-footer{text-align:center;padding:2rem 1rem 3rem;color:#9ca3af;font-family:'IBM Plex Mono',monospace;font-size:.75rem}
+footer{text-align:center;padding:2rem 1rem 3rem;color:#9ca3af;font-size:.75rem}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.2rem}
 .grid-item{margin:0;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 8px 20px rgba(17,24,39,.05)}
@@ -64,6 +78,12 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:#9ca3af;font-family:'IBM P
   .contact-rail{display:none}
   .hero{grid-template-columns:1fr;min-height:auto;padding-top:1rem}
   .scroll-indicator{display:none}
-  .grid-two,.grid-projects{grid-template-columns:1fr}
+  .grid-two,.grid-projects,.ap-grid,.skills-grid{grid-template-columns:1fr}
   .project-wide{grid-column:auto}
+  .skills-grid p{grid-template-columns:1fr}
+}
+
+@media (hover: none){
+  #cursor-orb{display:none}
+  *{cursor:auto!important}
 }

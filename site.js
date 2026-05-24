@@ -70,21 +70,28 @@ if (grid) {
 
   if (!hamburger || !overlay) return;
 
+  let closeTimer = null;
+
   function openMenu() {
-    overlay.classList.add('open');
+    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+    overlay.style.display = 'flex';
+    requestAnimationFrame(() => overlay.classList.add('open'));
     overlay.setAttribute('aria-hidden', 'false');
-    hamburger.setAttribute('aria-expanded', 'true');
     hamburger.classList.add('is-open');
+    hamburger.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
   }
 
   function closeMenu() {
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden', 'true');
-    hamburger.setAttribute('aria-expanded', 'false');
     hamburger.classList.remove('is-open');
+    hamburger.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
-    setTimeout(() => { overlay.style.display = 'none'; }, 300);
+    closeTimer = setTimeout(() => {
+      overlay.style.display = 'none';
+      closeTimer = null;
+    }, 300);
   }
 
   hamburger.addEventListener('click', () => {
@@ -99,7 +106,6 @@ if (grid) {
     link.addEventListener('click', closeMenu);
   });
 
-  overlay.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 })();
 

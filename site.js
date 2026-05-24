@@ -74,6 +74,7 @@ if (grid) {
 
   function openMenu() {
     if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+    overlay.classList.remove('closing');
     overlay.style.display = 'flex';
     requestAnimationFrame(() => overlay.classList.add('open'));
     overlay.setAttribute('aria-hidden', 'false');
@@ -83,15 +84,18 @@ if (grid) {
   }
 
   function closeMenu() {
+    if (closeTimer) { clearTimeout(closeTimer); }
+    overlay.classList.add('closing');
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden', 'true');
     hamburger.classList.remove('is-open');
     hamburger.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
     closeTimer = setTimeout(() => {
+      overlay.classList.remove('closing');
       overlay.style.display = 'none';
       closeTimer = null;
-    }, 300);
+    }, 250);
   }
 
   hamburger.addEventListener('click', () => {

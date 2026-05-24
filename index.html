@@ -8,19 +8,22 @@
   <meta name="description" content="High school senior at BASIS Phoenix — aerospace engineer in training focused on spacecraft design, planetary exploration, and space systems.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="home">
+  <div id="cursor-orb"></div>
   <header class="topbar" id="topbar">
     <a class="brand" href="#about">PK</a>
     <button class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">☰</button>
     <nav class="site-nav" aria-label="Primary">
       <a href="#about">About</a>
       <a href="#education">Education</a>
-      <a href="#experience">Experience</a>
       <a href="#distinctions">Distinctions</a>
+      <a href="#extracurriculars">Extracurriculars</a>
       <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
       <a href="gallery.html">Gallery</a>
     </nav>
     <a class="contact-rail" href="#contact">Contact <span>↗</span></a>
@@ -45,13 +48,13 @@
       <aside class="hero-side">
         <article class="card">
           <p class="label">NASA TECHRISE</p>
-          <h3>Arizona State Winner</h3>
+          <h3>Competition Winner</h3>
           <p>$1,500 NASA grant — suborbital payload designed, built, and flown.</p>
         </article>
         <article class="card">
           <p class="label">FOCUS</p>
-          <h3>Space Systems · Rovers · Probes</h3>
-          <p>Microcontroller engineering, PCB design, and experimental data analysis.</p>
+          <h3>Aerospace Systems · Robotics · Rocketry</h3>
+          <p>Rover and probe design, in-house rocket builds, payload engineering, and hands-on experimental flight.</p>
         </article>
         <article class="card">
           <p class="label">PHOENIX YOUTH SYMPHONY</p>
@@ -69,13 +72,81 @@
         <article class="card">
           <h3>BASIS Phoenix</h3>
           <p class="meta">GPA: 3.91 / 4.0 · 2020 – Present</p>
-          <p><strong>AP Scores:</strong> Physics 1 – 5, English Language – 5, Calculus AB – 4, European History – 4, Physics C: Mechanics – 4, U.S. Government – 4, Precalculus – 4</p>
-          <p><strong>Currently enrolled:</strong> AP Chemistry, Calculus BC, U.S. History, English Literature, Latin (V)</p>
+          <p><strong>Currently enrolled (Senior Year):</strong> Organic Chemistry, Multivariable Calculus, Mythology in Literature, Advanced Band, Greek</p>
+          <div class="ap-grid">
+            <div>
+              <p class="ap-year">FRESHMAN YEAR</p>
+              <p class="ap-row"><span>AP Precalculus</span><span>4</span></p>
+              <p class="ap-row"><span>AP U.S. Government</span><span>4</span></p>
+            </div>
+            <div>
+              <p class="ap-year">SOPHOMORE YEAR</p>
+              <p class="ap-row"><span>AP Physics 1</span><span>5</span></p>
+              <p class="ap-row"><span>AP English Language</span><span>5</span></p>
+              <p class="ap-row"><span>AP Calculus AB</span><span>4</span></p>
+              <p class="ap-row"><span>AP European History</span><span>4</span></p>
+              <p class="ap-row"><span>AP Physics C: Mechanics</span><span>4</span></p>
+            </div>
+            <div>
+              <p class="ap-year">JUNIOR YEAR</p>
+              <p class="ap-row"><span>AP Chemistry</span><span>scores not yet released</span></p>
+              <p class="ap-row"><span>AP Calculus BC</span><span>scores not yet released</span></p>
+              <p class="ap-row"><span>AP U.S. History</span><span>scores not yet released</span></p>
+              <p class="ap-row"><span>AP English Literature</span><span>scores not yet released</span></p>
+              <p class="ap-row"><span>AP Latin (V)</span><span>scores not yet released</span></p>
+            </div>
+          </div>
         </article>
         <article class="card">
           <h3>Embry-Riddle Aeronautical University</h3>
           <p class="meta">PS110 · Summer 2024 · GPA: 4.0 / 4.0</p>
         </article>
+      </div>
+    </section>
+
+    <section id="distinctions" class="section">
+      <p class="section-label">// DISTINCTIONS</p><h2>Recognition.</h2>
+      <article class="card"><ul><li>NASA TechRise Winner — NASA TechRise Student Challenge ($1,500 NASA grant; suborbital payload flown)</li><li>Arizona State Qualifier — FTC Robotics (First Tech Challenge)</li><li>George Eastman Young Leaders Award</li><li>Science National Honor Society</li><li>Tri-M Music Honor Society</li></ul></article>
+    </section>
+
+    <section id="extracurriculars" class="section">
+      <p class="section-label">// EXTRACURRICULARS</p><h2>What I do.</h2>
+      <div class="grid-two">
+        <article class="card"><h3>Aerospace Engineering Club</h3><p class="role">Co-founder</p><p>Designs and launches rockets entirely in-house — airframes, propulsion staging, and recovery systems. Teaches aerodynamics and microcontroller programming to members.</p></article>
+        <article class="card"><h3>FTC Robotics Team</h3><p class="role">Co-founder</p><p>Competed in the First Tech Challenge; reached the Arizona state competition. Combines mechanical design with software and machine learning to build autonomous and driver-controlled robots.</p></article>
+        <article class="card"><h3>Astronomy and Photography Club</h3><p class="role">Founder</p><p>Runs viewing nights, astrophotography sessions, and discussions on current developments in space science.</p></article>
+        <article class="card"><h3>Phoenix Youth Symphony Philharmonic</h3><p class="role">Percussionist and most senior section member</p><p>Helps run the percussion section and performs in the full Philharmonic orchestra.</p></article>
+        <article class="card"><h3>Tri-M Music Honor Society</h3><p class="role">Member</p><p>Performs at mental health institutions, hospitals, and schools for the elderly and children.</p></article>
+        <article class="card"><h3>Band Council</h3><p class="role">Council Chair</p><p>Helped launch the band's student government program.</p></article>
+        <article class="card"><h3>Science National Honor Society</h3><p class="role">Member</p><p>Advocates for scientific engagement across the school community.</p></article>
+      </div>
+    </section>
+
+    <section id="projects" class="section">
+      <p class="section-label">// PROJECTS</p><h2>Things I've built.</h2>
+      <div class="grid-projects">
+        <article class="card"><div class="card-head"><h3>NASA TechRise Payload</h3><p class="meta">Sep 2024 – May 2025</p></div><ul><li>Led Arizona's winning team in the NASA TechRise Student Challenge</li><li>Designed, built, launched, and analyzed data from a suborbital payload; earned $1,500 NASA grant</li></ul><p><a class="link-pill" href="https://festorage.blob.core.windows.net/nasatechrise/files/teamprogress/74100-progress.pdf" target="_blank" rel="noopener">Experiment PDF ↗</a></p></article>
+        <article class="card"><h3>Custom I2C Breakout PCB</h3><ul><li>Designed a custom PCB to streamline I2C prototyping for students and hobbyists</li><li>Maintains full microcontroller compatibility; currently in user trials</li></ul></article>
+        <article class="card project-wide"><h3>Latin Vocabulary Study App (PyQt6)</h3><ul><li>Desktop app: Kahoot-style timed quizzes, frequency-weighted word selection, spaced repetition</li><li>Configurable number-key bindings, principal parts display, per-word frequency analytics</li></ul></article>
+      </div>
+    </section>
+
+    <section id="gallery" class="section section-gallery-cta">
+      <p class="section-label">// GALLERY</p>
+      <h2>Photography & Projects.</h2>
+      <a class="gallery-cta" href="gallery.html">→ View Gallery</a>
+    </section>
+
+    <section id="skills" class="section">
+      <p class="section-label">// SKILLS</p><h2>What I know.</h2>
+      <div class="skills-grid">
+        <p><span>Programming</span>7 years Python (certified), 2 years MATLAB, Java familiarity</p>
+        <p><span>Hardware</span>Arduino, Raspberry Pi, microcontroller architecture, circuit design</p>
+        <p><span>PCB Design</span>Custom board layout and I2C system integration</p>
+        <p><span>Data Analysis</span>Python/Excel pipelines, graphing, experimental data interpretation</p>
+        <p><span>Rocketry</span>Airframe construction, propulsion staging, recovery systems</p>
+        <p><span>Robotics</span>FTC robot design, autonomous programming, mechanical integration</p>
+        <p><span>Engineering</span>Physical + software systems combined to solve real-world problems</p>
       </div>
     </section>
 
@@ -87,26 +158,6 @@
         <article class="card"><div class="card-head"><h3>Phoenix Public Library — Volunteer</h3><p class="meta">Summer 2024 & 2025</p></div><ul><li>Assisted librarians with shelving, indexing, and guest services</li></ul></article>
         <article class="card"><div class="card-head"><h3>Python Bootcamp — Instructor</h3><p class="meta">Jun – Jul 2024</p></div><ul><li>Designed and delivered a 2-month Python curriculum for neighborhood children</li><li>Managed enrollment, class operations, and payment tracking independently</li></ul></article>
       </div>
-    </section>
-
-    <section id="distinctions" class="section">
-      <p class="section-label">// DISTINCTIONS</p><h2>Recognition.</h2>
-      <article class="card"><ul><li>Arizona State Winner — NASA TechRise Student Challenge ($1,500 NASA grant; suborbital payload flown)</li><li>George Eastman Young Leaders Award</li><li>Co-founder — BASIS Phoenix FTC Robotics Team (First Tech Challenge)</li><li>Co-founder — Aerospace Engineering Club (designs and launches rockets in-house)</li><li>Founder — Astronomy and Photography Club</li><li>Phoenix Youth Symphony Philharmonic — Percussionist, most senior section member</li><li>Band Council Chair</li><li>Science National Honor Society</li><li>Tri-M Music Honor Society</li><li>Embry-Riddle Aeronautical University PS110 — 4.0 GPA</li></ul></article>
-    </section>
-
-    <section id="projects" class="section">
-      <p class="section-label">// PROJECTS</p><h2>Things I've built.</h2>
-      <div class="grid-projects">
-        <article class="card"><div class="card-head"><h3>NASA TechRise Payload</h3><p class="meta">Sep 2024 – May 2025</p></div><ul><li>Led Arizona's state-winning team in the NASA TechRise Student Challenge</li><li>Designed, built, launched, and analyzed data from a suborbital payload; earned $1,500 NASA grant</li></ul><p><a class="link-pill" href="https://festorage.blob.core.windows.net/nasatechrise/files/teamprogress/74100-progress.pdf" target="_blank" rel="noopener">Experiment PDF ↗</a></p></article>
-        <article class="card"><h3>Custom I2C Breakout PCB</h3><ul><li>Designed a custom PCB to streamline I2C prototyping for students and hobbyists</li><li>Maintains full microcontroller compatibility; currently in user trials</li></ul></article>
-        <article class="card project-wide"><h3>Latin Vocabulary Study App (PyQt6)</h3><ul><li>Desktop app: Kahoot-style timed quizzes, frequency-weighted word selection, spaced repetition</li><li>Configurable number-key bindings, principal parts display, per-word frequency analytics</li></ul></article>
-      </div>
-    </section>
-
-    <section id="gallery" class="section section-gallery-cta">
-      <p class="section-label">// GALLERY</p>
-      <h2>Photography & Projects.</h2>
-      <a class="gallery-cta" href="gallery.html">→ View Gallery</a>
     </section>
 
     <section id="contact" class="section">

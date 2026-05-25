@@ -37,7 +37,11 @@ function makeCloudBg(el) {
   el.style.animation = `cloudFloat ${dur}s ease-in-out ${delay}s infinite`;
 }
 function init() {
-  document.querySelectorAll('.card, .skills-grid p, .grid-item').forEach(makeCloudBg);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.card, .skills-grid p, .grid-item').forEach(makeCloudBg);
+    });
+  });
 }
 if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
 else init();

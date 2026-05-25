@@ -121,31 +121,60 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   const orb = document.getElementById('cursor-orb');
   if (orb) {
     orb.style.display = 'block';
-    let mouseX = 0;
-    let mouseY = 0;
+
+    let mouseX = 0, mouseY = 0;
+    let orbX = 0, orbY = 0;
+    let prevOrbX = 0, prevOrbY = 0;
+    let isExpanded = false;
+    let initialized = false;
 
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      if (!initialized) {
+        orbX = mouseX; orbY = mouseY;
+        prevOrbX = mouseX; prevOrbY = mouseY;
+        initialized = true;
+      }
     });
 
     function animateOrb() {
-      orb.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%))`;
+      // Smooth lerp follow
+      orbX += (mouseX - orbX) * 0.18;
+      orbY += (mouseY - orbY) * 0.18;
+
+      const dx = orbX - prevOrbX;
+      const dy = orbY - prevOrbY;
+      const speed = Math.sqrt(dx * dx + dy * dy);
+
+      prevOrbX = orbX;
+      prevOrbY = orbY;
+
+      let stretch = 1, squish = 1, angle = 0;
+
+      if (!isExpanded && speed > 0.3) {
+        stretch = Math.min(1 + speed * 0.22, 3.2);
+        squish  = Math.max(1 / stretch, 0.45);
+        angle   = Math.atan2(dy, dx);
+      }
+
+      orb.style.transform = `
+        translate(calc(${orbX}px - 50%), calc(${orbY}px - 50%))
+        rotate(${angle}rad)
+        scale(${stretch}, ${squish})
+      `;
+
       requestAnimationFrame(animateOrb);
     }
     requestAnimationFrame(animateOrb);
 
     const clickables = 'a, button, [data-blog-toggle], input, textarea, select, label, [role="button"]';
     document.querySelectorAll(clickables).forEach((el) => {
-      el.addEventListener('mouseenter', () => orb.classList.add('expanded'));
-      el.addEventListener('mouseleave', () => orb.classList.remove('expanded'));
+      el.addEventListener('mouseenter', () => { isExpanded = true;  orb.classList.add('expanded'); });
+      el.addEventListener('mouseleave', () => { isExpanded = false; orb.classList.remove('expanded'); });
     });
 
-    document.addEventListener('mouseleave', () => {
-      orb.style.opacity = '0';
-    });
-    document.addEventListener('mouseenter', () => {
-      orb.style.opacity = '1';
-    });
+    document.addEventListener('mouseleave', () => { orb.style.opacity = '0'; });
+    document.addEventListener('mouseenter', () => { orb.style.opacity = '1'; });
   }
 }

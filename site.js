@@ -118,63 +118,99 @@ window.addEventListener('hashchange', () => {
 });
 
 if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-  const orb = document.getElementById('cursor-orb');
-  if (orb) {
-    orb.style.display = 'block';
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:100003;';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
 
-    let mouseX = 0, mouseY = 0;
-    let orbX = 0, orbY = 0;
-    let prevOrbX = 0, prevOrbY = 0;
-    let isExpanded = false;
-    let initialized = false;
+  const HISTORY  = 28;   // trail length — more = longer tail
+  const HEAD_R   = 7;    // radius of the head dot in px
+  const TAIL_W   = 14;   // max width of tail at the head end in px
+  const LERP     = 0.16; // follow speed — lower = more lag/curve
+  const COLOR    = '#2563eb';
 
-    document.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      if (!initialized) {
-        orbX = mouseX; orbY = mouseY;
-        prevOrbX = mouseX; prevOrbY = mouseY;
-        initialized = true;
-      }
-    });
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
 
-    function animateOrb() {
-      // Smooth lerp follow
-      orbX += (mouseX - orbX) * 0.01;
-      orbY += (mouseY - orbY) * 0.01;
+  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+  let orbX = mouseX, orbY = mouseY;
+  let initialized = false, isExpanded = false, isVisible = true;
 
-      const dx = orbX - prevOrbX;
-      const dy = orbY - prevOrbY;
-      const speed = Math.sqrt(dx * dx + dy * dy);
+  const hist = Array.from({ length: HISTORY }, () => ({ x: orbX, y: orbY }));
 
-      prevOrbX = orbX;
-      prevOrbY = orbY;
-
-      let stretch = 1, squish = 1, angle = 0;
-
-      if (!isExpanded && speed > 0.3) {
-        stretch = Math.min(1 + speed * 0.22, 3.2);
-        squish  = Math.max(1 / stretch, 0.45);
-        angle   = Math.atan2(dy, dx);
-      }
-
-      orb.style.transform = `
-        translate(calc(${orbX}px - 50%), calc(${orbY}px - 50%))
-        rotate(${angle}rad)
-        scale(${stretch}, ${squish})
-      `;
-
-      requestAnimationFrame(animateOrb);
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    if (!initialized) {
+      orbX = mouseX; orbY = mouseY;
+      hist.forEach(p => { p.x = orbX; p.y = orbY; });
+      initialized = true;
     }
-    requestAnimationFrame(animateOrb);
+  });
 
-    const clickables = 'a, button, [data-blog-toggle], input, textarea, select, label, [role="button"]';
-    document.querySelectorAll(clickables).forEach((el) => {
-      el.addEventListener('mouseenter', () => { isExpanded = true;  orb.classList.add('expanded'); });
-      el.addEventListener('mouseleave', () => { isExpanded = false; orb.classList.remove('expanded'); });
-    });
+  document.addEventListener('mouseleave', () => { isVisible = false; });
+  document.addEventListener('mouseenter', () => { isVisible = true; });
 
-    document.addEventListener('mouseleave', () => { orb.style.opacity = '0'; });
-    document.addEventListener('mouseenter', () => { orb.style.opacity = '1'; });
+  const clickables = 'a, button, input, textarea, select, label, [role="button"]';
+  document.querySelectorAll(clickables).forEach(el => {
+    el.addEventListener('mouseenter', () => { isExpanded = true; });
+    el.addEventListener('mouseleave', () => { isExpanded = false; });
+  });
+
+  function drawTail() {
+    // Draw pairs of segments using midpoints for smooth curves
+    // Each segment is drawn individually so lineWidth can taper
+    for (let i = 0; i < HISTORY - 2; i++) {
+      const t0 = i       / (HISTORY - 1);
+      const t1 = (i + 1) / (HISTORY - 1);
+
+      const p0 = hist[i];
+      const p1 = hist[i + 1];
+      const p2 = hist[i + 2];
+
+      // Midpoints — the actual start/end of this bezier segment
+      const mx0 = (p0.x + p1.x) / 2;
+      const my0 = (p0.y + p1.y) / 2;
+      const mx1 = (p1.x + p2.x) / 2;
+      const my1 = (p1.y + p2.y) / 2;
+
+      const alpha = t0 * t0;           // quadratic falloff — fades toward tail
+      const width = isExpanded ? 1.5 : t1 * TAIL_W;
+
+      ctx.beginPath();
+      ctx.moveTo(mx0, my0);
+      ctx.quadraticCurveTo(p1.x, p1.y, mx1, my1);
+      ctx.strokeStyle = COLOR;
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth   = width;
+      ctx.lineCap     = 'round';
+      ctx.lineJoin    = 'round';
+      ctx.stroke();
+    }
   }
+
+  function drawHead() {
+    const r = isExpanded ? HEAD_R * 2.8 : HEAD_R;
+    ctx.beginPath();
+    ctx.arc(orbX, orbY, r, 0, Math.PI * 2);
+    ctx.fillStyle  = isExpanded ? 'rgba(37,99,235,0.35)' : COLOR;
+    ctx.globalAlpha = 1;
+    ctx.fill();
+  }
+
+  function animate() {
+    orbX += (mouseX - orbX) * LERP;
+    orbY += (mouseY - orbY) * LERP;
+
+    hist.shift();
+    hist.push({ x: orbX, y: orbY });
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (isVisible) { drawTail(); drawHead(); }
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
 }

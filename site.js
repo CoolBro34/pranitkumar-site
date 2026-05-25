@@ -136,7 +136,8 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
   let orbX = mouseX, orbY = mouseY;
   let initialized = false, isExpanded = false, isVisible = true;
-
+  let currentHeadR = HEAD_R;
+  
   const hist = Array.from({ length: HISTORY }, () => ({ x: orbX, y: orbY }));
 
   document.addEventListener('mousemove', (e) => {
@@ -188,11 +189,9 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
       ctx.stroke();
     }
   }
-
   function drawHead() {
-    const r = isExpanded ? HEAD_R * 2.8 : HEAD_R;
     ctx.beginPath();
-    ctx.arc(orbX, orbY, r, 0, Math.PI * 2);
+    ctx.arc(orbX, orbY, currentHeadR, 0, Math.PI * 2);
     ctx.fillStyle  = isExpanded ? 'rgba(37,99,235,0.35)' : COLOR;
     ctx.globalAlpha = 1;
     ctx.fill();
@@ -201,6 +200,8 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   function animate() {
     orbX += (mouseX - orbX) * LERP;
     orbY += (mouseY - orbY) * LERP;
+    const targetR = isExpanded ? HEAD_R * 2.8 : HEAD_R;
+    currentHeadR += (targetR - currentHeadR) * 0.12;
 
     hist.shift();
     hist.push({ x: orbX, y: orbY });

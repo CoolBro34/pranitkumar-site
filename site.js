@@ -124,7 +124,7 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   const ctx = canvas.getContext('2d');
 
   const HISTORY  = 15;   // trail length — more = longer tail
-  const HEAD_R   = 7;    // radius of the head dot in px
+  const HEAD_R   = 10;    // radius of the head dot in px
   const TAIL_W   = 14;   // max width of tail at the head end in px
   const LERP     = 0.5; // follow speed — lower = more lag/curve
   const COLOR    = '#2563eb';
@@ -159,44 +159,60 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   });
 
   function drawTail() {
-    // Draw pairs of segments using midpoints for smooth curves
-    // Each segment is drawn individually so lineWidth can taper
-    for (let i = 0; i < HISTORY - 2; i++) {
-      const t0 = i       / (HISTORY - 1);
-      const t1 = (i + 1) / (HISTORY - 1);
+    for (let i = 0; i < HISTORY; i++) {
+      const t = i / (HISTORY - 1);
+      const p = hist[i];
+      const r = t * currentHeadR * 1.15;
+      if (r < 0.5) continue;
 
-      const p0 = hist[i];
-      const p1 = hist[i + 1];
-      const p2 = hist[i + 2];
-
-      // Midpoints — the actual start/end of this bezier segment
-      const mx0 = (p0.x + p1.x) / 2;
-      const my0 = (p0.y + p1.y) / 2;
-      const mx1 = (p1.x + p2.x) / 2;
-      const my1 = (p1.y + p2.y) / 2;
-
-      const alpha = t0 * t0;           // quadratic falloff — fades toward tail
-      const width = isExpanded ? 1.5 : t1 * TAIL_W;
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+      grad.addColorStop(0,   `rgba(37,99,235,${(t * t * 0.85).toFixed(3)})`);
+      grad.addColorStop(0.6, `rgba(37,99,235,${(t * t * 0.4).toFixed(3)})`);
+      grad.addColorStop(1,   'rgba(37,99,235,0)');
 
       ctx.beginPath();
-      ctx.moveTo(mx0, my0);
-      ctx.quadraticCurveTo(p1.x, p1.y, mx1, my1);
-      ctx.strokeStyle = COLOR;
-      ctx.globalAlpha = alpha;
-      ctx.lineWidth   = width;
-      ctx.lineCap     = 'round';
-      ctx.lineJoin    = 'round';
-      ctx.stroke();
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 1;
+      ctx.fill();
     }
-  }
+  }  
   function drawHead() {
+    const r = currentHeadR;
+
+    // Soft outer glow
+    const glow = ctx.createRadialGradient(orbX, orbY, 0, orbX, orbY, r * 2.2);
+    glow.addColorStop(0,   'rgba(37,99,235,0.25)');
+    glow.addColorStop(1,   'rgba(37,99,235,0)');
     ctx.beginPath();
-    ctx.arc(orbX, orbY, currentHeadR, 0, Math.PI * 2);
-    ctx.fillStyle  = isExpanded ? 'rgba(37,99,235,0.35)' : COLOR;
+    ctx.arc(orbX, orbY, r * 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = glow;
     ctx.globalAlpha = 1;
     ctx.fill();
-  }
 
+    // Main orb body
+    const body = ctx.createRadialGradient(orbX - r * 0.2, orbY - r * 0.25, r * 0.1, orbX, orbY, r);
+    body.addColorStop(0,   '#5b8ef0');
+    body.addColorStop(0.5, '#2563eb');
+    body.addColorStop(1,   '#1a4fd6');
+    ctx.beginPath();
+    ctx.arc(orbX, orbY, r, 0, Math.PI * 2);
+    ctx.fillStyle = body;
+    ctx.fill();
+
+    // Specular highlight — top-left bright spot
+    const hl = ctx.createRadialGradient(
+      orbX - r * 0.32, orbY - r * 0.35, 0,
+      orbX - r * 0.32, orbY - r * 0.35, r * 0.52
+    );
+    hl.addColorStop(0,   'rgba(255,255,255,0.65)');
+    hl.addColorStop(0.5, 'rgba(255,255,255,0.15)');
+    hl.addColorStop(1,   'rgba(255,255,255,0)');
+    ctx.beginPath();
+    ctx.arc(orbX, orbY, r, 0, Math.PI * 2);
+    ctx.fillStyle = hl;
+    ctx.fill();
+  }
   function animate() {
     orbX += (mouseX - orbX) * LERP;
     orbY += (mouseY - orbY) * LERP;

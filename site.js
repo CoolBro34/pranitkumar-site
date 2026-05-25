@@ -35,7 +35,7 @@ if (body.dataset.page === 'home') {
 }
 
 const grid = document.getElementById('grid');
-if (grid) {
+if (grid && document.body.dataset.page !== 'gallery') {
   fetch('gallery/manifest.json')
     .then((response) => response.json())
     .then((images) => {

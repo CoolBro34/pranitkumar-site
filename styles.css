@@ -13,7 +13,7 @@ a{color:inherit}
   background: #2563eb;
   border-radius: 50%;
   pointer-events: none;
-  z-index: 99999;
+  z-index: 100003;
   transform: translate(-50%, -50%);
   transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
   will-change: transform;

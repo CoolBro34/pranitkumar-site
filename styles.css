@@ -1,7 +1,7 @@
 *{box-sizing:border-box}
 *,*::before,*::after{cursor:none!important}
-html{scroll-behavior:smooth;min-height:100%;background:linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));background-repeat:no-repeat;background-size:cover}
-body{margin:0;background:transparent;color:var(--text-primary);font-family:'Space Grotesk',sans-serif}
+html{scroll-behavior:smooth;min-height:100%;}
+body{background:linear-gradient(to bottom,var(--sky-top),var(--sky-bottom));background-attachment:fixed;margin:0;color:var(--text-primary);font-family:'Space Grotesk',sans-serif}
 a{color:inherit}
 
 .topbar{position:sticky;top:0;z-index:100002;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:transparent}
@@ -123,12 +123,8 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 .distinctions-panel{background:var(--card-bg);border:1px solid var(--card-border)}
 
 
-@keyframes cloudFloat {
-  0%   { transform: translateY(0); }
-  50%  { transform: translateY(calc(-1 * var(--float-distance, 6px))); }
-  100% { transform: translateY(0); }
-}
-
-.cloud-float{animation:cloudFloat var(--float-duration,5s) ease-in-out var(--float-delay,0s) infinite;will-change:transform}
 
 
+
+@keyframes cloudFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.pk-cloud-bg{overflow:visible;}

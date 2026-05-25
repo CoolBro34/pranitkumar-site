@@ -11,7 +11,11 @@ syncBar();
 
 if (body.dataset.page === 'home') {
   const anchors = navLinks.filter((link) => link.getAttribute('href').startsWith('#'));
-  const sections = anchors.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const sections = anchors.map((a) => {
+  const href = a.getAttribute('href');
+  if (href === '#about') return document.querySelector('.hero');
+  return document.querySelector(href);
+}).filter(Boolean);
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -21,7 +25,7 @@ if (body.dataset.page === 'home') {
         });
       }
     });
-  }, { rootMargin: '-35% 0px -50% 0px', threshold: 0 });
+  }, { rootMargin: '-5% 0px -50% 0px', threshold: 0 });
 
   sections.forEach((section) => observer.observe(section));
 } else if (body.dataset.page === 'gallery') {

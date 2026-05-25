@@ -121,6 +121,7 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   // ═══════════════════════════════════════════════════════════════
   // CURSOR CONFIG — all visual properties live here, edit freely
   // ═══════════════════════════════════════════════════════════════
+  const t = window.SiteTheme || {};
   const C = {
     // Orb radius in each state
     ORB_MOVE          : 7,     // plain orb while moving
@@ -156,9 +157,10 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     WAVE_SPEED        : 0.055,
 
     // Colors
-    COL_PRIMARY       : '#2563eb',
-    COL_LIGHT         : '#7aabf7',
-    COL_DARK          : '#1a4fd6',
+    COL_PRIMARY       : t.cursorPrimary || '#2563eb',
+    COL_LIGHT         : t.cursorLight   || '#7aabf7',
+    COL_DARK          : t.cursorDark    || '#1a4fd6',
+    COL_GLOW          : t.cursorGlow    || '37,99,235',
   };
   // ═══════════════════════════════════════════════════════════════
 
@@ -262,7 +264,7 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     const g = ctx.createRadialGradient(0, -C.BLOB_HEIGHT * 0.3, 0, 0, 0, C.BLOB_WIDTH * pulse);
     g.addColorStop(0,   'rgba(91,142,240,0.9)');
     g.addColorStop(0.6, 'rgba(37,99,235,0.7)');
-    g.addColorStop(1,   'rgba(37,99,235,0)');
+    g.addColorStop(1,   `rgba(${C.COL_GLOW},0)`);
     ctx.fillStyle = g;
     ctx.fill();
 
@@ -307,8 +309,8 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
 
       // Glow
       const glow = ctx.createRadialGradient(orbX, orbY, 0, orbX, orbY, drawR * 2.8);
-      glow.addColorStop(0, `rgba(37,99,235,${(0.08 + 0.10 * es).toFixed(3)})`);
-      glow.addColorStop(1, 'rgba(37,99,235,0)');
+      glow.addColorStop(0, `rgba(${C.COL_GLOW},${(0.08 + 0.10 * es).toFixed(3)})`);
+      glow.addColorStop(1, `rgba(${C.COL_GLOW},0)`);
       ctx.beginPath();
       ctx.arc(orbX, orbY, drawR * 2.8, 0, Math.PI * 2);
       ctx.fillStyle = glow;

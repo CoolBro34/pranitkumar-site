@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pranit Kumar</title>
+  <meta name="description" content="High school senior at BASIS Phoenix — aerospace engineer in training focused on spacecraft design, planetary exploration, and space systems.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:#fff;color:#0d0d0d;font-family:'Space Grotesk',sans-serif}
+    a{color:inherit}
+
+    .topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:transparent}
+    .topbar.scrolled{border-bottom:1px solid #e5e7eb;backdrop-filter:blur(8px);background:rgba(255,255,255,.92)}
+    .brand,.contact-rail,.site-nav a{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none}
+    .brand{font-size:1.1rem;font-weight:800;letter-spacing:.16em}
+    .contact-rail span{color:#2563eb}
+    .site-nav{display:flex;gap:1.2rem;align-items:center}
+    .site-nav a{padding:.2rem 0;border-bottom:1px solid transparent}
+    .site-nav a:hover,.site-nav a.active{color:#2563eb;border-color:#2563eb}
+
+    main{max-width:1200px;margin:0 auto;padding:0 1.5rem}
+    .section{padding-top:6rem;padding-bottom:6rem}
+    .hero{min-height:calc(100vh - 4.2rem);display:grid;grid-template-columns:1.65fr 1fr;gap:2rem;align-items:start;position:relative}
+    .hero h1{font-family:'Playfair Display',serif;font-size:clamp(4rem,10vw,9rem);line-height:.95;margin:0 0 1.25rem;font-weight:900;letter-spacing:-.03em}
+    .tagline{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:clamp(1.1rem,2.2vw,1.2rem);max-width:480px;color:#6b7280}
+    .social-row{display:flex;gap:1rem;margin:1.4rem 0}.social-row a{font-weight:500;text-decoration:none}.social-row a:hover{color:#2563eb}
+    .chip-row{display:flex;flex-wrap:wrap;gap:.55rem}
+    .chip{border:1px solid #2563eb;border-radius:999px;padding:.35rem .7rem;font-family:'IBM Plex Mono',monospace;font-size:.74rem;color:#1f2937}
+    .hero-side{display:grid;gap:1rem}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 20px rgba(17,24,39,.05);padding:1.1rem 1.2rem}
+    .label,.meta,.section-label,.ap-year,.ap-row,.skills-grid span,.role,footer{font-family:'IBM Plex Mono',monospace}
+    .label{font-size:.7rem;color:#6b7280;letter-spacing:.11em}
+    .card h3{margin:.35rem 0 .45rem;font-size:clamp(1rem,2.5vw,1.2rem)}
+    .hero-side .card h3{font-family:'Playfair Display',serif}
+    .card p,.card li{color:#374151}
+    .section-label{font-size:.78rem;color:#2563eb;letter-spacing:.12em;margin:0 0 .6rem}
+    h1,h2{font-family:'Playfair Display',serif}
+    h2{font-size:clamp(2rem,4vw,3rem);margin:0 0 1.5rem}
+    .grid-two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .stack{display:grid;gap:1rem}
+    .card-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start}
+    .meta{font-size:.76rem;color:#6b7280;margin:.2rem 0 0}
+    ul{margin:.5rem 0 0 1.1rem;padding:0;display:grid;gap:.4rem}
+    .ap-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:.9rem}
+    .ap-year{font-size:.7rem;letter-spacing:.1em;color:#6b7280;margin:.3rem 0}
+    .ap-row{display:flex;justify-content:space-between;gap:.8rem;font-size:.75rem;margin:.2rem 0}
+    .role{font-size:.72rem;letter-spacing:.08em;color:#6b7280;text-transform:uppercase;margin-top:0}
+    .grid-projects{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .project-wide{grid-column:1/-1}
+    .link-pill{display:inline-flex;border:1px solid #d1d5db;border-radius:999px;padding:.4rem .75rem;font-family:'IBM Plex Mono',monospace;font-size:.76rem;text-decoration:none}
+    .link-pill:hover{border-color:#2563eb;color:#2563eb}
+    .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem 1rem}
+    .skills-grid p{display:grid;grid-template-columns:170px 1fr;gap:.8rem;align-items:start;margin:0;padding:1rem;border:1px solid #e5e7eb;border-radius:12px}
+    .skills-grid span{font-size:.75rem;color:#6b7280;letter-spacing:.08em}
+    .contact-list{list-style:none;margin:0;padding:0;max-width:680px}
+    .contact-list li{display:grid;grid-template-columns:130px 1fr;padding:1rem 0;border-bottom:1px solid #e5e7eb}
+    .contact-list span,.contact-list a{font-size:clamp(1rem,2.2vw,1.1rem);text-decoration:none}
+    .contact-list a:hover{color:#2563eb}
+    footer{text-align:center;padding:2rem 1rem 3rem;color:#9ca3af;font-size:.75rem;font-family:'IBM Plex Mono',monospace}
+
+    /* ---- POPUP STYLES ---- */
+    .rr-popup {
+      position: fixed;
+      z-index: 99999;
+      background: #fff;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 14px;
+      box-shadow: 0 16px 48px rgba(17,24,39,.18), 0 2px 8px rgba(37,99,235,.08);
+      padding: 1.2rem 1.4rem 1rem;
+      width: 260px;
+      font-family: 'Space Grotesk', sans-serif;
+      animation: popIn .35s cubic-bezier(0.22,1,0.36,1) forwards;
+      pointer-events: all;
+      user-select: none;
+    }
+    .rr-popup.dragging {
+      box-shadow: 0 28px 64px rgba(17,24,39,.22), 0 4px 16px rgba(37,99,235,.12);
+      animation: none;
+      opacity: 1;
+      transform: scale(1.03);
+      transition: box-shadow .15s ease, transform .15s ease;
+    }
+    .rr-popup.dying {
+      animation: popOut .28s cubic-bezier(0.55,0,1,0.45) forwards;
+    }
+    @keyframes popIn {
+      from { opacity:0; transform: scale(0.82) translateY(18px); }
+      to   { opacity:1; transform: scale(1)    translateY(0);    }
+    }
+    @keyframes popOut {
+      from { opacity:1; transform: scale(1)    translateY(0);    }
+      to   { opacity:0; transform: scale(0.78) translateY(14px); }
+    }
+    .rr-popup .rr-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: .5rem;
+      margin-bottom: .55rem;
+      cursor: grab;
+    }
+    .rr-popup .rr-header:active { cursor: grabbing; }
+    .rr-popup .rr-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: .65rem;
+      color: #2563eb;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: .18rem;
+    }
+    .rr-popup .rr-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0;
+      line-height: 1.25;
+      color: #0d0d0d;
+    }
+    .rr-popup .rr-close {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      color: #9ca3af;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: .05rem;
+    }
+    .rr-popup .rr-close:hover { color: #0d0d0d; }
+    .rr-popup .rr-body {
+      font-size: .82rem;
+      color: #374151;
+      margin: 0 0 .85rem;
+      line-height: 1.5;
+    }
+    .rr-popup .rr-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      background: #2563eb;
+      color: #fff;
+      text-decoration: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .06em;
+      border-radius: 999px;
+      padding: .45rem .85rem;
+      transition: background .15s ease;
+    }
+    .rr-popup .rr-btn:hover { background: #1d4ed8; }
+
+    @media (max-width: 768px){
+      .topbar{padding:1rem}
+      .site-nav a{display:none}
+      .contact-rail{display:none}
+      .hero{grid-template-columns:1fr;min-height:auto;padding-top:1rem}
+      .grid-two,.grid-projects,.ap-grid,.skills-grid{grid-template-columns:1fr}
+      .project-wide{grid-column:auto}
+      .skills-grid p{grid-template-columns:1fr}
+      .rr-popup { width: 220px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#about">PK</a>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#education">Education</a>
+      <a href="#distinctions">Distinctions</a>
+      <a href="#extracurriculars">Extracurriculars</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+    </nav>
+    <a class="contact-rail" href="#contact">Contact <span>↗</span></a>
+  </header>
+
+  <main>
+    <div id="about" style="position:absolute;top:0"></div>
+    <section class="section hero">
+      <div class="hero-main">
+        <h1>Pranit<br>Kumar.</h1>
+        <p class="tagline">High school senior at BASIS Phoenix — aerospace engineer in training, obsessed with spacecraft design, planetary exploration, and the systems that get us there.</p>
+        <div class="social-row">
+          <a href="https://linkedin.com/in/pranitkumar1" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="mailto:pranit@pranitkumar.com">Email</a>
+        </div>
+        <div class="chip-row">
+          <span class="chip">Aerospace Engineering</span>
+          <span class="chip">Spacecraft Design</span>
+          <span class="chip">Planetary Exploration</span>
+          <span class="chip">Astrophysics</span>
+        </div>
+      </div>
+      <aside class="hero-side">
+        <article class="card">
+          <p class="label">NASA TECHRISE</p>
+          <h3>Competition Winner</h3>
+          <p>$1,500 NASA grant — suborbital payload designed, built, and flown.</p>
+        </article>
+        <article class="card">
+          <p class="label">FOCUS</p>
+          <h3>Aerospace Systems · Robotics · Rocketry</h3>
+          <p>Rover and probe design, in-house rocket builds, payload engineering, and hands-on experimental flight.</p>
+        </article>
+        <article class="card">
+          <p class="label">PHOENIX YOUTH SYMPHONY</p>
+          <h3>Percussionist</h3>
+          <p>Most senior member of the Philharmonic. Performs at hospitals and schools.</p>
+        </article>
+      </aside>
+    </section>
+
+    <section id="education" class="section">
+      <p class="section-label">// EDUCATION</p>
+      <h2>Where I've studied.</h2>
+      <div class="grid-two">
+        <article class="card">
+          <h3>BASIS Phoenix</h3>
+          <p class="meta">GPA: 3.91 / 4.0 · 2020 – Present</p>
+          <p><strong>Currently enrolled (Senior Year):</strong> Organic Chemistry, Multivariable Calculus, Mythology in Literature, Advanced Band, Greek</p>
+          <div class="ap-grid">
+            <div>
+              <p class="ap-year">FRESHMAN YEAR</p>
+              <p class="ap-row"><span>AP Precalculus</span><span>4</span></p>
+              <p class="ap-row"><span>AP U.S. Government</span><span>4</span></p>
+            </div>
+            <div>
+              <p class="ap-year">SOPHOMORE YEAR</p>
+              <p class="ap-row"><span>AP Physics 1</span><span>5</span></p>
+              <p class="ap-row"><span>AP English Language</span><span>5</span></p>
+              <p class="ap-row"><span>AP Calculus AB</span><span>4</span></p>
+              <p class="ap-row"><span>AP European History</span><span>4</span></p>
+              <p class="ap-row"><span>AP Physics C: Mechanics</span><span>4</span></p>
+            </div>
+            <div>
+              <p class="ap-year">JUNIOR YEAR</p>
+              <p class="ap-row"><span>AP Chemistry</span><span>—</span></p>
+              <p class="ap-row"><span>AP Calculus BC</span><span>—</span></p>
+              <p class="ap-row"><span>AP U.S. History</span><span>—</span></p>
+              <p class="ap-row"><span>AP English Literature</span><span>—</span></p>
+              <p class="ap-row"><span>AP Latin (V)</span><span>—</span></p>
+            </div>
+          </div>
+        </article>
+        <article class="card">
+          <h3>Embry-Riddle Aeronautical University</h3>
+          <p class="meta">PS110 · Summer 2024 · GPA: 4.0 / 4.0</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="distinctions" class="section">
+      <p class="section-label">// DISTINCTIONS</p>
+      <h2>Recognition.</h2>
+      <article class="card"><ul>
+        <li>NASA TechRise Winner — NASA TechRise Student Challenge ($1,500 NASA grant; suborbital payload flown)</li>
+        <li>Arizona State Qualifier — FTC Robotics (First Tech Challenge)</li>
+        <li>George Eastman Young Leaders Award</li>
+        <li>Science National Honor Society</li>
+        <li>Tri-M Music Honor Society</li>
+      </ul></article>
+    </section>
+
+    <section id="extracurriculars" class="section">
+      <p class="section-label">// EXTRACURRICULARS</p>
+      <h2>What I do.</h2>
+      <div class="grid-two">
+        <article class="card"><h3>Aerospace Engineering Club</h3><p class="role">Co-founder</p><p>Designs and launches rockets entirely in-house — airframes, propulsion staging, and recovery systems.</p></article>
+        <article class="card"><h3>FTC Robotics Team</h3><p class="role">Co-founder</p><p>Competed in the First Tech Challenge; reached the Arizona state competition.</p></article>
+        <article class="card"><h3>Astronomy and Photography Club</h3><p class="role">Founder</p><p>Runs viewing nights, astrophotography sessions, and discussions on current developments in space science.</p></article>
+        <article class="card"><h3>Phoenix Youth Symphony Philharmonic</h3><p class="role">Percussionist and most senior section member</p><p>Helps run the percussion section and performs in the full Philharmonic orchestra.</p></article>
+        <article class="card"><h3>Tri-M Music Honor Society</h3><p class="role">Member</p><p>Performs at mental health institutions, hospitals, and schools for the elderly and children.</p></article>
+        <article class="card"><h3>Band Council</h3><p class="role">Council Chair</p><p>Helped launch the band's student government program.</p></article>
+      </div>
+    </section>
+
+    <section id="projects" class="section">
+      <p class="section-label">// PROJECTS</p>
+      <h2>Things I've built.</h2>
+      <div class="grid-projects">
+        <article class="card"><div class="card-head"><h3>NASA TechRise Payload</h3><p class="meta">Sep 2024 – May 2025</p></div><ul><li>Led Arizona's winning team in the NASA TechRise Student Challenge</li><li>Designed, built, launched, and analyzed data from a suborbital payload; earned $1,500 NASA grant</li></ul><p><a class="link-pill" href="https://festorage.blob.core.windows.net/nasatechrise/files/teamprogress/74100-progress.pdf" target="_blank" rel="noopener">Experiment PDF ↗</a></p></article>
+        <article class="card"><h3>Custom I2C Breakout PCB</h3><ul><li>Designed a custom PCB to streamline I2C prototyping for students and hobbyists</li><li>Maintains full microcontroller compatibility; currently in user trials</li></ul></article>
+        <article class="card project-wide"><h3>Latin Vocabulary Study App (PyQt6)</h3><ul><li>Desktop app: Kahoot-style timed quizzes, frequency-weighted word selection, spaced repetition</li><li>Configurable number-key bindings, principal parts display, per-word frequency analytics</li></ul></article>
+      </div>
+    </section>
+
+    <section id="skills" class="section">
+      <p class="section-label">// SKILLS</p>
+      <h2>What I know.</h2>
+      <div class="skills-grid">
+        <p><span>Programming</span>7 years Python (certified), 2 years MATLAB, Java familiarity</p>
+        <p><span>Hardware</span>Arduino, Raspberry Pi, microcontroller architecture, circuit design</p>
+        <p><span>PCB Design</span>Custom board layout and I2C system integration</p>
+        <p><span>Data Analysis</span>Python/Excel pipelines, graphing, experimental data interpretation</p>
+        <p><span>Rocketry</span>Airframe construction, propulsion staging, recovery systems</p>
+        <p><span>Robotics</span>FTC robot design, autonomous programming, mechanical integration</p>
+        <p><span>Engineering</span>Physical + software systems combined to solve real-world problems</p>
+      </div>
+    </section>
+
+    <section id="experience" class="section">
+      <p class="section-label">// EXPERIENCE</p>
+      <h2>What I've done.</h2>
+      <div class="stack">
+        <article class="card"><div class="card-head"><h3>Drippy.ai — Data Science Intern</h3><p class="meta">Sep 2022 – Dec 2022</p></div><ul><li>Analyzed datasets with Python and Excel to derive real-world conclusions</li><li>Communicated data-driven findings to non-technical stakeholders</li></ul></article>
+        <article class="card"><div class="card-head"><h3>Arizona Science Center — Volunteer</h3><p class="meta">Oct 2024 – Present</p></div><ul><li>Explained complex scientific concepts to museum guests of all ages</li><li>Diagnosed and repaired exhibit computers and technology for staff</li></ul></article>
+        <article class="card"><div class="card-head"><h3>Phoenix Public Library — Volunteer</h3><p class="meta">Summer 2024 & 2025</p></div><ul><li>Assisted librarians with shelving, indexing, and guest services</li></ul></article>
+        <article class="card"><div class="card-head"><h3>Python Bootcamp — Instructor</h3><p class="meta">Jun – Jul 2024</p></div><ul><li>Designed and delivered a 2-month Python curriculum for neighborhood children</li><li>Managed enrollment, class operations, and payment tracking independently</li></ul></article>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <p class="section-label">// CONTACT</p>
+      <h2>Get in touch.</h2>
+      <ul class="contact-list">
+        <li><span>Email</span><a href="mailto:pranit@pranitkumar.com">pranit@pranitkumar.com</a></li>
+        <li><span>LinkedIn</span><a href="https://linkedin.com/in/pranitkumar1" target="_blank" rel="noopener">linkedin.com/in/pranitkumar1</a></li>
+        <li><span>Website</span><span>pranitkumar.com</span></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>© 2025 Pranit Kumar</footer>
+
+  <script>
+    // Topbar scroll
+    const topbar = document.getElementById('topbar');
+    window.addEventListener('scroll', () => {
+      topbar.classList.toggle('scrolled', window.scrollY > 8);
+    });
+
+    // ---- RICKROLL POPUP ENGINE ----
+    const RICKROLL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+    const POPUP_W = 270;
+    const POPUP_H = 160; // approximate height for boundary clamping
+
+    const popupTemplates = [
+      { label: 'NEW OPPORTUNITY',  title: 'Exclusive Internship at NASA JPL',     body: 'Your profile matched our spacecraft systems division. One seat remaining.',          btn: 'Apply Now ↗' },
+      { label: 'SCHOLARSHIP ALERT',title: '$50,000 Aerospace Grant',               body: 'Pre-selected based on your TechRise achievement. Claim before midnight.',           btn: 'Claim Grant ↗' },
+      { label: 'MIT ADMISSIONS',   title: 'Early Decision Preview',                body: 'A message from the admissions office regarding your application status.',           btn: 'View Letter ↗' },
+      { label: 'SPACEX RECRUITING',title: 'Internship Offer Inside',               body: 'Elon personally shortlisted your profile. Limited spots for summer 2026.',          btn: 'See Offer ↗' },
+      { label: 'URGENT UPDATE',    title: 'Your AP Score Is Available',             body: 'All five junior year AP scores just released. Spoiler: perfect 5s.',               btn: 'View Scores ↗' },
+      { label: 'PRESS RELEASE',    title: 'Featured in Space.com',                 body: 'A journalist wants to profile your TechRise payload work. Respond today.',         btn: 'Read Article ↗' },
+      { label: 'CONCERT NOTICE',   title: 'Solo Percussion Offer',                 body: 'Phoenix Symphony wants you as featured soloist for the spring gala.',               btn: 'Accept Role ↗' },
+      { label: 'ROBOT NEWS',       title: 'FTC World Championship',                body: 'Your robot has been retroactively invited to the world stage. Pack your bags.',     btn: 'Register ↗' },
+      { label: 'SECURITY ALERT',   title: 'Someone Viewed Your Resume',            body: 'A recruiter from Lockheed Martin downloaded your CV 4 minutes ago.',               btn: 'See Who ↗' },
+      { label: 'CALTECH PORTAL',   title: 'Application Update',                    body: 'Your Caltech portal status has changed. Log in to view your decision.',            btn: 'Log In ↗' },
+      { label: 'NASA ANNOUNCEMENT',title: 'TechRise Payload Data Ready',           body: 'Your suborbital flight data has finished processing. Download now.',               btn: 'Download ↗' },
+    ];
+
+    let usedTemplates = [];
+    function pickTemplate() {
+      if (usedTemplates.length >= popupTemplates.length) usedTemplates = [];
+      const remaining = popupTemplates.filter((_, i) => !usedTemplates.includes(i));
+      const idx = popupTemplates.indexOf(remaining[Math.floor(Math.random() * remaining.length)]);
+      usedTemplates.push(idx);
+      return popupTemplates[idx];
+    }
+
+    function randomPos() {
+      const maxX = window.innerWidth  - POPUP_W - 16;
+      const maxY = window.innerHeight - POPUP_H - 16;
+      return {
+        left: Math.floor(Math.random() * Math.max(maxX, 10)) + 8,
+        top:  Math.floor(Math.random() * Math.max(maxY, 10)) + 8,
+      };
+    }
+
+    function makeDraggable(el) {
+      const header = el.querySelector('.rr-header');
+      let dragging = false, startX, startY, origLeft, origTop;
+
+      header.addEventListener('mousedown', (e) => {
+        if (e.target.classList.contains('rr-close')) return;
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        origLeft = parseInt(el.style.left);
+        origTop  = parseInt(el.style.top);
+        el.classList.add('dragging');
+        e.preventDefault();
+      });
+
+      // Touch support
+      header.addEventListener('touchstart', (e) => {
+        if (e.target.classList.contains('rr-close')) return;
+        dragging = true;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        origLeft = parseInt(el.style.left);
+        origTop  = parseInt(el.style.top);
+        el.classList.add('dragging');
+      }, { passive: true });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        el.style.left = Math.max(0, Math.min(window.innerWidth  - POPUP_W, origLeft + dx)) + 'px';
+        el.style.top  = Math.max(0, Math.min(window.innerHeight - POPUP_H, origTop  + dy)) + 'px';
+      });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!dragging) return;
+        const dx = e.touches[0].clientX - startX;
+        const dy = e.touches[0].clientY - startY;
+        el.style.left = Math.max(0, Math.min(window.innerWidth  - POPUP_W, origLeft + dx)) + 'px';
+        el.style.top  = Math.max(0, Math.min(window.innerHeight - POPUP_H, origTop  + dy)) + 'px';
+      }, { passive: true });
+
+      const stopDrag = () => { dragging = false; el.classList.remove('dragging'); };
+      document.addEventListener('mouseup',  stopDrag);
+      document.addEventListener('touchend', stopDrag);
+    }
+
+    function spawnPopup() {
+      const tmpl = pickTemplate();
+      const pos  = randomPos();
+
+      const el = document.createElement('div');
+      el.className = 'rr-popup';
+      el.style.left = pos.left + 'px';
+      el.style.top  = pos.top  + 'px';
+
+      el.innerHTML = `
+        <div class="rr-header">
+          <div>
+            <p class="rr-label">${tmpl.label}</p>
+            <p class="rr-title">${tmpl.title}</p>
+          </div>
+          <button class="rr-close" aria-label="Dismiss">✕</button>
+        </div>
+        <p class="rr-body">${tmpl.body}</p>
+        <a class="rr-btn" href="${RICKROLL}" target="_blank" rel="noopener">${tmpl.btn}</a>
+      `;
+
+      document.body.appendChild(el);
+      makeDraggable(el);
+      el.querySelector('.rr-close').addEventListener('click', () => dismissPopup(el));
+      setTimeout(() => dismissPopup(el), 9000);
+    }
+
+    function dismissPopup(el) {
+      if (!el.isConnected || el.classList.contains('dying')) return;
+      el.classList.add('dying');
+      el.addEventListener('animationend', () => el.remove(), { once: true });
+    }
+
+    function spawnBatch() {
+      spawnPopup();
+      setTimeout(spawnPopup, 200);
+      setTimeout(spawnPopup, 400);
+    }
+
+    setTimeout(() => {
+      spawnBatch();
+      setInterval(spawnBatch, 2000);
+    }, 2000);
+  </script>
+</body>
+</html>

@@ -116,7 +116,6 @@ if (grid) {
 window.addEventListener('hashchange', () => {
   document.body.style.overflow = '';
 });
-
 if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
 
   const canvas = document.createElement('canvas');
@@ -128,22 +127,25 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   resize();
   window.addEventListener('resize', resize);
 
-  const BASE_R           = 7;
-  const EXPANDED_R       = 28;
-  const LERP_POS         = 0.18;
-  const LERP_R           = 0.10;
-  const LERP_EFFECT      = 0.04;
-  const BLOB_COUNT       = 4;
-  const BLOB_ORBIT_R     = 22;
-  const BLOB_W           = 9;
-  const BLOB_H           = 4;
-  const RING_SPEED_IDLE  = 0.028;
-  const RING_SPEED_HOVER = 0.055;
-  const WAVE_POINTS      = 64;
-  const WAVE_AMP_MAX     = 2.6;
-  const WAVE_FREQ        = 3;
-  const WAVE_SPEED       = 0.055;
-  const IDLE_DELAY_MS    = 1200;
+  const BASE_R            = 7;
+  const EXPANDED_R        = 28;
+  const LERP_POS          = 0.18;
+  const LERP_R            = 0.10;
+  const LERP_EFFECT_IN    = 0.03;  // slow: idle fades in gently
+  const LERP_EFFECT_OUT   = 0.18;  // fast: snaps away when you move again
+  const BLOB_COUNT        = 4;
+  const BLOB_ORBIT_R      = 22;
+  const BLOB_W            = 9;
+  const BLOB_H            = 4;
+  const RING_SPEED_IDLE   = 0.028;
+  const RING_SPEED_HOVER  = 0.055;
+  const WAVE_POINTS       = 64;
+  const WAVE_AMP_MAX      = 2.6;
+  const WAVE_FREQ         = 3;
+  const WAVE_SPEED        = 0.055;
+  const IDLE_DELAY_MS     = 1200;
+  const BLOOM_STRENGTH    = 18;   // peak extra radius on idle entry
+  const BLOOM_DECAY       = 0.87; // how fast the bloom ring collapses
 
   let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
   let orbX = mouseX, orbY = mouseY;
@@ -151,6 +153,8 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   let isVisible = true, isHover = false;
   let ringAngle = 0, wavePhase = 0;
   let effectStrength = 0, targetEffect = 0;
+  let prevEffectStrength = 0;
+  let bloomR = 0;
   let idleTimer = null;
 
   function startIdleCountdown() {
@@ -198,23 +202,34 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     ctx.closePath();
   }
 
-  function drawBlob(cx, cy, angle, blobIndex, r, alpha) {
-    if (alpha <= 0.01) return;
-    const bx = cx + Math.cos(angle) * (BLOB_ORBIT_R + r * 0.5);
-    const by = cy + Math.sin(angle) * (BLOB_ORBIT_R + r * 0.5);
+  function drawBlob(cx, cy, angle, blobIndex, r, es) {
+    if (es <= 0.01) return;
+
+    // Orbit radius scales with es: blobs emerge from inside the orb
+    // and travel outward to their full orbit position as es rises.
+    // On despawn they travel back in the same way.
+    const actualOrbit = (BLOB_ORBIT_R + r * 0.5) * es;
+    const bx = cx + Math.cos(angle) * actualOrbit;
+    const by = cy + Math.sin(angle) * actualOrbit;
+
     ctx.save();
     ctx.translate(bx, by);
     ctx.rotate(angle + Math.PI / 2);
-    ctx.globalAlpha = alpha;
+    ctx.globalAlpha = es;
+
+    // Blob also scales up as it exits so it looks like it's being emitted
     const pulse = 1 + 0.18 * Math.sin(wavePhase * 2 + blobIndex);
+    const scale = es;
     ctx.beginPath();
-    ctx.ellipse(0, 0, BLOB_W * pulse, BLOB_H * pulse, 0, 0, Math.PI * 2);
-    const grad = ctx.createRadialGradient(0, -BLOB_H * 0.3, 0, 0, 0, BLOB_W * pulse);
+    ctx.ellipse(0, 0, BLOB_W * pulse * scale, BLOB_H * pulse * scale, 0, 0, Math.PI * 2);
+
+    const grad = ctx.createRadialGradient(0, -BLOB_H * 0.3, 0, 0, 0, BLOB_W * pulse * scale);
     grad.addColorStop(0,   'rgba(91,142,240,0.9)');
     grad.addColorStop(0.6, 'rgba(37,99,235,0.7)');
     grad.addColorStop(1,   'rgba(37,99,235,0)');
     ctx.fillStyle = grad;
     ctx.fill();
+
     ctx.globalAlpha = 1;
     ctx.restore();
   }
@@ -223,7 +238,18 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     orbX     += (mouseX  - orbX)     * LERP_POS;
     orbY     += (mouseY  - orbY)     * LERP_POS;
     currentR += (targetR - currentR) * LERP_R;
-    effectStrength += (targetEffect - effectStrength) * LERP_EFFECT;
+
+    // Asymmetric lerp — different speed for fading in vs fading out
+    const lerpRate = targetEffect > effectStrength ? LERP_EFFECT_IN : LERP_EFFECT_OUT;
+    effectStrength += (targetEffect - effectStrength) * lerpRate;
+
+    // Bloom ring: whenever effectStrength is actively rising, spike bloomR.
+    // It then decays each frame, creating a brief expanding ring on idle entry
+    // and on hover — identical feel to the orb expanding outward.
+    const effectDelta = effectStrength - prevEffectStrength;
+    if (effectDelta > 0) bloomR += effectDelta * BLOOM_STRENGTH;
+    bloomR *= BLOOM_DECAY;
+    prevEffectStrength = effectStrength;
 
     const ringSpeed = RING_SPEED_IDLE + (RING_SPEED_HOVER - RING_SPEED_IDLE) * (isHover ? 1 : effectStrength);
     ringAngle += ringSpeed;
@@ -232,48 +258,50 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (isVisible) {
-      const es = effectStrength;
+      const es  = effectStrength;
       const waveAmp = WAVE_AMP_MAX * es;
+      const drawR = currentR + bloomR;  // bloom temporarily inflates the radius
 
-      // When purely moving (es near 0), draw the original flat solid orb
       if (es < 0.01) {
+        // Pure moving state — original flat small solid orb, nothing else
         ctx.beginPath();
         ctx.arc(orbX, orbY, currentR, 0, Math.PI * 2);
         ctx.fillStyle = '#2563eb';
         ctx.fill();
+
       } else {
-        // Glow
+        // Transitioning or fully idle/hover
+
+        // Glow behind everything, inflated by bloom
         const glowAlpha = 0.08 + 0.10 * es;
-        const glow = ctx.createRadialGradient(orbX, orbY, 0, orbX, orbY, currentR * 2.8);
+        const glow = ctx.createRadialGradient(orbX, orbY, 0, orbX, orbY, drawR * 2.8);
         glow.addColorStop(0, `rgba(37,99,235,${glowAlpha.toFixed(3)})`);
         glow.addColorStop(1, 'rgba(37,99,235,0)');
         ctx.beginPath();
-        ctx.arc(orbX, orbY, currentR * 2.8, 0, Math.PI * 2);
+        ctx.arc(orbX, orbY, drawR * 2.8, 0, Math.PI * 2);
         ctx.fillStyle = glow;
         ctx.fill();
 
-        // Blobs
+        // Blobs — emerge from orb centre, travel outward
         for (let i = 0; i < BLOB_COUNT; i++) {
           const angle = ringAngle + (i / BLOB_COUNT) * Math.PI * 2;
-          drawBlob(orbX, orbY, angle, i, currentR, es);
+          drawBlob(orbX, orbY, angle, i, drawR, es);
         }
 
-        // Wobbly orb body — crossfade from flat circle to wobbly
-        // We draw both and blend using globalAlpha
-        // Flat circle at (1 - es) opacity
+        // Crossfade: flat circle fades out, wobbly orb fades in
+        // Both use drawR so the bloom affects both equally
         ctx.globalAlpha = 1 - es;
         ctx.beginPath();
-        ctx.arc(orbX, orbY, currentR, 0, Math.PI * 2);
+        ctx.arc(orbX, orbY, drawR, 0, Math.PI * 2);
         ctx.fillStyle = '#2563eb';
         ctx.fill();
         ctx.globalAlpha = 1;
 
-        // Wobbly orb at es opacity
         ctx.globalAlpha = es;
-        drawWobblyOrb(orbX, orbY, currentR, wavePhase, waveAmp);
+        drawWobblyOrb(orbX, orbY, drawR, wavePhase, waveAmp);
         const body = ctx.createRadialGradient(
-          orbX - currentR * 0.25, orbY - currentR * 0.3, 0,
-          orbX, orbY, currentR
+          orbX - drawR * 0.25, orbY - drawR * 0.3, 0,
+          orbX, orbY, drawR
         );
         body.addColorStop(0,   '#7aabf7');
         body.addColorStop(0.5, '#2563eb');
@@ -282,10 +310,10 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
         ctx.fill();
 
         // Specular highlight
-        drawWobblyOrb(orbX, orbY, currentR, wavePhase, waveAmp);
+        drawWobblyOrb(orbX, orbY, drawR, wavePhase, waveAmp);
         const hl = ctx.createRadialGradient(
-          orbX - currentR * 0.3, orbY - currentR * 0.35, 0,
-          orbX - currentR * 0.3, orbY - currentR * 0.35, currentR * 0.6
+          orbX - drawR * 0.3, orbY - drawR * 0.35, 0,
+          orbX - drawR * 0.3, orbY - drawR * 0.35, drawR * 0.6
         );
         hl.addColorStop(0, 'rgba(255,255,255,0.6)');
         hl.addColorStop(1, 'rgba(255,255,255,0)');

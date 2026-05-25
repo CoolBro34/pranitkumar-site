@@ -1,7 +1,7 @@
 *{box-sizing:border-box}
 *,*::before,*::after{cursor:none!important}
-html{scroll-behavior:smooth}
-body{margin:0;background:linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));background-attachment:fixed;color:var(--text-primary);font-family:'Space Grotesk',sans-serif}
+html{scroll-behavior:smooth;min-height:100%;background:linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));background-repeat:no-repeat;background-size:cover}
+body{margin:0;background:transparent;color:var(--text-primary);font-family:'Space Grotesk',sans-serif}
 a{color:inherit}
 
 .topbar{position:sticky;top:0;z-index:100002;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:transparent}
@@ -129,27 +129,6 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   100% { transform: translateY(0); }
 }
 
-/* .cloud-float rule removed; clouds.js now sets animation inline */
+.cloud-float{animation:cloudFloat var(--float-duration,5s) ease-in-out var(--float-delay,0s) infinite;will-change:transform}
 
 
-@media (max-width: 768px) {
-  .grid-two, .stack, .grid-projects {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    position: static !important;
-    min-height: unset !important;
-  }
-  .grid-two > .card, .stack > .card, .grid-projects > .card {
-    position: static !important;
-    width: auto !important;
-    left: auto !important;
-    top: auto !important;
-    transform: none !important;
-    animation: none !important;
-    background: var(--card-bg) !important;
-    border: 1px solid var(--card-border) !important;
-    box-shadow: var(--card-shadow) !important;
-    opacity: 1 !important;
-  }
-  .pk-cloud-bg { display: none !important; }
-}

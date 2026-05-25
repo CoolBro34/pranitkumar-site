@@ -1,19 +1,27 @@
 // clouds.js — scatter, size, cloud-shape, drag
 
 const CLOUD = {
-  BLEED_X: 32,
-  BLEED_Y: 24,
-  GAP: 18,
-  CONTENT_WIDTH: 210,
-  COLS: 2,
-  ROW_H: 220,
-  JITTER_X_FRAC: 0.20,
-  JITTER_Y_FRAC: 0.28,
-  MAX_TRIES: 60,
-  FLOAT_DUR:   [4.5, 7.2],
-  FLOAT_DELAY: [0,   2.8],
-  BUMP_MIN: 38,
-  BUMP_MAX: 68,
+  // Layout — controls how cards are distributed in their section
+  COLS:          2,      // number of placement columns per section
+  ROW_H:         220,    // approximate vertical spacing between rows (px)
+  JITTER_X_FRAC: 0.20,   // horizontal randomness as fraction of column width
+  JITTER_Y_FRAC: 0.28,   // vertical randomness as fraction of row height
+  MAX_TRIES:     60,     // collision resolution attempts before fallback
+  CONTENT_WIDTH: 210,    // fixed width of card text content (px)
+
+  // Cloud shape — controls how far the cloud silhouette bleeds past the card text
+  BLEED_X: 32,           // horizontal bleed on each side (px)
+  BLEED_Y: 24,           // vertical bleed on each side (px)
+  GAP:     18,           // minimum clear space between adjacent clouds (px)
+
+  // Float animation — the gentle up/down drift on each card
+  FLOAT_DUR:   [4.5, 7.2],  // [min, max] duration in seconds
+  FLOAT_DELAY: [0,   2.8],  // [min, max] start delay in seconds
+  FLOAT_DIST:  6,           // vertical travel distance in px
+
+  // Cloud silhouette shape — border-radius randomness range
+  BUMP_MIN: 38,   // minimum curve percentage
+  BUMP_MAX: 68,   // maximum curve percentage
 };
 
 function rnd(a, b) { return a + Math.random() * (b - a); }
@@ -63,8 +71,10 @@ function rectsOverlap(a, b) {
            a.y + a.h + g < b.y || b.y + b.h + g < a.y);
 }
 
-function makeDraggable(el, region) {
+function makeDraggable(el, region, allCards) {
   let sx, sy, ol, ot, origAnim;
+  let lastValidLeft = ol;
+  let lastValidTop  = ot;
 
   function down(e) {
     e.preventDefault();
@@ -74,6 +84,8 @@ function makeDraggable(el, region) {
     ol = parseFloat(el.style.left) || 0;
     ot = parseFloat(el.style.top)  || 0;
     origAnim = el.style.animation;
+    lastValidLeft = ol;
+    lastValidTop = ot;
     el.style.animation = 'none';
     el.style.zIndex = '200';
     el.style.transform = 'scale(1.04)';
@@ -89,11 +101,28 @@ function makeDraggable(el, region) {
     const cx = e.touches ? e.touches[0].clientX : e.clientX;
     const cy = e.touches ? e.touches[0].clientY : e.clientY;
     const rW = region.offsetWidth, rH = region.offsetHeight;
-    el.style.left = Math.max(-CLOUD.BLEED_X, Math.min(rW  - el.offsetWidth  + CLOUD.BLEED_X, ol + cx - sx)) + 'px';
-    el.style.top  = Math.max(-CLOUD.BLEED_Y, Math.min(rH  - el.offsetHeight + CLOUD.BLEED_Y, ot + cy - sy)) + 'px';
+    const newLeft = Math.max(-CLOUD.BLEED_X, Math.min(rW - el.offsetWidth  + CLOUD.BLEED_X, ol + cx - sx));
+    const newTop  = Math.max(-CLOUD.BLEED_Y, Math.min(rH - el.offsetHeight + CLOUD.BLEED_Y, ot + cy - sy));
+
+    const candidate = { x: newLeft, y: newTop, w: el.offsetWidth, h: el.offsetHeight };
+    const blocked = allCards.some(other => {
+      if (other === el) return false;
+      const ox = parseFloat(other.style.left) || 0;
+      const oy = parseFloat(other.style.top)  || 0;
+      return rectsOverlap(candidate, { x: ox, y: oy, w: other.offsetWidth, h: other.offsetHeight });
+    });
+
+    if (!blocked) {
+      lastValidLeft = newLeft;
+      lastValidTop  = newTop;
+      el.style.left = newLeft + 'px';
+      el.style.top  = newTop  + 'px';
+    }
   }
 
   function up() {
+    ol = lastValidLeft;
+    ot = lastValidTop;
     el.style.zIndex = '1';
     el.style.transform = '';
     el.style.animation = origAnim;
@@ -180,9 +209,9 @@ function scatterSection(section) {
       const dur   = rnd(...CLOUD.FLOAT_DUR).toFixed(2);
       const delay = rnd(...CLOUD.FLOAT_DELAY).toFixed(2);
       card.style.animation = `cloudFloat ${dur}s ease-in-out ${delay}s infinite`;
-      card.style.setProperty('--float-distance', '6px');
+      card.style.setProperty('--float-distance', CLOUD.FLOAT_DIST + 'px');
 
-      makeDraggable(card, container);
+      makeDraggable(card, container, cards);
       setTimeout(() => { card.style.opacity = '1'; }, 80 + i * 100);
     });
 

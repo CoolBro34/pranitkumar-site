@@ -140,8 +140,8 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
 
     function animateOrb() {
       // Smooth lerp follow
-      orbX += (mouseX - orbX) * 0.18;
-      orbY += (mouseY - orbY) * 0.18;
+      orbX += (mouseX - orbX) * 0.01;
+      orbY += (mouseY - orbY) * 0.01;
 
       const dx = orbX - prevOrbX;
       const dy = orbY - prevOrbY;

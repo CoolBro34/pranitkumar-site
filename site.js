@@ -123,10 +123,10 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 
-  const HISTORY  = 28;   // trail length — more = longer tail
+  const HISTORY  = 15;   // trail length — more = longer tail
   const HEAD_R   = 7;    // radius of the head dot in px
   const TAIL_W   = 14;   // max width of tail at the head end in px
-  const LERP     = 0.16; // follow speed — lower = more lag/curve
+  const LERP     = 0.05; // follow speed — lower = more lag/curve
   const COLOR    = '#2563eb';
 
   function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }

@@ -118,116 +118,29 @@ window.addEventListener('hashchange', () => {
 });
 
 if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-  const canvas = document.createElement('canvas');
-  canvas.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:100003;';
-  document.body.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
+  const orb = document.getElementById('cursor-orb');
+  orb.style.display = 'block';
 
-  const HISTORY  = 15;   // trail length — more = longer tail
-  const HEAD_R   = 10;    // radius of the head dot in px
-  const TAIL_W   = 14;   // max width of tail at the head end in px
-  const LERP     = 0.5; // follow speed — lower = more lag/curve
-  const COLOR    = '#2563eb';
-
-  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  resize();
-  window.addEventListener('resize', resize);
-
-  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-  let orbX = mouseX, orbY = mouseY;
-  let initialized = false, isExpanded = false, isVisible = true;
-  let currentHeadR = HEAD_R;
-  
-  const hist = Array.from({ length: HISTORY }, () => ({ x: orbX, y: orbY }));
+  let mouseX = 0, mouseY = 0;
 
   document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX; mouseY = e.clientY;
-    if (!initialized) {
-      orbX = mouseX; orbY = mouseY;
-      hist.forEach(p => { p.x = orbX; p.y = orbY; });
-      initialized = true;
-    }
+    mouseX = e.clientX;
+    mouseY = e.clientY;
   });
 
-  document.addEventListener('mouseleave', () => { isVisible = false; });
-  document.addEventListener('mouseenter', () => { isVisible = true; });
+  function animateOrb() {
+    orb.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%))`;
+    requestAnimationFrame(animateOrb);
+  }
+  requestAnimationFrame(animateOrb);
+
+  document.addEventListener('mouseleave', () => orb.style.opacity = '0');
+  document.addEventListener('mouseenter', () => orb.style.opacity = '1');
 
   const clickables = 'a, button, input, textarea, select, label, [role="button"]';
   document.querySelectorAll(clickables).forEach(el => {
-    el.addEventListener('mouseenter', () => { isExpanded = true; });
-    el.addEventListener('mouseleave', () => { isExpanded = false; });
+    el.addEventListener('mouseenter', () => orb.classList.add('expanded'));
+    el.addEventListener('mouseleave', () => orb.classList.remove('expanded'));
   });
-
-  function drawTail() {
-    for (let i = 0; i < HISTORY; i++) {
-      const t = i / (HISTORY - 1);
-      const p = hist[i];
-      const r = t * currentHeadR * 1.15;
-      if (r < 0.5) continue;
-
-      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
-      grad.addColorStop(0,   `rgba(37,99,235,${(t * t * 0.85).toFixed(3)})`);
-      grad.addColorStop(0.6, `rgba(37,99,235,${(t * t * 0.4).toFixed(3)})`);
-      grad.addColorStop(1,   'rgba(37,99,235,0)');
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.globalAlpha = 1;
-      ctx.fill();
-    }
-  }  
-  function drawHead() {
-    const r = currentHeadR;
-
-    // Soft outer glow
-    const glow = ctx.createRadialGradient(orbX, orbY, 0, orbX, orbY, r * 2.2);
-    glow.addColorStop(0,   'rgba(37,99,235,0.25)');
-    glow.addColorStop(1,   'rgba(37,99,235,0)');
-    ctx.beginPath();
-    ctx.arc(orbX, orbY, r * 2.2, 0, Math.PI * 2);
-    ctx.fillStyle = glow;
-    ctx.globalAlpha = 1;
-    ctx.fill();
-
-    // Main orb body
-    const body = ctx.createRadialGradient(orbX - r * 0.2, orbY - r * 0.25, r * 0.1, orbX, orbY, r);
-    body.addColorStop(0,   '#5b8ef0');
-    body.addColorStop(0.5, '#2563eb');
-    body.addColorStop(1,   '#1a4fd6');
-    ctx.beginPath();
-    ctx.arc(orbX, orbY, r, 0, Math.PI * 2);
-    ctx.fillStyle = body;
-    ctx.fill();
-
-    // Specular highlight — top-left bright spot
-    const hl = ctx.createRadialGradient(
-      orbX - r * 0.32, orbY - r * 0.35, 0,
-      orbX - r * 0.32, orbY - r * 0.35, r * 0.52
-    );
-    hl.addColorStop(0,   'rgba(255,255,255,0.65)');
-    hl.addColorStop(0.5, 'rgba(255,255,255,0.15)');
-    hl.addColorStop(1,   'rgba(255,255,255,0)');
-    ctx.beginPath();
-    ctx.arc(orbX, orbY, r, 0, Math.PI * 2);
-    ctx.fillStyle = hl;
-    ctx.fill();
-  }
-  function animate() {
-    orbX += (mouseX - orbX) * LERP;
-    orbY += (mouseY - orbY) * LERP;
-    const targetR = isExpanded ? HEAD_R * 2.8 : HEAD_R;
-    currentHeadR += (targetR - currentHeadR) * 0.12;
-
-    hist.shift();
-    hist.push({ x: orbX, y: orbY });
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (isVisible) { drawTail(); drawHead(); }
-
-    requestAnimationFrame(animate);
-  }
-
-  animate();
 }
+

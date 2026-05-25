@@ -119,82 +119,95 @@ window.addEventListener('hashchange', () => {
 
 if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
 
-  // ── Canvas setup ───────────────────────────────────────────────
+  // ── Canvas setup ────────────────────────────────────────────────
   const canvas = document.createElement('canvas');
-  canvas.style.cssText = [
-    'position:fixed',
-    'top:0',
-    'left:0',
-    'pointer-events:none',
-    'z-index:99999',
-  ].join(';');
+  canvas.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:100010;';
   document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 
-  function resize() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   resize();
   window.addEventListener('resize', resize);
 
-  // ── State ───────────────────────────────────────────────────────
-  const ACCENT        = '#2563eb';
-  const BASE_R        = 10;       // resting orb radius
-  const EXPANDED_R    = 28;       // radius when hovering a clickable
-  const LERP_SPEED    = 0.18;     // how tightly the orb follows the mouse
+  // ── Config ──────────────────────────────────────────────────────
+  const BASE_R        = 10;
+  const EXPANDED_R    = 28;
+  const LERP_POS      = 0.18;    // position follow speed
+  const LERP_R        = 0.10;    // radius transition speed
+  const LERP_EFFECT   = 0.04;    // blob/wave fade speed (slow = smooth)
 
-  // Blob ring config
   const BLOB_COUNT    = 4;
-  const BLOB_ORBIT_R  = 22;       // orbit radius from orb centre
-  const BLOB_W        = 9;        // blob semi-major axis (stretched)
-  const BLOB_H        = 4;        // blob semi-minor axis
-  const RING_SPEED    = 0.028;    // radians per frame
+  const BLOB_ORBIT_R  = 22;
+  const BLOB_W        = 9;
+  const BLOB_H        = 4;
+  const RING_SPEED_IDLE  = 0.028;
+  const RING_SPEED_HOVER = 0.055;
 
-  // Orb surface-wave config
-  const WAVE_POINTS   = 64;       // polygon resolution for wobbly edge
-  const WAVE_AMP      = 2.6;      // max displacement of surface wave
-  const WAVE_FREQ     = 3;        // number of wave peaks around the orb
-  const WAVE_SPEED    = 0.055;    // wave animation speed
+  const WAVE_POINTS   = 64;
+  const WAVE_AMP_MAX  = 2.6;
+  const WAVE_FREQ     = 3;
+  const WAVE_SPEED    = 0.055;
 
-  let mouseX    = window.innerWidth  / 2;
-  let mouseY    = window.innerHeight / 2;
-  let orbX      = mouseX;
-  let orbY      = mouseY;
-  let currentR  = BASE_R;
-  let targetR   = BASE_R;
-  let isVisible = true;
-  let ringAngle = 0;
-  let wavePhase = 0;
-  let frame     = 0;
+  const IDLE_DELAY_MS = 1200;    // ms of no movement before idle kicks in
+  const EFFECT_FADE   = 0.6;    // seconds for idle effect to fully appear
 
-  // ── Mouse tracking ──────────────────────────────────────────────
-  document.addEventListener('mousemove', (e) => {
+  // ── State ───────────────────────────────────────────────────────
+  let mouseX = window.innerWidth / 2,  mouseY = window.innerHeight / 2;
+  let orbX   = mouseX,                 orbY   = mouseY;
+  let currentR  = BASE_R,  targetR  = BASE_R;
+  let isVisible = true,    isHover  = false;
+  let ringAngle = 0,       wavePhase = 0;
+
+  // effectStrength: 0 = pure moving orb, 1 = full idle animation
+  let effectStrength = 0;
+  let targetEffect   = 0;
+
+  let idleTimer = null;
+
+  function startIdleCountdown() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => { targetEffect = 1; }, IDLE_DELAY_MS);
+  }
+
+  function onMouseMove(e) {
     mouseX = e.clientX;
     mouseY = e.clientY;
-  });
-  document.addEventListener('mouseleave', () => { isVisible = false; });
-  document.addEventListener('mouseenter', () => { isVisible = true;  });
+    // When moving, idle animation fades out immediately
+    targetEffect = isHover ? 1 : 0;
+    startIdleCountdown();
+  }
 
-  // ── Hover expand ────────────────────────────────────────────────
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseleave', () => { isVisible = false; });
+  document.addEventListener('mouseenter', () => { isVisible = true; startIdleCountdown(); });
+
+  // Hover expand — blobs always visible when hovering clickable
   const clickables = 'a, button, input, textarea, select, label, [role="button"]';
   document.querySelectorAll(clickables).forEach(el => {
-    el.addEventListener('mouseenter', () => { targetR = EXPANDED_R; });
-    el.addEventListener('mouseleave', () => { targetR = BASE_R;     });
+    el.addEventListener('mouseenter', () => {
+      isHover   = true;
+      targetR   = EXPANDED_R;
+      targetEffect = 1;
+      clearTimeout(idleTimer);
+    });
+    el.addEventListener('mouseleave', () => {
+      isHover   = false;
+      targetR   = BASE_R;
+      // If mouse is moving, drop effect; otherwise restart idle countdown
+      targetEffect = 0;
+      startIdleCountdown();
+    });
   });
 
   // ── Draw helpers ────────────────────────────────────────────────
-
-  // Draw the wobbly orb body using a polar polygon
-  function drawWobblyOrb(cx, cy, r, phase) {
+  function drawWobblyOrb(cx, cy, r, phase, amp) {
     ctx.beginPath();
     for (let i = 0; i <= WAVE_POINTS; i++) {
       const theta = (i / WAVE_POINTS) * Math.PI * 2;
-      // Layer two sine waves for organic feel
-      const displacement =
-        Math.sin(theta * WAVE_FREQ + phase)       * WAVE_AMP +
-        Math.sin(theta * (WAVE_FREQ + 1) - phase * 1.3) * (WAVE_AMP * 0.4);
-      const rad = r + displacement;
+      const d =
+        Math.sin(theta * WAVE_FREQ + phase)              * amp +
+        Math.sin(theta * (WAVE_FREQ + 1) - phase * 1.3) * (amp * 0.4);
+      const rad = r + d;
       const x = cx + rad * Math.cos(theta);
       const y = cy + rad * Math.sin(theta);
       i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
@@ -202,67 +215,71 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     ctx.closePath();
   }
 
-  // Draw one stretched blob at a given orbit position and rotation
-  function drawBlob(cx, cy, angle, blobAngle, r) {
+  function drawBlob(cx, cy, angle, blobIndex, r, alpha) {
+    if (alpha <= 0.01) return;
     const bx = cx + Math.cos(angle) * (BLOB_ORBIT_R + r * 0.5);
     const by = cy + Math.sin(angle) * (BLOB_ORBIT_R + r * 0.5);
-
     ctx.save();
     ctx.translate(bx, by);
-    // Rotate blob so its long axis is tangent to the orbit
     ctx.rotate(angle + Math.PI / 2);
-
-    // Subtle size pulse per blob, offset in phase
-    const pulse = 1 + 0.18 * Math.sin(wavePhase * 2 + blobAngle);
-
+    ctx.globalAlpha = alpha;
+    const pulse = 1 + 0.18 * Math.sin(wavePhase * 2 + blobIndex);
     ctx.beginPath();
     ctx.ellipse(0, 0, BLOB_W * pulse, BLOB_H * pulse, 0, 0, Math.PI * 2);
-
-    // Gradient inside each blob
     const grad = ctx.createRadialGradient(0, -BLOB_H * 0.3, 0, 0, 0, BLOB_W * pulse);
     grad.addColorStop(0,   'rgba(91,142,240,0.9)');
     grad.addColorStop(0.6, 'rgba(37,99,235,0.7)');
     grad.addColorStop(1,   'rgba(37,99,235,0)');
     ctx.fillStyle = grad;
     ctx.fill();
+    ctx.globalAlpha = 1;
     ctx.restore();
   }
 
   // ── Main render loop ────────────────────────────────────────────
   function animate() {
-    frame++;
-    // Smooth follow
-    orbX += (mouseX - orbX) * LERP_SPEED;
-    orbY += (mouseY - orbY) * LERP_SPEED;
-    // Smooth radius transition
-    currentR += (targetR - currentR) * 0.1;
-    // Advance animations
-    ringAngle += RING_SPEED;
-    wavePhase += WAVE_SPEED;
+    // Interpolate all values
+    orbX      += (mouseX  - orbX)      * LERP_POS;
+    orbY      += (mouseY  - orbY)      * LERP_POS;
+    currentR  += (targetR - currentR)  * LERP_R;
+    effectStrength += (targetEffect - effectStrength) * LERP_EFFECT;
+
+    // Ring speed blends between idle and hover speeds
+    const ringSpeed = RING_SPEED_IDLE + (RING_SPEED_HOVER - RING_SPEED_IDLE) * (isHover ? 1 : effectStrength);
+    ringAngle  += ringSpeed;
+    wavePhase  += WAVE_SPEED;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (isVisible) {
+      const es = effectStrength; // shorthand, 0–1
+      const waveAmp = WAVE_AMP_MAX * es;
 
-      // 1 — Soft outer glow behind everything
+      // 1 — Glow (scales with effectStrength)
+      const glowAlpha = 0.08 + 0.10 * es;
       const glow = ctx.createRadialGradient(orbX, orbY, 0, orbX, orbY, currentR * 2.8);
-      glow.addColorStop(0,   'rgba(37,99,235,0.18)');
+      glow.addColorStop(0,   `rgba(37,99,235,${glowAlpha.toFixed(3)})`);
       glow.addColorStop(1,   'rgba(37,99,235,0)');
       ctx.beginPath();
       ctx.arc(orbX, orbY, currentR * 2.8, 0, Math.PI * 2);
       ctx.fillStyle = glow;
       ctx.fill();
 
-      // 2 — Orbiting blobs (drawn behind the orb)
+      // 2 — Orbiting blobs (faded by effectStrength)
       for (let i = 0; i < BLOB_COUNT; i++) {
         const angle = ringAngle + (i / BLOB_COUNT) * Math.PI * 2;
-        drawBlob(orbX, orbY, angle, i, currentR);
+        drawBlob(orbX, orbY, angle, i, currentR, es);
       }
 
-      // 3 — Wobbly orb body
-      drawWobblyOrb(orbX, orbY, currentR, wavePhase);
+      // 3 — Orb body: wobbly when effectStrength > 0, plain circle when 0
+      if (es > 0.01) {
+        drawWobblyOrb(orbX, orbY, currentR, wavePhase, waveAmp);
+      } else {
+        ctx.beginPath();
+        ctx.arc(orbX, orbY, currentR, 0, Math.PI * 2);
+      }
 
-      // Filled body gradient
+      // Fill gradient
       const body = ctx.createRadialGradient(
         orbX - currentR * 0.25, orbY - currentR * 0.3, 0,
         orbX, orbY, currentR
@@ -273,8 +290,13 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
       ctx.fillStyle = body;
       ctx.fill();
 
-      // 4 — Specular highlight on orb
-      drawWobblyOrb(orbX, orbY, currentR, wavePhase);
+      // 4 — Specular highlight
+      if (es > 0.01) {
+        drawWobblyOrb(orbX, orbY, currentR, wavePhase, waveAmp);
+      } else {
+        ctx.beginPath();
+        ctx.arc(orbX, orbY, currentR, 0, Math.PI * 2);
+      }
       const hl = ctx.createRadialGradient(
         orbX - currentR * 0.3, orbY - currentR * 0.35, 0,
         orbX - currentR * 0.3, orbY - currentR * 0.35, currentR * 0.6
@@ -288,5 +310,6 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     requestAnimationFrame(animate);
   }
 
+  startIdleCountdown();
   animate();
 }

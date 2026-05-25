@@ -47,12 +47,71 @@
   <main class="section">
     <p class="section-label">// GALLERY</p>
     <h1 class="gallery-title">Photography & Projects.</h1>
-    <!-- To add photos, drop the image file into the /gallery/ folder and add the filename to gallery/manifest.json -->
+    <a
+      href="https://instagram.com/pranit.pics"
+      target="_blank"
+      rel="noopener"
+      style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.78rem;letter-spacing:.08em;color:var(--accent);text-decoration:none;margin-bottom:2.5rem;"
+    >@pranit.pics ↗</a>
+
     <div class="grid" id="grid"></div>
+
+    <p style="font-family:'IBM Plex Mono',monospace;font-size:.78rem;color:var(--text-muted);letter-spacing:.1em;text-align:center;margin-top:3rem;padding-bottom:1rem;">// more coming soon</p>
   </main>
 
   <footer>© 2025 Pranit Kumar</footer>
   <script src="site.js"></script>
   <script src="clouds.js"></script>
+  <script>
+    // Override grid population to hide broken images cleanly
+    const grid = document.getElementById('grid');
+    if (grid) {
+      fetch('gallery/manifest.json')
+        .then(r => r.json())
+        .then(images => {
+          images.forEach(entry => {
+            const filename = typeof entry === 'string' ? entry : entry.filename;
+            if (!filename) return;
+
+            const wrapper = document.createElement('figure');
+            wrapper.className = 'grid-item';
+            // Hide by default — only shown once image confirms it loaded
+            wrapper.style.display = 'none';
+
+            const img = document.createElement('img');
+            img.className = 'gallery-image';
+            img.src = filename.includes('/') ? filename : `gallery/${filename}`;
+
+            // Use filename (without extension and path) as alt text
+            const base = filename.split('/').pop().replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
+            img.alt = base;
+
+            img.loading = 'lazy';
+
+            // Only reveal the card once the image has actually loaded
+            img.addEventListener('load', () => {
+              wrapper.style.display = '';
+            });
+
+            // On error, leave display:none — card stays invisible
+            img.addEventListener('error', () => {
+              wrapper.remove();
+            });
+
+            if (typeof entry === 'object' && entry.caption) {
+              const caption = document.createElement('figcaption');
+              caption.textContent = entry.caption;
+              wrapper.appendChild(caption);
+            }
+
+            wrapper.appendChild(img);
+            grid.appendChild(wrapper);
+          });
+        })
+        .catch(() => {
+          grid.innerHTML = '<p style="font-family:\'IBM Plex Mono\',monospace;font-size:.78rem;color:var(--text-muted);">Unable to load gallery.</p>';
+        });
+    }
+  </script>
 </body>
 </html>

@@ -85,7 +85,7 @@
             // Use filename (without extension and path) as alt text
             const base = filename.split('/').pop().replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
             img.alt = base;
-
+            img.style.display = 'none';
             img.loading = 'lazy';
 
             // Only reveal the card once the image has actually loaded

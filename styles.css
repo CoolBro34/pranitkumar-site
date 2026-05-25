@@ -4,28 +4,6 @@ html{scroll-behavior:smooth}
 body{margin:0;background:#fff;color:#0d0d0d;font-family:'Space Grotesk',sans-serif}
 a{color:inherit}
 
-#cursor-orb {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 14px;
-  height: 14px;
-  background: #2563eb;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 100003;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
-  will-change: transform;
-  display: none;
-}
-
-#cursor-orb.expanded {
-  width: 40px;
-  height: 40px;
-  opacity: 0.6;
-}
-
 .topbar{position:sticky;top:0;z-index:100002;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:transparent}
 .topbar.scrolled{border-bottom:1px solid #e5e7eb;backdrop-filter:blur(8px);background:rgba(255,255,255,.92)}
 .brand,.contact-rail,.site-nav a{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none}
@@ -135,6 +113,5 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:#9ca3af;font-size:.75rem}
 }
 
 @media (hover: none), (pointer: coarse){
-  #cursor-orb{display:none!important}
   *{cursor:auto!important}
 }

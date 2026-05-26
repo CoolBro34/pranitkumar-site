@@ -3,6 +3,9 @@
 // Day:   cloud blob backgrounds on cards + static canvas sky clouds
 // Night: aurora canvas backgrounds on cards + animated stars/aurora sky
 
+const IS_FIREFOX = navigator.userAgent.toLowerCase().includes('firefox');
+const PERFORMANCE_MODE = localStorage.getItem('pk-performance-mode') === '1';
+
 // ─────────────────────────────────────────────────────────────────
 // CONFIG
 // ─────────────────────────────────────────────────────────────────
@@ -15,7 +18,11 @@ const CLOUD = {
 };
 
 const NIGHT = {
-  STAR_COUNT           : 200,
+  STAR_COUNT           : PERFORMANCE_MODE
+    ? 70
+    : IS_FIREFOX
+      ? 110
+      : 200,
   STAR_SPECIALS        :   8,
   RIBBON_ACCENT_COUNT  :   2,   // number of accent ribbons alongside the hero curtain
   CARD_BLOBS: [
@@ -578,3 +585,30 @@ if (document.readyState === 'loading') {
 } else {
   _init();
 }
+
+
+let resizeRAF;
+
+window.addEventListener('resize', () => {
+  cancelAnimationFrame(resizeRAF);
+
+  resizeRAF = requestAnimationFrame(() => {
+    if (typeof redrawSky === 'function') redrawSky();
+  });
+});
+
+
+// mobile-sky-force-enable
+document.addEventListener('DOMContentLoaded', () => {
+  const sky =
+    document.getElementById('sky-bg') ||
+    document.getElementById('night-sky') ||
+    document.querySelector('.sky-bg') ||
+    document.querySelector('.night-sky');
+
+  if (sky && window.innerWidth <= 768) {
+    sky.style.display = 'block';
+    sky.style.opacity = '1';
+    sky.style.visibility = 'visible';
+  }
+});

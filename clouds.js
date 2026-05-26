@@ -123,7 +123,6 @@ function _initDayCards() {
 // ─────────────────────────────────────────────────────────────────
 
 function _initDaySky() {
-  if (window.matchMedia('(max-width: 768px)').matches) return;
   const bg = document.getElementById('sky-bg');
   if (!bg) return;
   Array.from(bg.querySelectorAll('canvas')).forEach(c => c.remove());

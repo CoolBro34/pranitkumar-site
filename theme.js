@@ -214,7 +214,9 @@ function showThemePopup() {
 
 function hideThemePopup() {
   const p = document.getElementById('theme-popup');
-  if (p) p.classList.remove('pk-popup-visible');
+  if (!p) return;
+  p.classList.remove('pk-popup-visible');
+  p.classList.add('pk-popup-anchored'); // subsequent opens → top-right
 }
 
 // ─────────────────────────────────────────────────────────────────

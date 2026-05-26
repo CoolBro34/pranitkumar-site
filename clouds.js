@@ -316,14 +316,15 @@ function _initNightCards() {
 // NIGHT — star + aurora sky (animated canvas in #sky-bg)
 // ─────────────────────────────────────────────────────────────────
 
-function _genStars(vw, vh) {
-  const stars = Array.from({length: NIGHT.STAR_COUNT}, () => ({
+function _genStars(vw, vh, isMobile) {
+  const count = isMobile ? Math.floor(NIGHT.STAR_COUNT * 0.5) : NIGHT.STAR_COUNT;
+  const stars = Array.from({length: count}, () => ({
     x: rnd(0,vw), y: rnd(0,vh*.9),
     r: Math.random() < .65 ? .5 : Math.random() < .85 ? .9 : 1.3,
     base: .15+rnd(0,.4), amp: .10+rnd(0,.35),
     spd: .25+rnd(0,1.5), off: rnd(0,Math.PI*2),
   }));
-  const specials = Array.from({length: NIGHT.STAR_SPECIALS}, () => ({
+  const specials = Array.from({length: isMobile ? 3 : NIGHT.STAR_SPECIALS}, () => ({
     x: rnd(0,vw), y: rnd(0,vh*.75),
     r: 1.0+rnd(0,.7),
     base:.30, amp:.45, spd:.4+rnd(0,.9), off:rnd(0,Math.PI*2),
@@ -376,9 +377,10 @@ function _genRibbons(vw, vh) {
 }
 
 const RAY_COUNT = 65;
-function _genRays(vw, vh) {
-  return Array.from({length:RAY_COUNT},(_,i)=>({
-    xf:.02+(i/RAY_COUNT)*.96,
+function _genRays(vw, vh, isMobile) {
+  const rayCount = isMobile ? 30 : RAY_COUNT;
+  return Array.from({length:rayCount},(_,i)=>({
+    xf:.02+(i/rayCount)*.96,
     hf:.16+rnd(0,.52),
     hue:148+(i/RAY_COUNT)*140,
     spd:.1+rnd(0,.22),
@@ -393,7 +395,7 @@ function _initNightSky() {
   const bg = document.getElementById('sky-bg');
   if (!bg) return;
   Array.from(bg.querySelectorAll('canvas')).forEach(c => c.remove());
-  if (window.matchMedia('(max-width: 768px)').matches) return;
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
   const vw = window.innerWidth, vh = window.innerHeight;
   const canvas = document.createElement('canvas');
@@ -402,9 +404,9 @@ function _initNightSky() {
   bg.appendChild(canvas);
 
   const ctx    = canvas.getContext('2d');
-  const star   = _genStars(vw, vh);
+  const star   = _genStars(vw, vh, isMobile);
   const ribbon = _genRibbons(vw, vh);
-  const rays   = _genRays(vw, vh);
+  const rays   = _genRays(vw, vh, isMobile);
 
   _nightSkyData = {ctx, vw, vh, star, ribbon, rays};
 }

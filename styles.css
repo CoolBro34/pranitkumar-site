@@ -37,12 +37,13 @@ main, footer { position: relative; z-index: 1; }
 /* ============================================================
    TOPBAR / NAV
    ============================================================ */
-.topbar{position:sticky;top:0;z-index:100002;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:transparent}
+.topbar{position:sticky;top:0;z-index:100002;display:flex;align-items:center;padding:1rem 2rem;background:transparent}
 .topbar.scrolled{border-bottom:1px solid var(--nav-scrolled-border);backdrop-filter:blur(12px);background:var(--nav-scrolled-bg)}
 .brand,.contact-rail,.site-nav a{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;color:var(--nav-text)}
 .brand{font-size:1.1rem;font-weight:800;letter-spacing:.16em}
+.pk-right-rail{display:flex;align-items:center;gap:.5rem;margin-left:auto}
 .contact-rail span{color:var(--accent)}
-.site-nav{display:flex;gap:1.2rem;align-items:center}
+.site-nav{display:flex;gap:1.2rem;align-items:center;position:absolute;left:50%;transform:translateX(-50%)}
 .site-nav a{padding:.2rem 0;border-bottom:1px solid transparent}
 .site-nav a:hover,.site-nav a.active{color:var(--nav-active);border-bottom:1px solid var(--nav-active)}
 .menu-toggle{display:none;border:none;background:transparent;font-size:1.4rem}
@@ -208,6 +209,7 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
    ============================================================ */
 @media (max-width: 768px) {
   #sky-bg { display: none; }
+  [data-theme="night"] #sky-bg { display: block; }
 
   body::before {
     content: '';
@@ -491,4 +493,132 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
     font-size: 1.4rem;
     flex-shrink: 0;
   }
+}
+
+/* ============================================================
+   RIGHT RAIL — brand | [nav centered] | [active-btn][perf-btn][contact]
+   ============================================================ */
+.pk-right-rail { display: flex; align-items: center; gap: .5rem; margin-left: auto; }
+
+/* ============================================================
+   MOBILE OVERLAY THEME BUTTON — appears inside overlay top-right
+   ============================================================ */
+#pk-overlay-theme-btn {
+  position: absolute;
+  top: 1.2rem;
+  right: 5rem; /* sits left of the hamburger X which stays in topbar */
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  width: 36px;
+  height: 36px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100001;
+}
+
+/* ============================================================
+   POPUP PERF ROW + RELOAD NOTE
+   ============================================================ */
+.pk-popup-divider {
+  border: none;
+  border-top: 1px solid var(--card-border, rgba(0,0,0,0.1));
+  margin: 1.5rem 0 1rem;
+}
+
+.pk-popup-perf-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  text-align: left;
+  margin-bottom: .75rem;
+}
+
+.pk-popup-perf-text {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+
+.pk-popup-perf-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: .82rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.pk-popup-perf-desc {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .64rem;
+  color: var(--text-muted);
+  letter-spacing: .04em;
+}
+
+.pk-perf-toggle-btn {
+  flex-shrink: 0;
+  background: var(--chip-bg, rgba(0,0,0,0.06));
+  border: 1.5px solid var(--card-border, rgba(0,0,0,0.12));
+  border-radius: 999px;
+  padding: .3rem .8rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+
+.pk-perf-toggle-btn.pk-perf-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.pk-popup-reload-note {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .66rem;
+  color: var(--text-muted);
+  letter-spacing: .05em;
+  text-align: center;
+  margin: .5rem 0 0;
+  opacity: .7;
+}
+
+/* ============================================================
+   NIGHT — brighter text overrides
+   ============================================================ */
+[data-theme="night"] h1,
+[data-theme="night"] h2,
+[data-theme="night"] h3 { color: var(--text-primary); }
+
+[data-theme="night"] p,
+[data-theme="night"] li { color: var(--text-secondary); }
+
+[data-theme="night"] .card p,
+[data-theme="night"] .card li { color: var(--text-secondary); }
+
+[data-theme="night"] .label { color: var(--text-label); }
+
+[data-theme="night"] .section-label { color: var(--text-label); }
+
+/* ============================================================
+   MOBILE — hide desktop theme group, pk-right-rail adjustments
+   ============================================================ */
+@media (max-width: 768px) {
+  .pk-theme-group { display: none; }
+  /* mobile toggle is in the overlay, not the topbar */
+  #theme-mobile-toggle { display: none !important; }
+  .pk-right-rail { gap: .35rem; }
+  /* On mobile the right rail just has the single active-btn + perf + contact(hidden) */
+  .pk-right-rail .contact-rail { display: none; }
+
+  .pk-popup-perf-row { flex-direction: column; align-items: flex-start; gap: .5rem; }
+  .pk-perf-toggle-btn { align-self: flex-start; }
 }

@@ -251,7 +251,7 @@ function _makeAuroraCard(el, palIdx) {
     jx: rnd(-.14,.14), jy: rnd(-.12,.12), jr: rnd(-.12,.12),
   }));
 
-  return { canvas, ctx: canvas.getContext('2d'), pal, blobs, w, h };
+  return { canvas, ctx: canvas.getContext('2d', { willReadFrequently: false }), pal, blobs, w, h };
 }
 
 function _drawAuroraCard(d, t) {
@@ -264,13 +264,16 @@ function _drawAuroraCard(d, t) {
   const mg = Math.round(g1+(g2-g1)*mx);
   const mb = Math.round(b1+(b2-b1)*mx);
 
+  // In Performance Mode: single-pass blobs (skip the 3 outer glow passes)
+  const blobPasses = window.PK_PERF_MODE ? [[1,.85]] : [[1,.85],[1.6,.40],[2.4,.18],[3.8,.07]];
+
   blobs.forEach(b => {
     const cx = (b.cx+b.jx)*w, cy = (b.cy+b.jy)*h;
     const rx = (b.rx+b.jr)*w, ry = (b.ry+b.jr*.8)*h;
     const r  = Math.max(rx, ry);
     const tw = .22 + .08*Math.sin(t*.45+pal.ph+b.jx*8);
 
-    [[1,.85],[1.6,.40],[2.4,.18],[3.8,.07]].forEach(([ws,os]) => {
+    blobPasses.forEach(([ws,os]) => {
       ctx.save();
       ctx.translate(cx,cy); ctx.scale(rx/(r*ws), ry/(r*ws)); ctx.translate(-cx,-cy);
       const g = ctx.createRadialGradient(cx,cy,0,cx,cy,r*ws);

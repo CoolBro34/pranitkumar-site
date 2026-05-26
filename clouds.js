@@ -43,5 +43,99 @@ function init() {
     });
   });
 }
-if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
-else init();
+
+function initSkyBg() {
+  const bg = document.getElementById('sky-bg');
+  if (!bg) return;
+
+  const SKY = {
+    COUNT: 8,
+    MIN_W: 220,
+    MAX_W: 520,
+    BLUR: 18,
+    OPACITY_MIN: 0.35,
+    OPACITY_MAX: 0.62,
+    FLOAT_DUR: [9, 16],
+    FLOAT_DELAY: [0, 6],
+    FLOAT_DIST: [12, 22],
+  };
+
+  const cols = 3;
+  const rows = Math.ceil(SKY.COUNT / cols);
+
+  for (let i = 0; i < SKY.COUNT; i++) {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+
+    const w = rnd(SKY.MIN_W, SKY.MAX_W);
+    const h = w * rnd(0.38, 0.58);
+    const op = rnd(SKY.OPACITY_MIN, SKY.OPACITY_MAX);
+    const dur = rnd(...SKY.FLOAT_DUR).toFixed(1);
+    const delay = rnd(...SKY.FLOAT_DELAY).toFixed(1);
+    const dist = rnd(...SKY.FLOAT_DIST).toFixed(1);
+
+    const zoneX = (col / cols) * 100 + (1 / cols) * 50;
+    const zoneY = (row / rows) * 100 + (1 / rows) * 50;
+    const jx = rnd(-14, 14);
+    const jy = rnd(-12, 12);
+
+    const cloud = document.createElement('div');
+    cloud.style.cssText = [
+      'position:absolute',
+      `left:${Math.min(90, Math.max(0, zoneX + jx))}%`,
+      `top:${Math.min(88, Math.max(-8, zoneY + jy))}%`,
+      `width:${w}px`,
+      `height:${h}px`,
+      `opacity:${op.toFixed(2)}`,
+      'transform:translate(-50%,-50%)',
+      `animation:bgCloudFloat ${dur}s ease-in-out ${delay}s infinite`,
+      '--float-dist:' + dist + 'px',
+    ].join(';');
+
+    const blobWrap = document.createElement('div');
+    blobWrap.style.cssText = [
+      'position:absolute',
+      'inset:0',
+      `filter:blur(${SKY.BLUR}px)`,
+      'overflow:visible',
+    ].join(';');
+
+    const blobs = [
+      { cx: .50, cy: .52, rx: .45, ry: .38 },
+      { cx: .18, cy: .38, rx: .28, ry: .30 },
+      { cx: .80, cy: .34, rx: .26, ry: .28 },
+      { cx: .50, cy: .22, rx: .22, ry: .26 },
+      { cx: .30, cy: .68, rx: .20, ry: .22 },
+      { cx: .68, cy: .70, rx: .19, ry: .20 },
+    ];
+
+    blobs.forEach(b => {
+      const jx = rnd(-.07, .07), jy = rnd(-.06, .06), jr = rnd(-.06, .08);
+      const cx = (b.cx + jx) * w;
+      const cy = (b.cy + jy) * h;
+      const rx = (b.rx + jr) * w;
+      const ry = (b.ry + jr * .8) * h;
+      const blob = document.createElement('div');
+      blob.style.cssText = [
+        'position:absolute',
+        `left:${cx - rx}px`,
+        `top:${cy - ry}px`,
+        `width:${rx * 2}px`,
+        `height:${ry * 2}px`,
+        'background:white',
+        'border-radius:50%',
+      ].join(';');
+      blobWrap.appendChild(blob);
+    });
+
+    cloud.appendChild(blobWrap);
+    bg.appendChild(cloud);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => { init(); initSkyBg(); });
+} else {
+  init();
+  initSkyBg();
+}

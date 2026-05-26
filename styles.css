@@ -16,6 +16,23 @@ h1,h2,h3{font-family:'Playfair Display',serif;color:var(--text-primary)}
 p,li{color:var(--text-secondary)}
 h2{font-size:clamp(2rem,4vw,3rem);margin:0 0 1.5rem}
 
+#sky-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Ensure all page content sits above bg clouds */
+.topbar { z-index: 100002; }
+main, footer { position: relative; z-index: 1; }
+
+@keyframes bgCloudFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-18px); }
+}
+
 /* ============================================================
    TOPBAR / NAV
    ============================================================ */

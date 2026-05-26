@@ -1,4 +1,4 @@
-/* ===============================================+=============
+/* ============================================================
    RESET
    ============================================================ */
 *{box-sizing:border-box}
@@ -7,6 +7,7 @@ html{scroll-behavior:smooth;min-height:100%}
 a:hover {
   color: var(--accent);
 }
+
 /* ============================================================
    BASE — body, links, headings, paragraphs
    ============================================================ */
@@ -73,7 +74,7 @@ main{max-width:1200px;margin:0 auto;padding:0 1.5rem}
 .scroll-indicator{position:absolute;right:0;bottom:1.1rem;font-size:.7rem;color:var(--text-muted);font-family:'IBM Plex Mono',monospace}
 
 /* ============================================================
-   CARDS — transparent so cloud blob bg shows through
+   CARDS
    ============================================================ */
 .card{border-radius:12px;padding:1.1rem 1.2rem;position:relative}
 .label,.meta,.ap-year,.ap-row,.skills-grid span,.role,footer{font-family:'IBM Plex Mono',monospace}
@@ -229,19 +230,265 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   .section { padding-top:2rem; padding-bottom:2rem; }
 }
 
-@media (hover: none),(pointer: coarse){
-  *{cursor:auto!important}
-}  /* Restore solid card appearance on mobile — no clouds on small screens 
-  .card,.skills-grid p,.section-gallery-cta,.grid-item{
-    background:var(--card-bg);
-    border:1px solid var(--card-border);
-    box-shadow:var(--card-shadow);
-  }
-  .pk-cloud-bg{display:none} */
-
 /* ============================================================
    TOUCH DEVICES — restore system cursor
    ============================================================ */
 @media (hover: none),(pointer: coarse){
   *{cursor:auto!important}
+}
+
+/* ============================================================
+   THEME TRANSITION OVERLAY — black flash between themes
+   ============================================================ */
+#theme-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+
+/* ============================================================
+   DESKTOP THEME TOGGLE GROUP (☼ ☾ ⌛)
+   Injected by theme.js just left of .contact-rail
+   ============================================================ */
+.pk-theme-group {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+
+.pk-theme-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  font-size: .9rem;
+  color: var(--nav-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.pk-theme-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.pk-theme-btn.pk-theme-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ============================================================
+   MOBILE THEME TOGGLE — single cycling button left of hamburger
+   ============================================================ */
+#theme-mobile-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+  color: var(--nav-text);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition: border-color .2s ease, color .2s ease;
+}
+
+#theme-mobile-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ============================================================
+   FIRST-LOAD THEME POPUP
+   ============================================================ */
+#theme-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 999998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+  backdrop-filter: blur(4px);
+}
+
+#theme-popup.pk-popup-visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.pk-popup-inner {
+  background: var(--card-bg, rgba(255,255,255,0.95));
+  border: 1px solid var(--card-border, rgba(255,255,255,0.95));
+  border-radius: 20px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+  padding: 2.5rem 2rem 2rem;
+  max-width: 480px;
+  width: calc(100vw - 3rem);
+  text-align: center;
+  backdrop-filter: blur(20px);
+}
+
+.pk-popup-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 .5rem;
+}
+
+.pk-popup-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .74rem;
+  color: var(--text-muted);
+  letter-spacing: .06em;
+  margin: 0 0 2rem;
+}
+
+.pk-popup-options {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pk-popup-btn {
+  background: transparent;
+  border: 1.5px solid var(--card-border, rgba(0,0,0,0.12));
+  border-radius: 14px;
+  padding: 1.2rem 1rem 1rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .35rem;
+  flex: 1;
+  min-width: 110px;
+  transition: border-color .2s ease, background .2s ease, transform .15s ease;
+}
+
+.pk-popup-btn:hover {
+  border-color: var(--accent);
+  background: var(--chip-bg);
+  transform: translateY(-2px);
+}
+
+.pk-popup-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.pk-popup-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--text-primary);
+}
+
+.pk-popup-desc {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .65rem;
+  color: var(--text-muted);
+  letter-spacing: .05em;
+}
+
+/* ============================================================
+   NIGHT THEME OVERRIDES  [data-theme="night"]
+   ============================================================ */
+
+[data-theme="night"] body {
+  background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+}
+
+[data-theme="night"] .hero-side .card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+[data-theme="night"] .grid-item {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+[data-theme="night"] .section-gallery-cta {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+
+[data-theme="night"] .link-pill {
+  border-color: var(--card-border);
+  color: var(--chip-text);
+  background: var(--card-bg);
+}
+
+[data-theme="night"] .topbar.scrolled {
+  border-bottom-color: var(--nav-scrolled-border);
+}
+
+[data-theme="night"] .contact-list li {
+  border-bottom-color: var(--nav-scrolled-border);
+}
+
+[data-theme="night"] .chip {
+  border-color: var(--chip-border);
+  background: var(--chip-bg);
+  color: var(--chip-text);
+}
+
+/* ============================================================
+   MOBILE — show mobile toggle, hide desktop group
+   ============================================================ */
+@media (max-width: 768px) {
+  .pk-theme-group {
+    display: none;
+  }
+
+  #theme-mobile-toggle {
+    display: flex;
+    margin-left: auto;
+    margin-right: .5rem;
+  }
+
+  /* Mobile toggle pushes hamburger to far right */
+  #nav-hamburger {
+    margin-left: 0;
+  }
+
+  .pk-popup-options {
+    flex-direction: column;
+  }
+
+  .pk-popup-btn {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: .9rem 1rem;
+    gap: .75rem;
+    text-align: left;
+    min-width: unset;
+  }
+
+  .pk-popup-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
 }

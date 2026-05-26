@@ -10,24 +10,44 @@ window.addEventListener('scroll', syncBar);
 syncBar();
 
 if (body.dataset.page === 'home') {
-  const anchors = navLinks.filter((link) => link.getAttribute('href').startsWith('#'));
-  const sections = anchors.map((a) => {
-  const href = a.getAttribute('href');
-  if (href === '#about') return document.querySelector('.hero');
-  return document.querySelector(href);
-}).filter(Boolean);
+  const anchors = navLinks.filter(link => link.getAttribute('href').startsWith('#'));
+  const sections = anchors
+    .map(a => document.querySelector(a.getAttribute('href')))
+    .filter(Boolean);
+
+  function setActive(href) {
+    anchors.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === href);
+    });
+  }
+
+  // When scrolled to very top, always force About active
+  // regardless of what the intersection observer says
+  function checkTop() {
+    if (window.scrollY < 60) {
+      setActive('#about');
+      return true;
+    }
+    return false;
+  }
 
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
+    if (checkTop()) return;
+    entries.forEach(entry => {
       if (entry.isIntersecting) {
-        anchors.forEach((a) => {
-          a.classList.toggle('active', a.getAttribute('href') === `#${entry.target.id}`);
-        });
+        setActive('#' + entry.target.id);
       }
     });
   }, { rootMargin: '-5% 0px -50% 0px', threshold: 0 });
 
-  sections.forEach((section) => observer.observe(section));
+  sections.forEach(s => observer.observe(s));
+
+  // Also run the top check on every scroll event
+  // so snapping back to top always shows About immediately
+  window.addEventListener('scroll', checkTop, { passive: true });
+
+  // Run once on load
+  checkTop();
 } else if (body.dataset.page === 'gallery') {
   navLinks.forEach((a) => {
     if (a.getAttribute('href') === 'gallery.html') a.classList.add('active');

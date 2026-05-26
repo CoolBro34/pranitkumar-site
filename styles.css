@@ -51,6 +51,7 @@ main, footer { position: relative; z-index: 1; }
    LAYOUT — main, sections
    ============================================================ */
 main{max-width:1200px;margin:0 auto;padding:0 1.5rem}
+#about { scroll-margin-top: 0px; }
 .section { padding-top: 3.5rem; padding-bottom: 3.5rem; }
 .section-label{font-size:.78rem;color:var(--text-label);letter-spacing:.12em;margin:0 0 .6rem;font-family:'IBM Plex Mono',monospace}
 .grid-two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}

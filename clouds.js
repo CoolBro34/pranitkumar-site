@@ -127,10 +127,8 @@ function initSkyBg() {
     COUNT       : 7,
     MIN_W       : 240,
     MAX_W       : 540,
-    OPACITY_MIN : 0.38,
-    OPACITY_MAX : 0.65,
-    FLOAT_DUR   : [9, 16],
-    FLOAT_DELAY : [0, 6],
+    OPACITY_MIN : 0.35,
+    OPACITY_MAX : 0.60,
     BLOBS : [
       { cx:.50, cy:.52, rx:.45, ry:.38 },
       { cx:.18, cy:.38, rx:.28, ry:.30 },
@@ -141,8 +139,7 @@ function initSkyBg() {
     ],
   };
 
-  // Session key in sessionStorage survives page navigation.
-  // Reload detection clears the key so clouds regenerate on refresh.
+  // Session key — survives navigation, regenerates on reload
   const isReload = (
     performance.getEntriesByType('navigation')[0]?.type === 'reload'
   );
@@ -175,13 +172,12 @@ function initSkyBg() {
       const zoneY = (row / rows) * 100 + (1 / rows) * 50;
 
       configs.push({
-        w,
-        h,
-        op    : rnd(BG.OPACITY_MIN, BG.OPACITY_MAX),
-        dur   : rnd(...BG.FLOAT_DUR),
-        delay : rnd(...BG.FLOAT_DELAY),
-        x     : Math.min(90, Math.max(0,  zoneX + rnd(-14, 14))),
-        y     : Math.min(88, Math.max(-8, zoneY + rnd(-12, 12))),
+        w, h,
+        op : rnd(BG.OPACITY_MIN, BG.OPACITY_MAX),
+        // Store as 0-1 fractions of viewport so canvas can place
+        // them correctly regardless of actual screen size
+        x  : Math.min(0.92, Math.max(0.05, (zoneX + rnd(-12, 12)) / 100)),
+        y  : Math.min(0.92, Math.max(0.05, (zoneY + rnd(-10, 10)) / 100)),
         blobs : BG.BLOBS.map(() => ({
           jx : rnd(-.07, .07),
           jy : rnd(-.06, .06),
@@ -193,35 +189,59 @@ function initSkyBg() {
     sessionStorage.setItem(storeKey, JSON.stringify(configs));
   }
 
-  // Build into a DocumentFragment — one DOM insertion means one
-  // compositing recalculation instead of one per cloud
-  const fragment = document.createDocumentFragment();
+  // Single canvas covering the entire fixed viewport
+  // Everything drawn onto it once — completely static, one GPU layer
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  const canvas = document.createElement('canvas');
+  canvas.width  = vw;
+  canvas.height = vh;
+  canvas.style.cssText = [
+    'position:absolute',
+    'inset:0',
+    'width:100%',
+    'height:100%',
+    'display:block',
+  ].join(';');
+
+  const ctx = canvas.getContext('2d');
 
   configs.forEach(c => {
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = [
-      'position:absolute',
-      `left:${c.x}%`,
-      `top:${c.y}%`,
-      'transform:translate(-50%,-50%)',
-      // will-change promotes to GPU layer immediately at page load,
-      // before card clouds run and trigger any recalculation
-      'will-change:transform',
-      `animation:bgCloudFloat ${c.dur.toFixed(1)}s ease-in-out ${c.delay.toFixed(1)}s infinite`,
-    ].join(';');
+    // Convert fractional positions to actual pixel coordinates
+    // centered on the cloud
+    const cx0 = c.x * vw;
+    const cy0 = c.y * vh;
 
-    const canvas = document.createElement('canvas');
-    canvas.style.cssText = `display:block;width:${c.w}px;height:${c.h}px;`;
+    BG.BLOBS.forEach((b, i) => {
+      const j  = c.blobs[i];
+      const cx = cx0 + (b.cx - 0.5 + j.jx) * c.w;
+      const cy = cy0 + (b.cy - 0.5 + j.jy) * c.h;
+      const rx = (b.rx + j.jr) * c.w;
+      const ry = (b.ry + j.jr * .8) * c.h;
+      const r  = Math.max(rx, ry);
 
-    drawBgCloud(canvas, c.w, c.h, BG.BLOBS, c.blobs, c.op);
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(rx / r, ry / r);
+      ctx.translate(-cx, -cy);
 
-    wrapper.appendChild(canvas);
-    fragment.appendChild(wrapper);
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      grad.addColorStop(0,    `rgba(255,255,255,${c.op.toFixed(2)})`);
+      grad.addColorStop(0.45, `rgba(255,255,255,${(c.op * 0.75).toFixed(2)})`);
+      grad.addColorStop(0.8,  `rgba(255,255,255,${(c.op * 0.25).toFixed(2)})`);
+      grad.addColorStop(1,    'rgba(255,255,255,0)');
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.restore();
+    });
   });
 
-  bg.appendChild(fragment);
+  bg.appendChild(canvas);
 }
-
 // ── Init ──────────────────────────────────────────────────────────
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {

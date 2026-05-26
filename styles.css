@@ -608,7 +608,7 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 [data-theme="night"] .label { color: var(--text-label); }
 
 [data-theme="night"] .section-label { color: var(--text-label); }
-
+[data-theme="night"] .pk-coming-soon { color: var(--text-primary) !important; }
 /* ============================================================
    MOBILE — hide desktop theme group, pk-right-rail adjustments
    ============================================================ */

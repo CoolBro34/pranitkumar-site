@@ -40,11 +40,12 @@ const THEMES = {
     cardBg:            'rgba(4,8,22,0.85)',
     cardBorder:        'rgba(0,210,160,0.22)',
     cardShadow:        '0 8px 32px rgba(0,210,160,0.10)',
-    textPrimary:       '#ddeeff',
-    textSecondary:     '#7a9cc0',
-    textMuted:         '#4e6e96',
-    textLabel:         '#00d2a0',
-    navText:           '#c8dcff',
+	textPrimary:       '#f4fbff',
+	textSecondary:     '#d6ecff',
+	textMuted:         '#9ec7e8',
+	navText:           '#eef7ff',
+	chipText:          '#d9fff3',    
+	textLabel:         '#00d2a0',
     navActive:         '#00d2a0',
     navScrolledBg:     'rgba(1,4,9,0.88)',
     navScrolledBorder: 'rgba(0,210,160,0.20)',
@@ -52,7 +53,6 @@ const THEMES = {
     accentHover:       '#00b88a',
     chipBg:            'rgba(0,210,160,0.07)',
     chipBorder:        'rgba(0,210,160,0.35)',
-    chipText:          '#00d2a0',
     overlayBg:         '#010d1e',
     cursorPrimary:     '#00d2a0',
     cursorLight:       '#40e8c0',
@@ -130,6 +130,12 @@ function applyTheme(key) {
   r.style.setProperty('--cursor-dark',         t.cursorDark);
   r.style.setProperty('--cursor-glow',         t.cursorGlow);
   r.dataset.theme = key;
+  r.style.setProperty(
+  '--cursor-color',
+  key === 'night'
+    ? '#d9fff3'
+    : '#111111'
+);
   window.SiteTheme = t;
   // Signal cursor code to re-read colors
   window.dispatchEvent(new CustomEvent('pk-theme-applied', { detail: t }));
@@ -248,25 +254,65 @@ function _injectThemeUI() {
     popup.id = 'theme-popup';
     popup.innerHTML = `
       <div class="pk-popup-inner">
-        <p class="pk-popup-title">Choose your experience</p>
-        <p class="pk-popup-sub">You can change this anytime from the navigation.</p>
+        <p class="pk-popup-title">
+          Choose your experience
+        </p>
+
+        <p class="pk-popup-sub">
+          Uses your local sunrise &amp; sunset times.
+        </p>
+
         <div class="pk-popup-options">
           <button class="pk-popup-btn" data-pick="light">
-            <span class="pk-popup-icon">${_ICONS.sun}</span>
-            <span class="pk-popup-label">Light</span>
-            <span class="pk-popup-desc">Day sky · clouds</span>
+            <span class="pk-popup-icon">
+              ${_ICONS.sun}
+            </span>
+
+            <span class="pk-popup-label">
+              Light
+            </span>
+
+            <span class="pk-popup-desc">
+              Day sky · clouds
+            </span>
           </button>
+
           <button class="pk-popup-btn" data-pick="dark">
-            <span class="pk-popup-icon">${_ICONS.moon}</span>
-            <span class="pk-popup-label">Dark</span>
-            <span class="pk-popup-desc">Night sky · aurora</span>
+            <span class="pk-popup-icon">
+              ${_ICONS.moon}
+            </span>
+
+            <span class="pk-popup-label">
+              Dark
+            </span>
+
+            <span class="pk-popup-desc">
+              Night sky · aurora
+            </span>
           </button>
+
           <button class="pk-popup-btn" data-pick="auto">
-            <span class="pk-popup-icon">${_ICONS.clock}</span>
-            <span class="pk-popup-label">Time-based</span>
-            <span class="pk-popup-desc">Follows your local sunrise &amp; sunset</span>
+            <span class="pk-popup-icon">
+              ${_ICONS.clock}
+            </span>
+
+            <span class="pk-popup-label">
+              Time-based
+            </span>
+
+            <span class="pk-popup-desc">
+              Automatically follows your local time
+            </span>
           </button>
         </div>
+
+        <div class="theme-popup-note">
+          Reload the page to see different clouds and aurora patterns.
+        </div>
+
+        <button class="popup-performance-toggle">
+          ${performanceMode ? 'Disable' : 'Enable'} Performance Mode
+        </button>
       </div>
     `;
     document.body.appendChild(popup);
@@ -276,81 +322,93 @@ function _injectThemeUI() {
         hideThemePopup();
       });
     });
-  }
+const perfPopupBtn =
+  popup.querySelector('.popup-performance-toggle');
 
-  // ── Desktop right-rail: [clock] [sun] [moon] [clock-btn] [perf] [contact] ──
-  const topbar = document.getElementById('topbar');
-  if (topbar && !topbar.querySelector('.pk-right-rail')) {
-    const contact = topbar.querySelector('.contact-rail');
+if (perfPopupBtn) {
+  perfPopupBtn.addEventListener('click', () => {
 
-    // Build the right rail wrapper (replaces where contact was)
-    const rail = document.createElement('div');
-    rail.className = 'pk-right-rail';
+    const enabled =
+      localStorage.getItem('pk-perf-mode') === '1';
 
-    // Live clock display
-    const clockEl = document.createElement('span');
-    clockEl.className = 'pk-nav-clock';
-    clockEl.setAttribute('aria-label', 'Local time');
-    _startClock(clockEl);
-    rail.appendChild(clockEl);
+    localStorage.setItem(
+      'pk-perf-mode',
+      enabled ? '0' : '1'
+    );
 
-    // Theme toggle group
-    const group = document.createElement('div');
-    group.className = 'pk-theme-group';
-    group.setAttribute('aria-label', 'Theme');
-    group.innerHTML = `
-      <button class="pk-theme-btn" data-mode="light" title="Light mode">${_ICONS.sun}</button>
-      <button class="pk-theme-btn" data-mode="dark"  title="Dark mode">${_ICONS.moon}</button>
-      <button class="pk-theme-btn" data-mode="auto"  title="Time-based">${_ICONS.clock}</button>
-    `;
-    group.querySelectorAll('.pk-theme-btn').forEach(btn => {
-      btn.addEventListener('click', () => switchTheme(btn.dataset.mode));
-    });
-    rail.appendChild(group);
-
-    // Performance mode toggle (Gecko-friendly; stored in localStorage)
-    const perfBtn = document.createElement('button');
-    perfBtn.className = 'pk-theme-btn pk-perf-btn';
-    perfBtn.title     = 'Performance mode (reduces aurora complexity)';
-    perfBtn.innerHTML = _ICONS.perf;
-    const perfOn = localStorage.getItem('pk-perf-mode') === '1';
-    window.PK_PERF_MODE = perfOn;
-    if (perfOn) perfBtn.classList.add('pk-theme-active');
-    perfBtn.addEventListener('click', () => {
-      window.PK_PERF_MODE = !window.PK_PERF_MODE;
-      localStorage.setItem('pk-perf-mode', window.PK_PERF_MODE ? '1' : '0');
-      perfBtn.classList.toggle('pk-theme-active', window.PK_PERF_MODE);
-      // Re-init effects if night mode is active
-      if (document.documentElement.dataset.theme === 'night' &&
-          typeof window.reinitEffects === 'function') {
-        window.reinitEffects('night');
-      }
-    });
-    rail.appendChild(perfBtn);
-
-    // Contact link (moved into right rail)
-    if (contact) {
-      contact.remove();
-      rail.appendChild(contact);
-    }
-
-    topbar.appendChild(rail);
-
-    // ── Mobile single-cycle button ───────────────────────────────
-    const hamburger = document.getElementById('nav-hamburger');
-    if (hamburger) {
-      const mob = document.createElement('button');
-      mob.id           = 'theme-mobile-toggle';
-      mob.className    = 'pk-theme-mobile';
-      mob.dataset.mode = window.PK_THEME_MODE || 'auto';
-      const initIcon   = { light: 'sun', dark: 'moon', auto: 'clock' }[window.PK_THEME_MODE] || 'clock';
-      mob.innerHTML    = _ICONS[initIcon];
-      mob.title        = 'Cycle theme';
-      mob.addEventListener('click', _cycleMobileTheme);
-      hamburger.parentNode.insertBefore(mob, hamburger);
-    }
-  }
+    location.reload();
+  });
 }
+  }
+  
+
+  // ── Unified right controls ───────────────────────────────
+	const rail = document.createElement('div');
+	rail.className = 'nav-right-group';
+
+	const currentTheme =
+	document.documentElement.dataset.theme || 'day';
+
+	const ACTIVE_THEME_ICONS = {
+	day: _ICONS.sun,
+	night: _ICONS.moon,
+	};
+
+	const performanceMode =
+	localStorage.getItem('pk-perf-mode') === '1';
+
+	rail.innerHTML = `
+	<button class="theme-active-btn"
+			id="theme-popup-toggle"
+			aria-label="Theme settings">
+		${ACTIVE_THEME_ICONS[currentTheme]}
+	</button>
+
+	<button class="perf-btn ${performanceMode ? 'active' : ''}"
+			id="perf-toggle"
+			aria-label="Performance mode">
+		${_ICONS.perf}
+	</button>
+
+	<button class="clock-btn"
+			aria-label="Local sunrise and sunset">
+		${_ICONS.clock}
+	</button>
+
+	<a class="contact-rail" href="#contact">
+		Contact
+	</a>
+	`;
+
+	topbar.appendChild(rail);
+
+	// reopen popup
+	rail.querySelector('#theme-popup-toggle')
+	?.addEventListener('click', showThemePopup);
+
+	// perf mode
+	rail.querySelector('#perf-toggle')
+	?.addEventListener('click', () => {
+
+		const enabled =
+		localStorage.getItem('pk-perf-mode') === '1';
+
+		localStorage.setItem(
+		'pk-perf-mode',
+		enabled ? '0' : '1'
+		);
+
+		location.reload();
+	});
+
+	// mobile
+	const mobileOverlay =
+	document.getElementById('mobile-nav-overlay');
+
+	if (window.innerWidth <= 768 && mobileOverlay) {
+	mobileOverlay.prepend(rail);
+	}
+  }
 
 // ─────────────────────────────────────────────────────────────────
 // INIT — runs immediately (before DOMContentLoaded) to set vars,

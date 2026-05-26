@@ -37,12 +37,41 @@ main, footer { position: relative; z-index: 1; }
 /* ============================================================
    TOPBAR / NAV
    ============================================================ */
-.topbar{position:sticky;top:0;z-index:100002;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;background:transparent}
-.topbar.scrolled{border-bottom:1px solid var(--nav-scrolled-border);backdrop-filter:blur(12px);background:var(--nav-scrolled-bg)}
-.brand,.contact-rail,.site-nav a{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;color:var(--nav-text)}
-.brand{font-size:1.1rem;font-weight:800;letter-spacing:.16em}
-.contact-rail span{color:var(--accent)}
-.site-nav{display:flex;gap:1.2rem;align-items:center}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:100002;
+
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+
+  align-items:center;
+
+  padding:1rem 2rem;
+  background:transparent;
+}
+
+.brand{
+  justify-self:start;
+}
+
+.site-nav{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+
+  display:flex;
+  align-items:center;
+  gap:1.2rem;
+}
+
+.nav-right-group{
+  justify-self:end;
+
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+}
 .site-nav a{padding:.2rem 0;border-bottom:1px solid transparent}
 .site-nav a:hover,.site-nav a.active{color:var(--nav-active);border-bottom:1px solid var(--nav-active)}
 .menu-toggle{display:none;border:none;background:transparent;font-size:1.4rem}
@@ -207,7 +236,6 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
    MOBILE LAYOUT — reflow grids, restore card appearance
    ============================================================ */
 @media (max-width: 768px) {
-  #sky-bg { display: none; }
 
   body::before {
     content: '';
@@ -254,28 +282,6 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
    DESKTOP THEME TOGGLE GROUP (☼ ☾ ⌛)
    Injected by theme.js just left of .contact-rail
    ============================================================ */
-.pk-theme-group {
-  display: flex;
-  align-items: center;
-  gap: .3rem;
-}
-
-.pk-theme-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  width: 28px;
-  height: 28px;
-  font-size: .9rem;
-  color: var(--nav-text);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: border-color .2s ease, background .2s ease, color .2s ease;
-  padding: 0;
-  line-height: 1;
-}
 
 .pk-theme-btn:hover {
   border-color: var(--accent);
@@ -287,26 +293,35 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   border-color: var(--accent);
   color: #fff;
 }
+.theme-active-btn,
+.perf-btn,
+.clock-btn{
+  width:38px;
+  height:38px;
 
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:999px;
+
+  border:1px solid var(--chip-border);
+
+  background:var(--chip-bg);
+  color:var(--nav-text);
+
+  padding:0;
+}
+
+.theme-active-btn svg,
+.perf-btn svg,
+.clock-btn svg{
+  width:18px;
+  height:18px;
+}
 /* ============================================================
    MOBILE THEME TOGGLE — single cycling button left of hamburger
    ============================================================ */
-#theme-mobile-toggle {
-  display: none;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  width: 32px;
-  height: 32px;
-  font-size: 1rem;
-  color: var(--nav-text);
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  line-height: 1;
-  transition: border-color .2s ease, color .2s ease;
-}
 
 #theme-mobile-toggle:hover {
   border-color: var(--accent);
@@ -334,7 +349,17 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   opacity: 1;
   pointer-events: all;
 }
+.theme-popup-note{
+  margin-top:1rem;
+  font-size:.82rem;
+  line-height:1.5;
+  color:var(--text-secondary);
+  text-align:center;
+}
 
+.popup-performance-toggle{
+  margin-top:1rem;
+}
 .pk-popup-inner {
   background: var(--card-bg, rgba(255,255,255,0.95));
   border: 1px solid var(--card-border, rgba(255,255,255,0.95));
@@ -491,4 +516,29 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
     font-size: 1.4rem;
     flex-shrink: 0;
   }
+}
+@media (max-width:768px){
+
+  .site-nav{
+    display:none;
+  }
+
+  .nav-right-group{
+    gap:.4rem;
+  }
+
+  .theme-active-btn,
+  .perf-btn,
+  .clock-btn{
+    width:34px;
+    height:34px;
+  }
+
+  .theme-active-btn svg,
+  .perf-btn svg,
+  .clock-btn svg{
+    width:16px;
+    height:16px;
+  }
+
 }

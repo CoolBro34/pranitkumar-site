@@ -663,10 +663,8 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   backdrop-filter: none;
 }
 
-/* Mobile: anchored popup always centers (no top-right anchor on small screens) */
 @media (max-width: 768px) {
 
-  /* Center ALL popup states on mobile */
   #theme-popup,
   #theme-popup.pk-popup-anchored {
     align-items: center;

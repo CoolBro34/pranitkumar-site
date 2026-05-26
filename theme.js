@@ -20,15 +20,15 @@ const THEMES = {
     textPrimary:      '#0d0d0d',
     textSecondary:    '#374151',
     textMuted:        '#6b7280',
-    textLabel:        '#2563eb',
+    textLabel:        '#1e3a5f',
     // Nav
     navText:          '#0d0d0d',
-    navActive:        '#2563eb',
+    navActive:        '#1e3a5f',
     navScrolledBg:    'rgba(162, 207, 254, 0.90)',
     navScrolledBorder:'rgba(255, 255, 255, 0.5)',
     // Accent
-    accent:           '#2563eb',
-    accentHover:      '#1a4fd6',
+    accent:           '#1e3a5f',
+    accentHover:      '#162d47',
     // Chips
     chipBg:           'rgba(255, 255, 255, 0.55)',
     chipBorder:       'rgba(37, 99, 235, 0.35)',
@@ -36,10 +36,10 @@ const THEMES = {
     // Mobile overlay
     overlayBg:        '#a2cffe',
     // Cursor
-    cursorPrimary:    '#2563eb',
-    cursorLight:      '#7aabf7',
-    cursorDark:       '#1a4fd6',
-    cursorGlow:       '37,99,235',
+    cursorPrimary:    '#1e3a5f',
+    cursorLight:      '#4a7aa8',
+    cursorDark:       '#0f1f33',
+    cursorGlow:       '30,58,95',
     // Cloud shape opacity
     cloudOpacity:     0.82,
   },

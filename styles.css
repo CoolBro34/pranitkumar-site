@@ -205,9 +205,15 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
    MOBILE LAYOUT — reflow grids, restore card appearance
    ============================================================ */
 @media (max-width: 768px) {
-  #sky-bg {
-    display: block;
+  #sky-bg { display: none; }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
     background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+    pointer-events: none;
   }
 
   body {
@@ -221,7 +227,10 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   .skills-grid p { grid-template-columns:1fr; }
   .section { padding-top:2rem; padding-bottom:2rem; }
 }
-  /* Restore solid card appearance on mobile — no clouds on small screens 
+
+@media (hover: none),(pointer: coarse){
+  *{cursor:auto!important}
+}  /* Restore solid card appearance on mobile — no clouds on small screens 
   .card,.skills-grid p,.section-gallery-cta,.grid-item{
     background:var(--card-bg);
     border:1px solid var(--card-border);

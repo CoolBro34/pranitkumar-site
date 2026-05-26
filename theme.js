@@ -178,7 +178,7 @@ function _updateToggleUI(mode) {
       auto:  'Time-based — click to change',
     }[mode] || 'Change theme';
   }
-  // Update mobile overlay button
+  // Sync mobile topbar button icon
   const mobBtn = document.getElementById('pk-overlay-theme-btn');
   if (mobBtn) {
     const iconKey = { light: 'sun', dark: 'moon', auto: 'clock' }[mode] || 'clock';
@@ -345,22 +345,22 @@ function _injectThemeUI() {
 
     topbar.appendChild(rail);
 
-    // ── Mobile: inject theme cycle button INTO the overlay ────────
-    // Appears in top-right of overlay, next to where the X (hamburger) is
-    const overlay = document.getElementById('mobile-nav-overlay');
-    if (overlay && !overlay.querySelector('#pk-overlay-theme-btn')) {
+    // ── Mobile: inject theme button into TOPBAR before hamburger ─
+    // (Not inside the overlay — it needs to be visible in the topbar always)
+    const hamburger = document.getElementById('nav-hamburger');
+    if (hamburger && !document.getElementById('pk-overlay-theme-btn')) {
       const mobBtn = document.createElement('button');
       mobBtn.id        = 'pk-overlay-theme-btn';
-      mobBtn.className = 'pk-overlay-theme-btn';
       mobBtn.dataset.mode = window.PK_THEME_MODE || 'auto';
       const mobIcon = { light: 'sun', dark: 'moon', auto: 'clock' }[window.PK_THEME_MODE] || 'clock';
       mobBtn.innerHTML = _ICONS[mobIcon];
-      mobBtn.title     = 'Cycle theme';
+      mobBtn.title     = 'Change theme';
       mobBtn.addEventListener('click', e => {
-        e.stopPropagation(); // don't close menu
+        e.stopPropagation();
         showThemePopup();
       });
-      overlay.appendChild(mobBtn);
+      // Insert immediately before the hamburger button
+      hamburger.parentNode.insertBefore(mobBtn, hamburger);
     }
   }
 }

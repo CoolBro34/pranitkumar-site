@@ -239,6 +239,7 @@ function _injectThemeUI() {
       <div class="pk-popup-inner">
         <p class="pk-popup-title">Choose your experience</p>
         <p class="pk-popup-sub">You can change this anytime from the nav.</p>
+        <p class="pk-popup-reload-note">↺ Reload the page to see new clouds &amp; aurora layouts</p>
         <div class="pk-popup-options">
           <button class="pk-popup-btn" data-pick="light">
             <span class="pk-popup-icon">${_ICONS.sun}</span>
@@ -266,7 +267,6 @@ function _injectThemeUI() {
             <span class="pk-perf-status">OFF</span>
           </button>
         </div>
-        <p class="pk-popup-reload-note">↺ Reload the page to see new clouds &amp; aurora layouts</p>
       </div>
     `;
     document.body.appendChild(popup);

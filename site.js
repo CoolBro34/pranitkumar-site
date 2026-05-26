@@ -266,8 +266,8 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     ctx.ellipse(0, 0, C.BLOB_WIDTH * pulse, C.BLOB_HEIGHT * pulse, 0, 0, Math.PI * 2);
 
     const g = ctx.createRadialGradient(0, -C.BLOB_HEIGHT * 0.3, 0, 0, 0, C.BLOB_WIDTH * pulse);
-    g.addColorStop(0,   'rgba(91,142,240,0.9)');
-    g.addColorStop(0.6, 'rgba(37,99,235,0.7)');
+    g.addColorStop(0,   'rgba(74,122,168,0.9)');
+    g.addColorStop(0.6, 'rgba(30,58,95,0.7)');
     g.addColorStop(1,   `rgba(${C.COL_GLOW},0)`);
     ctx.fillStyle = g;
     ctx.fill();

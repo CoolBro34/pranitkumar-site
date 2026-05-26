@@ -277,6 +277,14 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   transition: border-color .2s ease, background .2s ease, color .2s ease;
   padding: 0;
   line-height: 1;
+  /* Ensure SVG children don't introduce vertical offset */
+  vertical-align: middle;
+}
+.pk-theme-btn svg,
+#pk-overlay-theme-btn svg,
+.pk-popup-icon svg {
+  display: block;      /* removes inline baseline gap */
+  flex-shrink: 0;
 }
 
 .pk-theme-btn:hover {
@@ -503,23 +511,22 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 .pk-right-rail { display: flex; align-items: center; gap: .5rem; margin-left: auto; }
 
 /* ============================================================
-   MOBILE OVERLAY THEME BUTTON — appears inside overlay top-right
+   MOBILE THEME BUTTON — lives in the topbar, left of hamburger
+   Hidden on desktop; shown on mobile via the mobile media query.
    ============================================================ */
 #pk-overlay-theme-btn {
-  position: absolute;
-  top: 4.5rem;
-  right: 1.5rem; /* sits left of the hamburger X which stays in topbar */
+  display: none; /* shown in mobile block below */
   background: transparent;
   border: 1px solid var(--accent);
   border-radius: 999px;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   color: var(--accent);
-  display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 100004;
+  flex-shrink: 0;
+  z-index: 100005;
 }
 
 /* ============================================================
@@ -615,10 +622,17 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
    ============================================================ */
 @media (max-width: 768px) {
   .pk-theme-group { display: none; }
-  /* mobile toggle is in the overlay, not the topbar */
+  /* mobile toggle is in the topbar before the hamburger */
   #theme-mobile-toggle { display: none !important; }
-   .pk-right-rail { display: none; }
-   #nav-hamburger { margin-left: auto; }
+  .pk-right-rail { display: none; }
+  #nav-hamburger { margin-left: 0; }
+
+  /* Show the theme cycle button in the topbar on mobile */
+  #pk-overlay-theme-btn {
+    display: flex;
+    margin-left: auto; /* pushes it and hamburger to the right */
+    margin-right: .5rem;
+  }
 
   .pk-popup-perf-row { flex-direction: column; align-items: stretch; gap: .5rem; }
   .pk-perf-toggle-btn {
@@ -649,7 +663,7 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   backdrop-filter: none;
 }
 
-/* Mobile: anchored popup still centers */
+/* Mobile: anchored popup always centers (no top-right anchor on small screens) */
 @media (max-width: 768px) {
   #theme-popup.pk-popup-anchored {
     align-items: center;
@@ -657,5 +671,10 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
     padding: 0;
     background: rgba(0,0,0,0.45);
     backdrop-filter: blur(4px);
+  }
+  /* Also ensure the inner panel doesn't exceed screen width */
+  .pk-popup-inner {
+    width: calc(100vw - 2rem);
+    max-width: 100%;
   }
 }

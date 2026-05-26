@@ -204,21 +204,23 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 /* ============================================================
    MOBILE LAYOUT — reflow grids, restore card appearance
    ============================================================ */
-@media (max-width: 768px){
-   #sky-bg { display: none; }
-  .hero{grid-template-columns:1fr;min-height:auto;padding-top:1rem}
-  .scroll-indicator{display:none}
-  .grid-two,.grid-projects,.ap-grid,.skills-grid{grid-template-columns:1fr}
-  .project-wide{grid-column:auto}
-  .skills-grid p{grid-template-columns:1fr}
-  .section { padding-top: 2rem; padding-bottom: 2rem; }
-   body {
-     background: var(--sky-bottom);
-   }
+@media (max-width: 768px) {
+  #sky-bg { display: none; }
 
-   #sky-bg {
-     background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
-   }
+  body {
+    background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+    background-attachment: scroll;
+    background-size: 100% max(100%, 2000px);
+    background-repeat: no-repeat;
+  }
+
+  .hero { grid-template-columns:1fr; min-height:auto; padding-top:1rem; }
+  .scroll-indicator { display:none; }
+  .grid-two, .grid-projects, .ap-grid, .skills-grid { grid-template-columns:1fr; }
+  .project-wide { grid-column:auto; }
+  .skills-grid p { grid-template-columns:1fr; }
+  .section { padding-top:2rem; padding-bottom:2rem; }
+}
 
   /* Restore solid card appearance on mobile — no clouds on small screens 
   .card,.skills-grid p,.section-gallery-cta,.grid-item{
@@ -227,7 +229,6 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
     box-shadow:var(--card-shadow);
   }
   .pk-cloud-bg{display:none} */
-}
 
 /* ============================================================
    TOUCH DEVICES — restore system cursor

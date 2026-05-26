@@ -48,21 +48,68 @@ function initSkyBg() {
   const bg = document.getElementById('sky-bg');
   if (!bg) return;
 
-  // ── Config ────────────────────────────────────────────────────
   const SKY = {
-    COUNT       : 8,
-    MIN_W       : 220,
-    MAX_W       : 520,
-    BLUR        : 18,
-    OPACITY_MIN : 0.35,
-    OPACITY_MAX : 0.62,
-    FLOAT_DUR   : [9, 16],
-    FLOAT_DELAY : [0, 6],
-    FLOAT_DIST  : [12, 22],
+    COUNT        : 8,
+    MIN_W        : 220,
+    MAX_W        : 520,
+    BLUR         : 18,
+    OPACITY_MIN  : 0.35,
+    OPACITY_MAX  : 0.62,
+    FLOAT_DUR    : [9, 16],
+    FLOAT_DELAY  : [0, 6],
+    FLOAT_DIST   : [12, 22],
   };
-  // ─────────────────────────────────────────────────────────────
 
-  const BLOB_DEFS = [
+  // Try to load existing cloud config from this session
+  let cloudConfigs;
+  const stored = sessionStorage.getItem('pk-sky-clouds');
+  if (stored) {
+    try { cloudConfigs = JSON.parse(stored); } catch(e) { cloudConfigs = null; }
+  }
+
+  // If no stored config, generate and save it
+  if (!cloudConfigs) {
+    const cols = 3;
+    const rows = Math.ceil(SKY.COUNT / cols);
+    cloudConfigs = [];
+
+    for (let i = 0; i < SKY.COUNT; i++) {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const w   = rnd(SKY.MIN_W, SKY.MAX_W);
+      const h   = w * rnd(0.38, 0.58);
+
+      // Generate blob jitter values and store them too
+      const blobJitters = [
+        { jx:rnd(-.07,.07), jy:rnd(-.06,.06), jr:rnd(-.06,.08) },
+        { jx:rnd(-.07,.07), jy:rnd(-.06,.06), jr:rnd(-.06,.08) },
+        { jx:rnd(-.07,.07), jy:rnd(-.06,.06), jr:rnd(-.06,.08) },
+        { jx:rnd(-.07,.07), jy:rnd(-.06,.06), jr:rnd(-.06,.08) },
+        { jx:rnd(-.07,.07), jy:rnd(-.06,.06), jr:rnd(-.06,.08) },
+        { jx:rnd(-.07,.07), jy:rnd(-.06,.06), jr:rnd(-.06,.08) },
+      ];
+
+      const zoneX = (col / cols) * 100 + (1 / cols) * 50;
+      const zoneY = (row / rows) * 100 + (1 / rows) * 50;
+
+      cloudConfigs.push({
+        w,
+        h,
+        op:     rnd(SKY.OPACITY_MIN, SKY.OPACITY_MAX),
+        dur:    rnd(...SKY.FLOAT_DUR),
+        delay:  rnd(...SKY.FLOAT_DELAY),
+        dist:   rnd(...SKY.FLOAT_DIST),
+        x:      Math.min(90, Math.max(0,  zoneX + rnd(-14, 14))),
+        y:      Math.min(88, Math.max(-8, zoneY + rnd(-12, 12))),
+        blobJitters,
+      });
+    }
+
+    sessionStorage.setItem('pk-sky-clouds', JSON.stringify(cloudConfigs));
+  }
+
+  // Build DOM from config (same every time within a session)
+  const blobDefs = [
     { cx:.50, cy:.52, rx:.45, ry:.38 },
     { cx:.18, cy:.38, rx:.28, ry:.30 },
     { cx:.80, cy:.34, rx:.26, ry:.28 },
@@ -71,59 +118,7 @@ function initSkyBg() {
     { cx:.68, cy:.70, rx:.19, ry:.20 },
   ];
 
-  // ── Session key ───────────────────────────────────────────────
-  // window._pkSkyKey is created once per page load and lives only
-  // in JS memory. Navigating between pages keeps the same window
-  // context so the key survives and clouds stay consistent.
-  // A full reload kills the runtime so _pkSkyKey is undefined,
-  // a new key is generated, sessionStorage misses, and fresh
-  // clouds are built and saved under the new key.
-  if (!window._pkSkyKey) {
-    window._pkSkyKey = Math.random().toString(36).slice(2);
-  }
-  const storeKey = 'pk-sky-' + window._pkSkyKey;
-
-  // ── Load or generate config ───────────────────────────────────
-  let configs = null;
-  const stored = sessionStorage.getItem(storeKey);
-  if (stored) {
-    try { configs = JSON.parse(stored); } catch(e) { configs = null; }
-  }
-
-  if (!configs) {
-    const cols = 3;
-    const rows = Math.ceil(SKY.COUNT / cols);
-    configs = [];
-
-    for (let i = 0; i < SKY.COUNT; i++) {
-      const col = i % cols;
-      const row = Math.floor(i / cols);
-      const w   = rnd(SKY.MIN_W, SKY.MAX_W);
-      const h   = w * rnd(0.38, 0.58);
-      const zoneX = (col / cols) * 100 + (1 / cols) * 50;
-      const zoneY = (row / rows) * 100 + (1 / rows) * 50;
-
-      configs.push({
-        w,
-        h,
-        op    : rnd(SKY.OPACITY_MIN, SKY.OPACITY_MAX),
-        dur   : rnd(...SKY.FLOAT_DUR),
-        delay : rnd(...SKY.FLOAT_DELAY),
-        x     : Math.min(90, Math.max(0,  zoneX + rnd(-14, 14))),
-        y     : Math.min(88, Math.max(-8, zoneY + rnd(-12, 12))),
-        blobs : BLOB_DEFS.map(() => ({
-          jx : rnd(-.07, .07),
-          jy : rnd(-.06, .06),
-          jr : rnd(-.06, .08),
-        })),
-      });
-    }
-
-    sessionStorage.setItem(storeKey, JSON.stringify(configs));
-  }
-
-  // ── Build DOM ─────────────────────────────────────────────────
-  configs.forEach(c => {
+  cloudConfigs.forEach(c => {
     const cloud = document.createElement('div');
     cloud.style.cssText = [
       'position:absolute',
@@ -144,8 +139,8 @@ function initSkyBg() {
       'overflow:visible',
     ].join(';');
 
-    BLOB_DEFS.forEach((b, idx) => {
-      const { jx, jy, jr } = c.blobs[idx];
+    blobDefs.forEach((b, idx) => {
+      const { jx, jy, jr } = c.blobJitters[idx];
       const cx = (b.cx + jx) * c.w;
       const cy = (b.cy + jy) * c.h;
       const rx = (b.rx + jr) * c.w;

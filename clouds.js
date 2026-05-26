@@ -179,11 +179,7 @@ function _initDaySky() {
   const canvas = document.createElement('canvas');
   canvas.width = vw; canvas.height = vh;
   canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;';
-  const ctx = canvas.getContext('2d', {
-      alpha: true,
-      desynchronized: true,
-      willReadFrequently: false,
-    });
+  const ctx = canvas.getContext('2d');
 
   configs.forEach(c => {
     const cx0 = c.x * vw, cy0 = c.y * vh;
@@ -405,11 +401,7 @@ function _initNightSky() {
   canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;';
   bg.appendChild(canvas);
 
-  const ctx    = canvas.getContext('2d', {
-      alpha: true,
-      desynchronized: true,
-      willReadFrequently: false,
-    });
+  const ctx    = canvas.getContext('2d');
   const star   = _genStars(vw, vh);
   const ribbon = _genRibbons(vw, vh);
   const rays   = _genRays(vw, vh);

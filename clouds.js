@@ -6,7 +6,13 @@
 // ─────────────────────────────────────────────────────────────────
 // CONFIG
 // ─────────────────────────────────────────────────────────────────
+const IS_FIREFOX =
+  navigator.userAgent
+    .toLowerCase()
+    .includes('firefox');
 
+const PERFORMANCE_MODE =
+  localStorage.getItem('pk-perf-mode') === '1';
 const CLOUD = {
   BLEED_X    : 36,
   BLEED_Y    : 28,
@@ -15,7 +21,11 @@ const CLOUD = {
 };
 
 const NIGHT = {
-  STAR_COUNT           : 200,
+  STAR_COUNT: PERFORMANCE_MODE
+	? 70
+	: IS_FIREFOX
+		? 110
+		: 200,
   STAR_SPECIALS        :   8,
   RIBBON_ACCENT_COUNT  :   2,   // number of accent ribbons alongside the hero curtain
   CARD_BLOBS: [
@@ -179,7 +189,11 @@ function _initDaySky() {
   const canvas = document.createElement('canvas');
   canvas.width = vw; canvas.height = vh;
   canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;';
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', {
+  alpha: true,
+  desynchronized: true,
+  willReadFrequently: false,
+});
 
   configs.forEach(c => {
     const cx0 = c.x * vw, cy0 = c.y * vh;
@@ -393,15 +407,18 @@ function _initNightSky() {
   const bg = document.getElementById('sky-bg');
   if (!bg) return;
   Array.from(bg.querySelectorAll('canvas')).forEach(c => c.remove());
-  if (window.matchMedia('(max-width: 768px)').matches) return;
-
+  
   const vw = window.innerWidth, vh = window.innerHeight;
   const canvas = document.createElement('canvas');
   canvas.width = vw; canvas.height = vh;
   canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;';
   bg.appendChild(canvas);
 
-  const ctx    = canvas.getContext('2d');
+  const ctx    = canvas.getContext('2d', {
+  alpha: true,
+  desynchronized: true,
+  willReadFrequently: false,
+});
   const star   = _genStars(vw, vh);
   const ribbon = _genRibbons(vw, vh);
   const rays   = _genRays(vw, vh);

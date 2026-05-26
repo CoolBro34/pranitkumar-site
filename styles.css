@@ -4,7 +4,9 @@
 *{box-sizing:border-box}
 *,*::before,*::after{cursor:none!important}
 html{scroll-behavior:smooth;min-height:100%}
-
+a:hover {
+  color: var(--accent);
+}
 /* ============================================================
    BASE — body, links, headings, paragraphs
    ============================================================ */
@@ -32,7 +34,7 @@ h2{font-size:clamp(2rem,4vw,3rem);margin:0 0 1.5rem}
    LAYOUT — main, sections
    ============================================================ */
 main{max-width:1200px;margin:0 auto;padding:0 1.5rem}
-.section{padding-top:6rem;padding-bottom:6rem}
+.section { padding-top: 3.5rem; padding-bottom: 3.5rem; }
 .section-label{font-size:.78rem;color:var(--text-label);letter-spacing:.12em;margin:0 0 .6rem;font-family:'IBM Plex Mono',monospace}
 .grid-two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .stack{display:grid;gap:1rem}
@@ -76,8 +78,20 @@ ul{margin:.5rem 0 0 1.1rem;padding:0;display:grid;gap:.4rem}
    ============================================================ */
 .grid-projects{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .project-wide{grid-column:1/-1}
-.link-pill{display:inline-flex;border:1px solid var(--card-border);border-radius:999px;padding:.4rem .75rem;font-family:'IBM Plex Mono',monospace;font-size:.76rem;text-decoration:none;color:var(--chip-text)}
-.link-pill:hover{border-color:var(--accent);color:var(--accent)}
+.link-pill {
+  display: inline-flex;
+  border: 1px solid var(--text-primary);
+  border-radius: 999px;
+  padding: .4rem .75rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .76rem;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+.link-pill:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 
 /* ============================================================
    SKILLS
@@ -179,14 +193,15 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   .grid-two,.grid-projects,.ap-grid,.skills-grid{grid-template-columns:1fr}
   .project-wide{grid-column:auto}
   .skills-grid p{grid-template-columns:1fr}
+  .section { padding-top: 2rem; padding-bottom: 2rem; }
 
-  /* Restore solid card appearance on mobile — no clouds on small screens */
+  /* Restore solid card appearance on mobile — no clouds on small screens 
   .card,.skills-grid p,.section-gallery-cta,.grid-item{
     background:var(--card-bg);
     border:1px solid var(--card-border);
     box-shadow:var(--card-shadow);
   }
-  .pk-cloud-bg{display:none}
+  .pk-cloud-bg{display:none} */
 }
 
 /* ============================================================

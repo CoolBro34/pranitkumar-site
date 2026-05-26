@@ -48,48 +48,92 @@ function initSkyBg() {
   const bg = document.getElementById('sky-bg');
   if (!bg) return;
 
+  // ── Config ────────────────────────────────────────────────────
   const SKY = {
-    COUNT: 8,
-    MIN_W: 220,
-    MAX_W: 520,
-    BLUR: 18,
-    OPACITY_MIN: 0.35,
-    OPACITY_MAX: 0.62,
-    FLOAT_DUR: [9, 16],
-    FLOAT_DELAY: [0, 6],
-    FLOAT_DIST: [12, 22],
+    COUNT       : 8,
+    MIN_W       : 220,
+    MAX_W       : 520,
+    BLUR        : 18,
+    OPACITY_MIN : 0.35,
+    OPACITY_MAX : 0.62,
+    FLOAT_DUR   : [9, 16],
+    FLOAT_DELAY : [0, 6],
+    FLOAT_DIST  : [12, 22],
   };
+  // ─────────────────────────────────────────────────────────────
 
-  const cols = 3;
-  const rows = Math.ceil(SKY.COUNT / cols);
+  const BLOB_DEFS = [
+    { cx:.50, cy:.52, rx:.45, ry:.38 },
+    { cx:.18, cy:.38, rx:.28, ry:.30 },
+    { cx:.80, cy:.34, rx:.26, ry:.28 },
+    { cx:.50, cy:.22, rx:.22, ry:.26 },
+    { cx:.30, cy:.68, rx:.20, ry:.22 },
+    { cx:.68, cy:.70, rx:.19, ry:.20 },
+  ];
 
-  for (let i = 0; i < SKY.COUNT; i++) {
-    const col = i % cols;
-    const row = Math.floor(i / cols);
+  // ── Session key ───────────────────────────────────────────────
+  // window._pkSkyKey is created once per page load and lives only
+  // in JS memory. Navigating between pages keeps the same window
+  // context so the key survives and clouds stay consistent.
+  // A full reload kills the runtime so _pkSkyKey is undefined,
+  // a new key is generated, sessionStorage misses, and fresh
+  // clouds are built and saved under the new key.
+  if (!window._pkSkyKey) {
+    window._pkSkyKey = Math.random().toString(36).slice(2);
+  }
+  const storeKey = 'pk-sky-' + window._pkSkyKey;
 
-    const w = rnd(SKY.MIN_W, SKY.MAX_W);
-    const h = w * rnd(0.38, 0.58);
-    const op = rnd(SKY.OPACITY_MIN, SKY.OPACITY_MAX);
-    const dur = rnd(...SKY.FLOAT_DUR).toFixed(1);
-    const delay = rnd(...SKY.FLOAT_DELAY).toFixed(1);
-    const dist = rnd(...SKY.FLOAT_DIST).toFixed(1);
+  // ── Load or generate config ───────────────────────────────────
+  let configs = null;
+  const stored = sessionStorage.getItem(storeKey);
+  if (stored) {
+    try { configs = JSON.parse(stored); } catch(e) { configs = null; }
+  }
 
-    const zoneX = (col / cols) * 100 + (1 / cols) * 50;
-    const zoneY = (row / rows) * 100 + (1 / rows) * 50;
-    const jx = rnd(-14, 14);
-    const jy = rnd(-12, 12);
+  if (!configs) {
+    const cols = 3;
+    const rows = Math.ceil(SKY.COUNT / cols);
+    configs = [];
 
+    for (let i = 0; i < SKY.COUNT; i++) {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const w   = rnd(SKY.MIN_W, SKY.MAX_W);
+      const h   = w * rnd(0.38, 0.58);
+      const zoneX = (col / cols) * 100 + (1 / cols) * 50;
+      const zoneY = (row / rows) * 100 + (1 / rows) * 50;
+
+      configs.push({
+        w,
+        h,
+        op    : rnd(SKY.OPACITY_MIN, SKY.OPACITY_MAX),
+        dur   : rnd(...SKY.FLOAT_DUR),
+        delay : rnd(...SKY.FLOAT_DELAY),
+        x     : Math.min(90, Math.max(0,  zoneX + rnd(-14, 14))),
+        y     : Math.min(88, Math.max(-8, zoneY + rnd(-12, 12))),
+        blobs : BLOB_DEFS.map(() => ({
+          jx : rnd(-.07, .07),
+          jy : rnd(-.06, .06),
+          jr : rnd(-.06, .08),
+        })),
+      });
+    }
+
+    sessionStorage.setItem(storeKey, JSON.stringify(configs));
+  }
+
+  // ── Build DOM ─────────────────────────────────────────────────
+  configs.forEach(c => {
     const cloud = document.createElement('div');
     cloud.style.cssText = [
       'position:absolute',
-      `left:${Math.min(90, Math.max(0, zoneX + jx))}%`,
-      `top:${Math.min(88, Math.max(-8, zoneY + jy))}%`,
-      `width:${w}px`,
-      `height:${h}px`,
-      `opacity:${op.toFixed(2)}`,
+      `left:${c.x}%`,
+      `top:${c.y}%`,
+      `width:${c.w}px`,
+      `height:${c.h}px`,
+      `opacity:${c.op.toFixed(2)}`,
       'transform:translate(-50%,-50%)',
-      `animation:bgCloudFloat ${dur}s ease-in-out ${delay}s infinite`,
-      '--float-dist:' + dist + 'px',
+      `animation:bgCloudFloat ${c.dur.toFixed(1)}s ease-in-out ${c.delay.toFixed(1)}s infinite`,
     ].join(';');
 
     const blobWrap = document.createElement('div');
@@ -100,21 +144,12 @@ function initSkyBg() {
       'overflow:visible',
     ].join(';');
 
-    const blobs = [
-      { cx: .50, cy: .52, rx: .45, ry: .38 },
-      { cx: .18, cy: .38, rx: .28, ry: .30 },
-      { cx: .80, cy: .34, rx: .26, ry: .28 },
-      { cx: .50, cy: .22, rx: .22, ry: .26 },
-      { cx: .30, cy: .68, rx: .20, ry: .22 },
-      { cx: .68, cy: .70, rx: .19, ry: .20 },
-    ];
-
-    blobs.forEach(b => {
-      const jx = rnd(-.07, .07), jy = rnd(-.06, .06), jr = rnd(-.06, .08);
-      const cx = (b.cx + jx) * w;
-      const cy = (b.cy + jy) * h;
-      const rx = (b.rx + jr) * w;
-      const ry = (b.ry + jr * .8) * h;
+    BLOB_DEFS.forEach((b, idx) => {
+      const { jx, jy, jr } = c.blobs[idx];
+      const cx = (b.cx + jx) * c.w;
+      const cy = (b.cy + jy) * c.h;
+      const rx = (b.rx + jr) * c.w;
+      const ry = (b.ry + jr * .8) * c.h;
       const blob = document.createElement('div');
       blob.style.cssText = [
         'position:absolute',
@@ -130,7 +165,7 @@ function initSkyBg() {
 
     cloud.appendChild(blobWrap);
     bg.appendChild(cloud);
-  }
+  });
 }
 
 if (document.readyState === 'loading') {

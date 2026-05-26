@@ -397,17 +397,43 @@ function _initNightSky() {
   Array.from(bg.querySelectorAll('canvas')).forEach(c => c.remove());
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
+  // Persist aurora seed across page navigations (index ↔ gallery)
+  // Same session key approach as the day sky — regenerates only on reload
+  const isReload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
+  let nightKey = sessionStorage.getItem('pk-night-key');
+  if (!nightKey || isReload) {
+    if (nightKey) sessionStorage.removeItem('pk-night-' + nightKey);
+    nightKey = Math.random().toString(36).slice(2);
+    sessionStorage.setItem('pk-night-key', nightKey);
+  }
+  const storeKey = 'pk-night-' + nightKey;
+  let seed = null;
+  try { seed = JSON.parse(sessionStorage.getItem(storeKey) || 'null'); } catch(e) {}
+
   const vw = window.innerWidth, vh = window.innerHeight;
+  let star, ribbon, rays;
+
+  if (seed) {
+    // Rebuild deterministic data from stored seed using a seeded rng
+    star   = seed.star;
+    ribbon = seed.ribbon;
+    rays   = seed.rays;
+  } else {
+    star   = _genStars(vw, vh, isMobile);
+    ribbon = _genRibbons(vw, vh);
+    rays   = _genRays(vw, vh, isMobile);
+    // Store the generated data for the other page to reuse
+    try {
+      sessionStorage.setItem(storeKey, JSON.stringify({ star, ribbon, rays }));
+    } catch(e) {} // quota exceeded — just skip caching
+  }
+
   const canvas = document.createElement('canvas');
   canvas.width = vw; canvas.height = vh;
   canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;';
   bg.appendChild(canvas);
 
-  const ctx    = canvas.getContext('2d');
-  const star   = _genStars(vw, vh, isMobile);
-  const ribbon = _genRibbons(vw, vh);
-  const rays   = _genRays(vw, vh, isMobile);
-
+  const ctx = canvas.getContext('2d');
   _nightSkyData = {ctx, vw, vh, star, ribbon, rays};
 }
 

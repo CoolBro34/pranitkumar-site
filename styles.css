@@ -194,6 +194,10 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   .project-wide{grid-column:auto}
   .skills-grid p{grid-template-columns:1fr}
   .section { padding-top: 2rem; padding-bottom: 2rem; }
+   body {
+  background-attachment: scroll;
+  background-size: 100% 100%;
+}
 
   /* Restore solid card appearance on mobile — no clouds on small screens 
   .card,.skills-grid p,.section-gallery-cta,.grid-item{

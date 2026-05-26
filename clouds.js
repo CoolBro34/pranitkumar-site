@@ -44,11 +44,19 @@ function init() {
   });
 }
 function initSkyBg() {
+  // Mobile guard — no bg clouds on small screens
+  if (window.matchMedia('(max-width: 768px)').matches) return;
+
   const bg = document.getElementById('sky-bg');
   if (!bg) return;
 
+  // DOM guard — if clouds already exist, do nothing.
+  // This prevents any double-execution from regenerating clouds.
+  if (bg.children.length > 0) return;
+
+  // ── Config ────────────────────────────────────────────────────
   const SKY = {
-    COUNT       : 8,
+    COUNT       : 7,      // slightly reduced to ease GPU layer pressure
     MIN_W       : 220,
     MAX_W       : 520,
     BLUR        : 18,
@@ -56,8 +64,8 @@ function initSkyBg() {
     OPACITY_MAX : 0.62,
     FLOAT_DUR   : [9, 16],
     FLOAT_DELAY : [0, 6],
-    FLOAT_DIST  : [12, 22],
   };
+  // ─────────────────────────────────────────────────────────────
 
   const BLOB_DEFS = [
     { cx:.50, cy:.52, rx:.45, ry:.38 },
@@ -69,10 +77,9 @@ function initSkyBg() {
   ];
 
   // ── Session key ───────────────────────────────────────────────
-  // The key lives in sessionStorage so it survives page-to-page
-  // navigation between index.html and gallery.html.
-  // On a reload, performance.navigation detects it and generates
-  // a fresh key, clearing the old cloud config so new clouds build.
+  // Key lives in sessionStorage so it survives page navigation.
+  // On reload, performance API detects it and a new key is made,
+  // clearing the old config and producing fresh clouds.
   const isReload = (
     performance.getEntriesByType('navigation')[0]?.type === 'reload'
   );
@@ -80,10 +87,7 @@ function initSkyBg() {
   let skyKey = sessionStorage.getItem('pk-sky-key');
 
   if (!skyKey || isReload) {
-    // Clear any previously stored cloud config
-    if (skyKey) {
-      sessionStorage.removeItem('pk-sky-' + skyKey);
-    }
+    if (skyKey) sessionStorage.removeItem('pk-sky-' + skyKey);
     skyKey = Math.random().toString(36).slice(2);
     sessionStorage.setItem('pk-sky-key', skyKey);
   }
@@ -130,6 +134,11 @@ function initSkyBg() {
   }
 
   // ── Build DOM ─────────────────────────────────────────────────
+  // Clouds are built into a fragment first so only one DOM insertion
+  // happens — this prevents the browser triggering multiple
+  // compositing layer recalculations during construction.
+  const fragment = document.createDocumentFragment();
+
   configs.forEach(c => {
     const cloud = document.createElement('div');
     cloud.style.cssText = [
@@ -140,6 +149,10 @@ function initSkyBg() {
       `height:${c.h}px`,
       `opacity:${c.op.toFixed(2)}`,
       'transform:translate(-50%,-50%)',
+      // will-change locks this element into its own GPU layer immediately,
+      // preventing it from being dropped when cards add their own
+      // filter:blur layers shortly after
+      'will-change:transform',
       `animation:bgCloudFloat ${c.dur.toFixed(1)}s ease-in-out ${c.delay.toFixed(1)}s infinite`,
     ].join(';');
 
@@ -149,6 +162,7 @@ function initSkyBg() {
       'inset:0',
       `filter:blur(${SKY.BLUR}px)`,
       'overflow:visible',
+      'will-change:transform',
     ].join(';');
 
     BLOB_DEFS.forEach((b, idx) => {
@@ -171,8 +185,11 @@ function initSkyBg() {
     });
 
     cloud.appendChild(blobWrap);
-    bg.appendChild(cloud);
+    fragment.appendChild(cloud);
   });
+
+  // Single DOM insertion — one compositing recalculation instead of many
+  bg.appendChild(fragment);
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => { init(); initSkyBg(); });

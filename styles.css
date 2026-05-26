@@ -208,7 +208,6 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
    MOBILE LAYOUT — reflow grids, restore card appearance
    ============================================================ */
 @media (max-width: 768px) {
-  #sky-bg { display: none; }
   [data-theme="night"] #sky-bg { display: block; }
   .topbar { z-index: 100006 !important; }
   body::before {
@@ -678,5 +677,42 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
     width: calc(100vw - 2rem);
     max-width: 100%;
     margin: 0 auto;
+  }
+}
+@media (max-width: 768px) {
+
+  #theme-popup {
+    position: fixed !important;
+    inset: 0 !important;
+
+    width: 100vw !important;
+    height: 100dvh !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    overflow: hidden !important;
+
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+  }
+
+  .pk-popup-inner {
+    position: relative !important;
+
+    width: min(92vw, 420px) !important;
+    max-width: 92vw !important;
+
+    margin: 0 auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+
+    transform: none !important;
   }
 }

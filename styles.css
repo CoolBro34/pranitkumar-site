@@ -210,7 +210,7 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 @media (max-width: 768px) {
   #sky-bg { display: none; }
   [data-theme="night"] #sky-bg { display: block; }
-
+  .topbar { z-index: 100006 !important; }
   body::before {
     content: '';
     position: fixed;
@@ -363,7 +363,8 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   font-size: .74rem;
   color: var(--text-muted);
   letter-spacing: .06em;
-  margin: 0 0 2rem;
+  margin: 0 0 .4rem;
+  text-align:center;
 }
 
 .pk-popup-options {
@@ -506,8 +507,8 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
    ============================================================ */
 #pk-overlay-theme-btn {
   position: absolute;
-  top: 1.2rem;
-  right: 5rem; /* sits left of the hamburger X which stays in topbar */
+  top: 4.5rem;
+  right: 1.5rem; /* sits left of the hamburger X which stays in topbar */
   background: transparent;
   border: 1px solid var(--accent);
   border-radius: 999px;
@@ -588,7 +589,7 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   color: var(--text-muted);
   letter-spacing: .05em;
   text-align: center;
-  margin: 0 0 1rem;
+  margin: 0;
   opacity: .7;
 }
 

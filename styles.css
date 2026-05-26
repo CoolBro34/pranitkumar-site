@@ -665,6 +665,9 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 
 /* Mobile: anchored popup always centers (no top-right anchor on small screens) */
 @media (max-width: 768px) {
+
+  /* Center ALL popup states on mobile */
+  #theme-popup,
   #theme-popup.pk-popup-anchored {
     align-items: center;
     justify-content: center;
@@ -672,9 +675,10 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
     background: rgba(0,0,0,0.45);
     backdrop-filter: blur(4px);
   }
-  /* Also ensure the inner panel doesn't exceed screen width */
+
   .pk-popup-inner {
     width: calc(100vw - 2rem);
     max-width: 100%;
+    margin: 0 auto;
   }
 }

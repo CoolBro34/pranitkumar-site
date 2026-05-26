@@ -1,85 +1,149 @@
+// clouds.js
+// ─────────────────────────────────────────────────────────────────
+// CLOUD CONFIG
+// ─────────────────────────────────────────────────────────────────
 const CLOUD = {
-  BLEED_X: 36, BLEED_Y: 28,
-  FLOAT_DUR: [4.5, 7.2], FLOAT_DELAY: [0, 2.8],
-};
-function rnd(a,b){return a+Math.random()*(b-a);}
-function makeCloudBg(el) {
-  const old = el.querySelector('.pk-cloud-bg');
-  if (old) old.remove();
-  const w = el.offsetWidth, h = el.offsetHeight;
-  const bgW = w + CLOUD.BLEED_X*2, bgH = h + CLOUD.BLEED_Y*2;
-  const bg = document.createElement('div');
-  bg.className = 'pk-cloud-bg';
-  bg.style.cssText = `position:absolute;left:${-CLOUD.BLEED_X}px;top:${-CLOUD.BLEED_Y}px;width:${bgW}px;height:${bgH}px;pointer-events:none;filter:blur(10px);z-index:0;overflow:visible;`;
-  [{cx:.50,cy:.52,rx:.42,ry:.34},{cx:.20,cy:.28,rx:.24,ry:.26},
-   {cx:.78,cy:.24,rx:.22,ry:.24},{cx:.50,cy:.18,rx:.20,ry:.22},
-   {cx:.25,cy:.68,rx:.20,ry:.20},{cx:.74,cy:.70,rx:.18,ry:.18}
-  ].forEach(b => {
-    const jx=rnd(-.06,.06),jy=rnd(-.05,.05),jr=rnd(-.05,.07);
-    const cx=(b.cx+jx)*bgW, cy=(b.cy+jy)*bgH;
-    const rx=(b.rx+jr)*bgW, ry=(b.ry+jr*.8)*bgH;
-    const blob = document.createElement('div');
-    blob.style.cssText=`position:absolute;background:var(--card-bg,rgba(255,255,255,0.85));border-radius:50%;left:${cx-rx}px;top:${cy-ry}px;width:${rx*2}px;height:${ry*2}px;`;
-    bg.appendChild(blob);
-  });
-  el.style.position = 'relative';
-  el.insertBefore(bg, el.firstChild);
-  Array.from(el.childNodes).forEach(n => {
-    if (n === bg || n._wrapped) return;
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'position:relative;z-index:1;';
-    n._wrapped = true;
-    el.insertBefore(wrap, n);
-    wrap.appendChild(n);
-  });
-  const dur = rnd(...CLOUD.FLOAT_DUR).toFixed(2);
-  const delay = rnd(...CLOUD.FLOAT_DELAY).toFixed(2);
-  el.style.animation = `cloudFloat ${dur}s ease-in-out ${delay}s infinite`;
-}
-function init() {
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      document.querySelectorAll('.card, .skills-grid p, .grid-item').forEach(makeCloudBg);
-    });
-  });
-}
-function initSkyBg() {
-  // Mobile guard — no bg clouds on small screens
-  if (window.matchMedia('(max-width: 768px)').matches) return;
-
-  const bg = document.getElementById('sky-bg');
-  if (!bg) return;
-
-  // DOM guard — if clouds already exist, do nothing.
-  // This prevents any double-execution from regenerating clouds.
-  if (bg.children.length > 0) return;
-
-  // ── Config ────────────────────────────────────────────────────
-  const SKY = {
-    COUNT       : 7,      // slightly reduced to ease GPU layer pressure
-    MIN_W       : 220,
-    MAX_W       : 520,
-    BLUR        : 18,
-    OPACITY_MIN : 0.35,
-    OPACITY_MAX : 0.62,
-    FLOAT_DUR   : [9, 16],
-    FLOAT_DELAY : [0, 6],
-  };
-  // ─────────────────────────────────────────────────────────────
-
-  const BLOB_DEFS = [
+  // Card clouds
+  BLEED_X         : 40,
+  BLEED_Y         : 32,
+  FLOAT_DUR       : [4.5, 7.2],
+  FLOAT_DELAY     : [0, 2.8],
+  // Card cloud blobs
+  CARD_BLOBS : [
+    { cx:.50, cy:.52, rx:.42, ry:.36 },
+    { cx:.18, cy:.30, rx:.26, ry:.28 },
+    { cx:.80, cy:.26, rx:.24, ry:.26 },
+    { cx:.50, cy:.16, rx:.22, ry:.24 },
+    { cx:.26, cy:.70, rx:.20, ry:.22 },
+    { cx:.72, cy:.72, rx:.18, ry:.20 },
+  ],
+  // Background clouds
+  BG_COUNT        : 7,
+  BG_MIN_W        : 240,
+  BG_MAX_W        : 540,
+  BG_OPACITY_MIN  : 0.38,
+  BG_OPACITY_MAX  : 0.65,
+  BG_FLOAT_DUR    : [9, 16],
+  BG_FLOAT_DELAY  : [0, 6],
+  BG_BLOBS : [
     { cx:.50, cy:.52, rx:.45, ry:.38 },
     { cx:.18, cy:.38, rx:.28, ry:.30 },
     { cx:.80, cy:.34, rx:.26, ry:.28 },
     { cx:.50, cy:.22, rx:.22, ry:.26 },
     { cx:.30, cy:.68, rx:.20, ry:.22 },
     { cx:.68, cy:.70, rx:.19, ry:.20 },
-  ];
+  ],
+};
+// ─────────────────────────────────────────────────────────────────
 
-  // ── Session key ───────────────────────────────────────────────
-  // Key lives in sessionStorage so it survives page navigation.
-  // On reload, performance API detects it and a new key is made,
-  // clearing the old config and producing fresh clouds.
+function rnd(a, b) { return a + Math.random() * (b - a); }
+
+// Draw a cloud shape onto a canvas using radial gradients.
+// Each blob is a soft radial gradient — no filter:blur needed.
+// The result is one single GPU layer per cloud regardless of
+// blob count, and the browser can never evict it mid-paint.
+function drawCloudCanvas(canvas, w, h, blobs, jitters, opacity) {
+  canvas.width  = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, w, h);
+
+  blobs.forEach((b, i) => {
+    const j  = jitters[i];
+    const cx = (b.cx + j.jx) * w;
+    const cy = (b.cy + j.jy) * h;
+    const rx = (b.rx + j.jr) * w;
+    const ry = (b.ry + j.jr * .8) * h;
+    // Use the larger radius for the radial gradient
+    const r  = Math.max(rx, ry);
+
+    ctx.save();
+    // Scale non-uniformly to get ellipse shape from a circle gradient
+    ctx.translate(cx, cy);
+    ctx.scale(rx / r, ry / r);
+    ctx.translate(-cx, -cy);
+
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    grad.addColorStop(0,   `rgba(255,255,255,${opacity.toFixed(2)})`);
+    grad.addColorStop(0.5, `rgba(255,255,255,${(opacity * 0.7).toFixed(2)})`);
+    grad.addColorStop(1,   'rgba(255,255,255,0)');
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.restore();
+  });
+}
+
+// ── Card clouds ───────────────────────────────────────────────────
+function makeCloudBg(el) {
+  // Remove old canvas if reshuffling
+  const old = el.querySelector('.pk-cloud-canvas');
+  if (old) old.remove();
+
+  // Wrap content in a z-index layer if not already done
+  Array.from(el.childNodes).forEach(n => {
+    if (n._cloudWrapped || n.nodeType !== 1) return;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;z-index:1;';
+    n._cloudWrapped = true;
+    el.insertBefore(wrap, n);
+    wrap.appendChild(n);
+  });
+
+  el.style.position = 'relative';
+
+  const w = el.offsetWidth  + CLOUD.BLEED_X * 2;
+  const h = el.offsetHeight + CLOUD.BLEED_Y * 2;
+
+  const jitters = CLOUD.CARD_BLOBS.map(() => ({
+    jx : rnd(-.06, .06),
+    jy : rnd(-.05, .05),
+    jr : rnd(-.05, .07),
+  }));
+
+  const canvas = document.createElement('canvas');
+  canvas.className = 'pk-cloud-canvas';
+  canvas.style.cssText = [
+    'position:absolute',
+    `left:${-CLOUD.BLEED_X}px`,
+    `top:${-CLOUD.BLEED_Y}px`,
+    `width:${w}px`,
+    `height:${h}px`,
+    'z-index:0',
+    'pointer-events:none',
+    'will-change:transform',
+  ].join(';');
+
+  drawCloudCanvas(canvas, w, h, CLOUD.CARD_BLOBS, jitters, 0.92);
+
+  el.insertBefore(canvas, el.firstChild);
+
+  const dur   = rnd(...CLOUD.FLOAT_DUR).toFixed(2);
+  const delay = rnd(...CLOUD.FLOAT_DELAY).toFixed(2);
+  el.style.animation = `cloudFloat ${dur}s ease-in-out ${delay}s infinite`;
+}
+
+function init() {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.card, .skills-grid p, .grid-item')
+        .forEach(makeCloudBg);
+    });
+  });
+}
+
+// ── Background clouds ─────────────────────────────────────────────
+function initSkyBg() {
+  if (window.matchMedia('(max-width: 768px)').matches) return;
+
+  const bg = document.getElementById('sky-bg');
+  if (!bg) return;
+  if (bg.children.length > 0) return;
+
+  // Session key — lives in sessionStorage so it survives navigation.
+  // Reload detection regenerates it so clouds change on refresh.
   const isReload = (
     performance.getEntriesByType('navigation')[0]?.type === 'reload'
   );
@@ -94,7 +158,6 @@ function initSkyBg() {
 
   const storeKey = 'pk-sky-' + skyKey;
 
-  // ── Load or generate config ───────────────────────────────────
   let configs = null;
   const stored = sessionStorage.getItem(storeKey);
   if (stored) {
@@ -103,26 +166,26 @@ function initSkyBg() {
 
   if (!configs) {
     const cols = 3;
-    const rows = Math.ceil(SKY.COUNT / cols);
+    const rows = Math.ceil(CLOUD.BG_COUNT / cols);
     configs = [];
 
-    for (let i = 0; i < SKY.COUNT; i++) {
-      const col = i % cols;
-      const row = Math.floor(i / cols);
-      const w   = rnd(SKY.MIN_W, SKY.MAX_W);
-      const h   = w * rnd(0.38, 0.58);
+    for (let i = 0; i < CLOUD.BG_COUNT; i++) {
+      const col   = i % cols;
+      const row   = Math.floor(i / cols);
+      const w     = rnd(CLOUD.BG_MIN_W, CLOUD.BG_MAX_W);
+      const h     = w * rnd(0.38, 0.58);
       const zoneX = (col / cols) * 100 + (1 / cols) * 50;
       const zoneY = (row / rows) * 100 + (1 / rows) * 50;
 
       configs.push({
         w,
         h,
-        op    : rnd(SKY.OPACITY_MIN, SKY.OPACITY_MAX),
-        dur   : rnd(...SKY.FLOAT_DUR),
-        delay : rnd(...SKY.FLOAT_DELAY),
+        op    : rnd(CLOUD.BG_OPACITY_MIN, CLOUD.BG_OPACITY_MAX),
+        dur   : rnd(...CLOUD.BG_FLOAT_DUR),
+        delay : rnd(...CLOUD.BG_FLOAT_DELAY),
         x     : Math.min(90, Math.max(0,  zoneX + rnd(-14, 14))),
         y     : Math.min(88, Math.max(-8, zoneY + rnd(-12, 12))),
-        blobs : BLOB_DEFS.map(() => ({
+        blobs : CLOUD.BG_BLOBS.map(() => ({
           jx : rnd(-.07, .07),
           jy : rnd(-.06, .06),
           jr : rnd(-.06, .08),
@@ -133,66 +196,43 @@ function initSkyBg() {
     sessionStorage.setItem(storeKey, JSON.stringify(configs));
   }
 
-  // ── Build DOM ─────────────────────────────────────────────────
-  // Clouds are built into a fragment first so only one DOM insertion
-  // happens — this prevents the browser triggering multiple
-  // compositing layer recalculations during construction.
+  // Build into a fragment — single DOM insertion, one compositing
+  // recalculation instead of one per cloud
   const fragment = document.createDocumentFragment();
 
   configs.forEach(c => {
-    const cloud = document.createElement('div');
-    cloud.style.cssText = [
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = [
       'position:absolute',
       `left:${c.x}%`,
       `top:${c.y}%`,
-      `width:${c.w}px`,
-      `height:${c.h}px`,
-      `opacity:${c.op.toFixed(2)}`,
       'transform:translate(-50%,-50%)',
-      // will-change locks this element into its own GPU layer immediately,
-      // preventing it from being dropped when cards add their own
-      // filter:blur layers shortly after
       'will-change:transform',
       `animation:bgCloudFloat ${c.dur.toFixed(1)}s ease-in-out ${c.delay.toFixed(1)}s infinite`,
     ].join(';');
 
-    const blobWrap = document.createElement('div');
-    blobWrap.style.cssText = [
-      'position:absolute',
-      'inset:0',
-      `filter:blur(${SKY.BLUR}px)`,
-      'overflow:visible',
-      'will-change:transform',
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = [
+      `width:${c.w}px`,
+      `height:${c.h}px`,
+      'display:block',
     ].join(';');
 
-    BLOB_DEFS.forEach((b, idx) => {
-      const { jx, jy, jr } = c.blobs[idx];
-      const cx = (b.cx + jx) * c.w;
-      const cy = (b.cy + jy) * c.h;
-      const rx = (b.rx + jr) * c.w;
-      const ry = (b.ry + jr * .8) * c.h;
-      const blob = document.createElement('div');
-      blob.style.cssText = [
-        'position:absolute',
-        `left:${cx - rx}px`,
-        `top:${cy - ry}px`,
-        `width:${rx * 2}px`,
-        `height:${ry * 2}px`,
-        'background:white',
-        'border-radius:50%',
-      ].join(';');
-      blobWrap.appendChild(blob);
-    });
+    drawCloudCanvas(canvas, c.w, c.h, CLOUD.BG_BLOBS, c.blobs, c.op);
 
-    cloud.appendChild(blobWrap);
-    fragment.appendChild(cloud);
+    wrapper.appendChild(canvas);
+    fragment.appendChild(wrapper);
   });
 
-  // Single DOM insertion — one compositing recalculation instead of many
   bg.appendChild(fragment);
 }
+
+// ── Init ──────────────────────────────────────────────────────────
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => { init(); initSkyBg(); });
+  document.addEventListener('DOMContentLoaded', () => {
+    init();
+    initSkyBg();
+  });
 } else {
   init();
   initSkyBg();

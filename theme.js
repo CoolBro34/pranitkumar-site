@@ -358,7 +358,7 @@ function _injectThemeUI() {
       mobBtn.title     = 'Cycle theme';
       mobBtn.addEventListener('click', e => {
         e.stopPropagation(); // don't close menu
-        _cycleMobileTheme();
+        showThemePopup();
       });
       overlay.appendChild(mobBtn);
     }

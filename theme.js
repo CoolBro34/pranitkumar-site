@@ -388,32 +388,3 @@ function _initThemeSystem() {
 }
 
 _initThemeSystem();
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  const popupBody = document.querySelector('.theme-popup-body');
-
-  if (popupBody && !popupBody.querySelector('.theme-popup-note')) {
-    const note = document.createElement('div');
-    note.className = 'theme-popup-note';
-    note.innerHTML = `
-      Uses your local sunrise & sunset times.<br>
-      Reload the page to see different clouds and aurora patterns.
-    `;
-    popupBody.appendChild(note);
-
-    const perf = document.createElement('button');
-    perf.className = 'popup-performance-toggle';
-    perf.textContent = window.PK_PERFORMANCE_MODE
-      ? 'Disable Performance Mode'
-      : 'Enable Performance Mode';
-
-    perf.addEventListener('click', () => {
-      const next = !(localStorage.getItem('pk-performance-mode') === '1');
-      localStorage.setItem('pk-performance-mode', next ? '1' : '0');
-      location.reload();
-    });
-
-    popupBody.appendChild(perf);
-  }
-});

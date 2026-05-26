@@ -4,7 +4,7 @@
 // Night: aurora canvas backgrounds on cards + animated stars/aurora sky
 
 // ─────────────────────────────────────────────────────────────────
-// CONFIG
+// CONFIG 
 // ─────────────────────────────────────────────────────────────────
 
 const CLOUD = {

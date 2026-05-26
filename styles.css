@@ -323,13 +323,14 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   inset: 0;
   z-index: 999998;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.45);
   opacity: 0;
   pointer-events: none;
   transition: opacity .35s ease;
-  backdrop-filter: blur(4px);
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 4.5rem 1.5rem 0 0;
+  background: transparent;
+  backdrop-filter: none;
 }
 
 #theme-popup.pk-popup-visible {
@@ -597,7 +598,7 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 [data-theme="night"] h1,
 [data-theme="night"] h2,
 [data-theme="night"] h3 { color: var(--text-primary); }
-
+[data-theme="night"] .tagline { color: var(--text-primary); }
 [data-theme="night"] p,
 [data-theme="night"] li { color: var(--text-secondary); }
 
@@ -615,9 +616,8 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   .pk-theme-group { display: none; }
   /* mobile toggle is in the overlay, not the topbar */
   #theme-mobile-toggle { display: none !important; }
-  .pk-right-rail { gap: .35rem; }
-  /* On mobile the right rail just has the single active-btn + perf + contact(hidden) */
-  .pk-right-rail .contact-rail { display: none; }
+   .pk-right-rail { display: none; }
+   #nav-hamburger { margin-left: auto; }
 
   .pk-popup-perf-row { flex-direction: column; align-items: flex-start; gap: .5rem; }
   .pk-perf-toggle-btn { align-self: flex-start; }

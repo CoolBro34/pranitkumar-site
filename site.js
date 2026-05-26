@@ -186,10 +186,18 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     COL_DARK          : t.cursorDark    || '#1a4fd6',
     COL_GLOW          : t.cursorGlow    || '37,99,235',
   };
+  
+  window.addEventListener('pk-theme-applied', (e) => {
+  const t = e.detail;
+  C.COL_PRIMARY = t.cursorPrimary || C.COL_PRIMARY;
+  C.COL_LIGHT   = t.cursorLight   || C.COL_LIGHT;
+  C.COL_DARK    = t.cursorDark    || C.COL_DARK;
+  C.COL_GLOW    = t.cursorGlow    || C.COL_GLOW;
+});
   // ═══════════════════════════════════════════════════════════════
 
   const canvas = document.createElement('canvas');
-  canvas.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:100010;';
+  canvas.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:1000001;';
   document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 

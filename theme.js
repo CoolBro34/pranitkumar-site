@@ -1,6 +1,6 @@
 // theme.js
 // ─────────────────────────────────────────────────────────────────
-// THEME DEFINITIONS 
+// THEME DEFINITIONS
 // ─────────────────────────────────────────────────────────────────
 
 const THEMES = {
@@ -64,26 +64,74 @@ const THEMES = {
 };
 
 // ─────────────────────────────────────────────────────────────────
-// TIME-BASED DETECTION — uses the user's local system time
+// TIME-BASED DETECTION
+//
+// Uses IANA timezone name (via Intl.DateTimeFormat) to look up
+// real lat/lon from TZ_TABLE (tz-table.js, loaded before this file).
+// Falls back to the UTC-offset proxy if the zone isn't in the table
+// (unrecognised or very old browser).
+//
+// Longitude is used to correct solar noon: solar noon ≠ 12:00 clock
+// time unless you happen to be on your timezone's standard meridian.
+// Earth rotates 1°/4 min, so every degree you're west of the
+// standard meridian shifts solar noon 4 minutes later, and east
+// shifts it earlier.  This eliminates the within-timezone error that
+// a latitude-only approach misses (e.g. Phoenix sits 7° west of the
+// UTC-7 meridian → solar noon is 12:28, not 12:00).
 // ─────────────────────────────────────────────────────────────────
 
-function _localIsDaytime() {
-  const now        = new Date();
-  const h          = now.getHours() + now.getMinutes() / 60;
-  const dayOfYear  = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
-  const utcOffsetH = -now.getTimezoneOffset() / 60;
-  const latRad     = Math.max(-55, Math.min(55, utcOffsetH * 7.5)) * Math.PI / 180;
-  const decl       = 0.4093 * Math.sin(2 * Math.PI * (dayOfYear - 81) / 365);
-  const cosH       = -Math.tan(latRad) * Math.tan(decl);
-  const halfDay    = (Math.abs(cosH) >= 1) ? (cosH < 0 ? 12 : 0)
-                   : Math.acos(Math.max(-1, Math.min(1, cosH))) * 12 / Math.PI;
-  return h >= (12 - halfDay) && h <= (12 + halfDay);
+function _resolveCoords() {
+  // TZ_TABLE is defined in tz-table.js which must be loaded first.
+  // If it somehow isn't available, fall back gracefully.
+  const table = (typeof TZ_TABLE !== 'undefined') ? TZ_TABLE : null;
+
+  if (table) {
+    const tz    = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const entry = table[tz];
+    if (entry) return { lat: entry.lat, lon: entry.lon };
+  }
+
+  // Fallback: estimate latitude from UTC offset (original behaviour).
+  // Longitude is left null so the solar-noon correction is skipped.
+  const utcOffsetH = -new Date().getTimezoneOffset() / 60;
+  return { lat: Math.max(-55, Math.min(55, utcOffsetH * 7.5)), lon: null };
+}
+
+function _localIsDaytime(lat, lon) {
+  const now       = new Date();
+  const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+  const latRad    = Math.max(-89, Math.min(89, lat)) * Math.PI / 180;
+
+  // Solar declination — standard astronomical approximation.
+  // 0.4093 rad = 23.45° (Earth's axial tilt). dayOfYear-81 aligns
+  // the sine peak with the summer solstice (~day 172).
+  const decl    = 0.4093 * Math.sin(2 * Math.PI * (dayOfYear - 81) / 365);
+  const cosH    = -Math.tan(latRad) * Math.tan(decl);
+  const halfDay = (Math.abs(cosH) >= 1)
+    ? (cosH < 0 ? 12 : 0)
+    : Math.acos(Math.max(-1, Math.min(1, cosH))) * 12 / Math.PI;
+
+  // Solar noon correction from longitude.
+  // Standard meridian = utcOffset × 15°. Difference between that and
+  // the actual longitude (in degrees) converts to hours at 1°/15°.
+  // Positive offset → solar noon is later than 12:00 clock time
+  // (you're west of your timezone's centre meridian).
+  let solarNoon = 12;
+  if (lon != null) {
+    const utcOffsetH  = -now.getTimezoneOffset() / 60;
+    const stdMeridian = utcOffsetH * 15;
+    solarNoon         = 12 + (stdMeridian - lon) / 15;
+  }
+
+  const h = now.getHours() + now.getMinutes() / 60;
+  return h >= (solarNoon - halfDay) && h <= (solarNoon + halfDay);
 }
 
 function resolveThemeKey(mode) {
   if (mode === 'light') return 'day';
   if (mode === 'dark')  return 'night';
-  return _localIsDaytime() ? 'day' : 'night';
+  const { lat, lon } = _resolveCoords();
+  return _localIsDaytime(lat, lon) ? 'day' : 'night';
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -397,4 +445,3 @@ function _initThemeSystem() {
 }
 
 _initThemeSystem();
- 

@@ -43,8 +43,8 @@ function _ensureScratch(w, h) {
 // ─────────────────────────────────────────────────────────────────
 
 const NIGHT = {
-  STAR_COUNT          : 200,
-  STAR_SPECIALS       :   8,
+  STAR_COUNT          : 400,
+  STAR_SPECIALS       :   20,
   RIBBON_ACCENT_COUNT :   2,
   CARD_BLOBS: [
     {cx:.50,cy:.50,rx:.52,ry:.56},

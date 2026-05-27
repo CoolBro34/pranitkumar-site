@@ -408,7 +408,7 @@ function _stopNight() {
 // ─────────────────────────────────────────────────────────────────
 
 function _genStarsFallback(vw, vh, isMobile) {
-  const count = isMobile ? 100 : 200;
+  const count = isMobile ? 200 : 400;
   const stars = Array.from({length:count}, () => ({
     x:rnd(0,vw), y:rnd(0,vh*.9),
     r:Math.random()<.65?.5:Math.random()<.85?.9:1.3,

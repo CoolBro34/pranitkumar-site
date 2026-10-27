@@ -60,10 +60,13 @@ function rnd(a, b) { return a + Math.random() * (b - a); }
 // OFFSCREEN CANVAS SUPPORT DETECTION
 // ─────────────────────────────────────────────────────────────────
 
+// OffscreenCanvas support is not enough by itself; the HTML canvas must also be transferable.
 const _workerSupported = (
   typeof Worker !== 'undefined' &&
   typeof OffscreenCanvas !== 'undefined' &&
-  (() => { try { new OffscreenCanvas(1,1).getContext('2d'); return true; } catch(e) { return false; } })()
+  typeof HTMLCanvasElement !== 'undefined' &&
+  typeof HTMLCanvasElement.prototype.transferControlToOffscreen === 'function' &&
+  (() => { try { return !!new OffscreenCanvas(1, 1).getContext('2d'); } catch (_) { return false; } })()
 );
 
 // ─────────────────────────────────────────────────────────────────

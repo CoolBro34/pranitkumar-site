@@ -1,6 +1,10 @@
 // clouds.js
 // Handles all visual background effects for both day and night themes.
 // Storage is optional; effects still work if browser session storage is blocked.
+const _motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+function _prefersReducedMotion() {
+  return _motionPreference.matches;
+}
 function _sessionGet(key) {
   try { return window.sessionStorage.getItem(key); } catch (_) { return null; }
 }
@@ -262,7 +266,7 @@ function _initNightSky() {
     const offscreen = canvas.transferControlToOffscreen();
     _postWorker('init-sky', {
       canvas: offscreen, vw, vh, isMobile,
-      seed, perfMode: !!window.PK_PERF_MODE,
+      seed, perfMode: !!window.PK_PERF_MODE, reducedMotion: _prefersReducedMotion(),
     }, [offscreen]);
 
     // Worker sends generated seed back so we can cache it
@@ -536,6 +540,12 @@ function _drawFallbackCard(d, t) {
 }
 
 function _startFallbackLoop() {
+  if (_prefersReducedMotion()) {
+    if (_nightSkyData) _drawFallbackSky(_nightSkyData, 0);
+    _nightCardData.forEach(d => _drawFallbackCard(d, 0));
+    return;
+  }
+
   function loop(ts) {
     const t = ts / 1000;
     if (_nightSkyData) _drawFallbackSky(_nightSkyData, t);
@@ -574,6 +584,17 @@ window.reinitEffects = function(themeKey) {
     _initDayCards();
   }
 };
+
+// Reinitialize visual effects if the system motion preference changes.
+function _onMotionPreferenceChange() {
+  const themeKey = document.documentElement.dataset.theme || 'day';
+  if (typeof window.reinitEffects === 'function') window.reinitEffects(themeKey);
+}
+if (typeof _motionPreference.addEventListener === 'function') {
+  _motionPreference.addEventListener('change', _onMotionPreferenceChange);
+} else if (typeof _motionPreference.addListener === 'function') {
+  _motionPreference.addListener(_onMotionPreferenceChange);
+}
 
 // Forward perf-mode changes to the worker
 window.addEventListener('pk-perf-changed', e => {

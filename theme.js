@@ -3,10 +3,10 @@
 // Storage can be unavailable in private or restricted browsing contexts.
 // Keep the page usable in-memory when persistence is blocked.
 function _readLocalStorage(key) {
-  try { return window._readLocalStorage(key); } catch (_) { return null; }
+  try { return window.localStorage.getItem(key); } catch (_) { return null; }
 }
 function _writeLocalStorage(key, value) {
-  try { window._writeLocalStorage(key, value); } catch (_) { /* persistence is optional */ }
+  try { window.localStorage.setItem(key, value); } catch (_) { /* persistence is optional */ }
 }
 // ─────────────────────────────────────────────────────────────────
 // THEME DEFINITIONS

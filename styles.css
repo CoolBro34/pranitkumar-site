@@ -249,7 +249,7 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 }
 
 /* ============================================================
-   THEME BUTTONS — injected by theme.js into the desktop rail and mobile topbar
+   DESKTOP THEME BUTTONS — injected by theme.js into the right rail
    ============================================================ */
 .pk-theme-btn {
   background: transparent;

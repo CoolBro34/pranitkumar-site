@@ -301,36 +301,30 @@ function _drawCard(card, t) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// ANIMATION LOOP — worker-owned, no rAF (not available in workers)
-// Uses MessageChannel for ~60fps high-resolution scheduling
+// ANIMATION LOOP — worker-owned, capped at approximately 60 fps
+// A timer prevents a tight message loop from consuming an entire CPU core
 // ─────────────────────────────────────────────────────────────────
 
-let _port = null;
 
 function _loop() {
   if (!_running) return;
   const t = (performance.now() - _startTime) / 1000;
   _drawSky(t);
   _cards.forEach(c => _drawCard(c, t));
-  // Re-schedule via port for minimal latency
-  _port.postMessage(null);
+  // Cap the loop near 60 fps instead of spinning as fast as messages allow.
+  _loopId = setTimeout(_loop, 16);
 }
 
 function _startLoop() {
   if (_running) return;
   _running = true;
   _startTime = performance.now();
-  // MessageChannel trick: port.onmessage fires as a microtask-adjacent
-  // macrotask — much tighter than setTimeout(fn, 0), ~1ms resolution
-  const { port1, port2 } = new MessageChannel();
-  _port = port1;
-  port2.onmessage = _loop;
-  port1.postMessage(null); // kick off
+  _loopId = setTimeout(_loop, 0); // draw the first frame immediately
 }
 
 function _stopLoop() {
   _running = false;
-  if (_port) { _port.close(); _port = null; }
+  if (_loopId !== null) { clearTimeout(_loopId); _loopId = null; }
 }
 
 // ─────────────────────────────────────────────────────────────────

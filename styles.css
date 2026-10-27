@@ -717,3 +717,15 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
     transform: none !important;
   }
 }
+
+
+/* Respect reduced-motion preferences while keeping controls and navigation usable. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

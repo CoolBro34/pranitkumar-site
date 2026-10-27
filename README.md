@@ -34,7 +34,7 @@ The shared scripts are included at the bottom of the page where they need the co
 
 ## Gallery images
 
-Add image files under `images/`, then add their repository-root-relative paths to `gallery/manifest.json`. Manifest entries may be plain filename strings or objects with a `filename` and optional `caption`. Human-written alt text is not currently part of the manifest schema, so the renderer falls back to the filename; provide meaningful captions and alt text as the collection grows.
+Add image files under `images/`, then add their repository-root-relative paths to `gallery/manifest.json`. Manifest entries may be plain filename strings or objects with a `filename` and optional `caption`. Human-written alt text is not currently part of the manifest schema, so the renderer falls back to the filename. If adding per-image alt text, update both this schema documentation and gallery.js together.
 
 `images.json` currently mirrors `gallery/manifest.json`, but the site's gallery renderer reads the latter. Keep the two files synchronized if the mirror is still needed.
 

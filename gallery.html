@@ -93,6 +93,7 @@
 
             // Only reveal the card once the image has actually loaded
             img.addEventListener('load', () => {
+              img.style.display = '';
               wrapper.style.display = '';
             });
 

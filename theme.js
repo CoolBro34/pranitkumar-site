@@ -1,4 +1,13 @@
 // theme.js
+
+// Storage can be unavailable in private or restricted browsing contexts.
+// Keep the page usable in-memory when persistence is blocked.
+function _readLocalStorage(key) {
+  try { return window._readLocalStorage(key); } catch (_) { return null; }
+}
+function _writeLocalStorage(key, value) {
+  try { window._writeLocalStorage(key, value); } catch (_) { /* persistence is optional */ }
+}
 // ─────────────────────────────────────────────────────────────────
 // THEME DEFINITIONS
 // ─────────────────────────────────────────────────────────────────
@@ -180,7 +189,7 @@ let _switchLock = false;
 function switchTheme(mode) {
   if (_switchLock) return;
   _switchLock = true;
-  localStorage.setItem('pk-theme-mode', mode);
+  _writeLocalStorage('pk-theme-mode', mode);
   window.PK_THEME_MODE = mode;
 
   const overlay = document.getElementById('theme-transition-overlay');
@@ -332,7 +341,7 @@ function _injectThemeUI() {
     if (perfPopupBtn) {
       perfPopupBtn.addEventListener('click', () => {
         window.PK_PERF_MODE = !window.PK_PERF_MODE;
-        localStorage.setItem('pk-perf-mode', window.PK_PERF_MODE ? '1' : '0');
+        _writeLocalStorage('pk-perf-mode', window.PK_PERF_MODE ? '1' : '0');
         _syncPerfPopupBtn();
         // Re-init effects if night is active
         const perfBtn = document.getElementById('pk-nav-perf-btn');
@@ -378,7 +387,7 @@ function _injectThemeUI() {
     if (window.PK_PERF_MODE) perfBtn.classList.add('pk-theme-active');
     perfBtn.addEventListener('click', () => {
       window.PK_PERF_MODE = !window.PK_PERF_MODE;
-      localStorage.setItem('pk-perf-mode', window.PK_PERF_MODE ? '1' : '0');
+      _writeLocalStorage('pk-perf-mode', window.PK_PERF_MODE ? '1' : '0');
       perfBtn.classList.toggle('pk-theme-active', window.PK_PERF_MODE);
       _syncPerfPopupBtn();
       if (document.documentElement.dataset.theme === 'night' &&
@@ -418,9 +427,9 @@ function _injectThemeUI() {
 // ─────────────────────────────────────────────────────────────────
 
 function _initThemeSystem() {
-  const saved = localStorage.getItem('pk-theme-mode');
+  const saved = _readLocalStorage('pk-theme-mode');
   window.PK_THEME_MODE = saved || 'auto';
-  window.PK_PERF_MODE  = localStorage.getItem('pk-perf-mode') === '1';
+  window.PK_PERF_MODE  = _readLocalStorage('pk-perf-mode') === '1';
   const key = resolveThemeKey(window.PK_THEME_MODE);
   applyTheme(key);
 

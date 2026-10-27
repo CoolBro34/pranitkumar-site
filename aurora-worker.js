@@ -6,11 +6,6 @@
  * The worker owns the drawing loop; the main thread manages page layout and
  * IntersectionObserver visibility. This file does not access the DOM.
  */
-// aurora-worker.js
-// Runs entirely off the main thread. Owns all night-mode drawing.
-// Receives OffscreenCanvas handles for sky + each card via postMessage.
-// Drives its own animation loop — zero main-thread drawing cost during animation.
-
 'use strict';
 
 // ─────────────────────────────────────────────────────────────────

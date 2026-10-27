@@ -15,12 +15,12 @@
   <div id="sky-bg"></div>
   <div id="cursor-orb" style="display:none;"></div>
   <header class="topbar" id="topbar">
-    <a class="brand" href="pranitkumar.com/">PK</a>
+    <a class="brand" href="/">PK</a>
     <button id="nav-hamburger" class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
     <nav class="site-nav" aria-label="Primary">
-      <a href="index.html#top">About</a>
+      <a href="index.html#about">About</a>
       <a href="index.html#education">Education</a>
       <a href="index.html#distinctions">Distinctions</a>
       <a href="index.html#extracurriculars">Extracurriculars</a>
@@ -34,7 +34,7 @@
 
   <div id="mobile-nav-overlay" aria-hidden="true">
     <nav>
-      <a href="index.html#top">About</a>
+      <a href="index.html#about">About</a>
       <a href="index.html#education">Education</a>
       <a href="index.html#distinctions">Distinctions</a>
       <a href="index.html#extracurriculars">Extracurriculars</a>
@@ -61,7 +61,7 @@
     <p class="pk-coming-soon" style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,3rem);color:var(--text-muted);text-align:center;margin-top:4rem;padding-bottom:2rem;font-style:italic;">More coming soon.</p>
   </main>
 
-  <footer>© 2025 Pranit Kumar</footer>
+  <footer>© 2026 Pranit Kumar</footer>
   <script src="site.js"></script>
   <script src="clouds.js"></script>
   <script>
@@ -89,6 +89,7 @@
             img.alt = base;
             img.style.display = 'none';
             img.loading = 'lazy';
+            img.decoding = 'async';
 
             // Only reveal the card once the image has actually loaded
             img.addEventListener('load', () => {

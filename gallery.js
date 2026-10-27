@@ -58,6 +58,6 @@
     .catch((error) => {
       // Keep the failure visible instead of presenting an empty gallery.
       console.error('Unable to load gallery:', error);
-      grid.textContent = 'Unable to load gallery.';
+      grid.innerHTML = '<p style="font-family:\'IBM Plex Mono\',monospace;font-size:.78rem;color:var(--text-muted);">Unable to load gallery.</p>';
     });
 })();

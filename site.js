@@ -168,7 +168,7 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
     COL_DARK          : t.cursorDark    || '#1a4fd6',
     COL_GLOW          : t.cursorGlow    || '37,99,235',
   };
-  
+
   window.addEventListener('pk-theme-applied', (e) => {
   const t = e.detail;
   C.COL_PRIMARY = t.cursorPrimary || C.COL_PRIMARY;
@@ -383,4 +383,4 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
   startIdleCountdown();
   animationFrame = requestAnimationFrame(animate);
 }
- 
+

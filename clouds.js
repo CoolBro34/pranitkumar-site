@@ -1,5 +1,20 @@
 // clouds.js
 // Handles all visual background effects for both day and night themes.
+// Storage is optional; effects still work if browser session storage is blocked.
+const _motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+function _prefersReducedMotion() {
+  return _motionPreference.matches;
+}
+function _sessionGet(key) {
+  try { return window.sessionStorage.getItem(key); } catch (_) { return null; }
+}
+function _sessionSet(key, value) {
+  try { window.sessionStorage.setItem(key, value); } catch (_) { /* caching is optional */ }
+}
+function _sessionRemove(key) {
+  try { window.sessionStorage.removeItem(key); } catch (_) { /* caching is optional */ }
+}
+
 // Day:   cloud blob backgrounds on cards + static canvas sky clouds
 // Night: aurora runs entirely in aurora-worker.js via OffscreenCanvas.
 //        Main thread only creates canvases, transfers control, and
@@ -138,15 +153,15 @@ function _initDaySky() {
   };
 
   const isReload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
-  let skyKey = sessionStorage.getItem('pk-sky-key');
+  let skyKey = _sessionGet('pk-sky-key');
   if (!skyKey || isReload) {
-    if (skyKey) sessionStorage.removeItem('pk-sky-' + skyKey);
+    if (skyKey) _sessionRemove('pk-sky-' + skyKey);
     skyKey = Math.random().toString(36).slice(2);
-    sessionStorage.setItem('pk-sky-key', skyKey);
+    _sessionSet('pk-sky-key', skyKey);
   }
   const storeKey = 'pk-sky-' + skyKey;
   let configs = null;
-  try { configs = JSON.parse(sessionStorage.getItem(storeKey) || 'null'); } catch(e) {}
+  try { configs = JSON.parse(_sessionGet(storeKey) || 'null'); } catch(e) {}
 
   if (!configs) {
     const cols = 3, rows = Math.ceil(DAY_SKY.COUNT / cols);
@@ -162,7 +177,7 @@ function _initDaySky() {
         blobs: DAY_SKY.BLOBS.map(() => ({jx:rnd(-.07,.07),jy:rnd(-.06,.06),jr:rnd(-.06,.08)})),
       });
     }
-    sessionStorage.setItem(storeKey, JSON.stringify(configs));
+    _sessionSet(storeKey, JSON.stringify(configs));
   }
 
   const vw = window.innerWidth, vh = window.innerHeight;
@@ -232,15 +247,15 @@ function _initNightSky() {
 
   // Load cached seed (avoids regenerating on page nav within session)
   const isReload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
-  let nightKey = sessionStorage.getItem('pk-night-key');
+  let nightKey = _sessionGet('pk-night-key');
   if (!nightKey || isReload) {
-    if (nightKey) sessionStorage.removeItem('pk-night-' + nightKey);
+    if (nightKey) _sessionRemove('pk-night-' + nightKey);
     nightKey = Math.random().toString(36).slice(2);
-    sessionStorage.setItem('pk-night-key', nightKey);
+    _sessionSet('pk-night-key', nightKey);
   }
   const storeKey = 'pk-night-' + nightKey;
   let seed = null;
-  try { seed = JSON.parse(sessionStorage.getItem(storeKey) || 'null'); } catch(e) {}
+  try { seed = JSON.parse(_sessionGet(storeKey) || 'null'); } catch(e) {}
 
   const canvas = document.createElement('canvas');
   canvas.width = vw; canvas.height = vh;
@@ -251,14 +266,14 @@ function _initNightSky() {
     const offscreen = canvas.transferControlToOffscreen();
     _postWorker('init-sky', {
       canvas: offscreen, vw, vh, isMobile,
-      seed, perfMode: !!window.PK_PERF_MODE,
+      seed, perfMode: !!window.PK_PERF_MODE, reducedMotion: _prefersReducedMotion(),
     }, [offscreen]);
 
     // Worker sends generated seed back so we can cache it
     if (!seed) {
       _worker.addEventListener('message', function onSeed(e) {
         if (e.data.type === 'sky-seed') {
-          try { sessionStorage.setItem(storeKey, JSON.stringify(e.data.payload)); } catch(_) {}
+          try { _sessionSet(storeKey, JSON.stringify(e.data.payload)); } catch(_) {}
           _worker.removeEventListener('message', onSeed);
         }
       });
@@ -270,7 +285,7 @@ function _initNightSky() {
     const ribbon = _genRibbonsFallback(vw, vh);
     const rays   = _genRaysFallback(vw, vh, isMobile);
     if (!seed) {
-      try { sessionStorage.setItem(storeKey, JSON.stringify({star, ribbon, rays})); } catch(_) {}
+      try { _sessionSet(storeKey, JSON.stringify({star, ribbon, rays})); } catch(_) {}
     }
     _nightSkyData = { ctx, vw, vh,
       star:   seed ? seed.star   : star,
@@ -525,6 +540,12 @@ function _drawFallbackCard(d, t) {
 }
 
 function _startFallbackLoop() {
+  if (_prefersReducedMotion()) {
+    if (_nightSkyData) _drawFallbackSky(_nightSkyData, 0);
+    _nightCardData.forEach(d => _drawFallbackCard(d, 0));
+    return;
+  }
+
   function loop(ts) {
     const t = ts / 1000;
     if (_nightSkyData) _drawFallbackSky(_nightSkyData, t);
@@ -563,6 +584,17 @@ window.reinitEffects = function(themeKey) {
     _initDayCards();
   }
 };
+
+// Reinitialize visual effects if the system motion preference changes.
+function _onMotionPreferenceChange() {
+  const themeKey = document.documentElement.dataset.theme || 'day';
+  if (typeof window.reinitEffects === 'function') window.reinitEffects(themeKey);
+}
+if (typeof _motionPreference.addEventListener === 'function') {
+  _motionPreference.addEventListener('change', _onMotionPreferenceChange);
+} else if (typeof _motionPreference.addListener === 'function') {
+  _motionPreference.addListener(_onMotionPreferenceChange);
+}
 
 // Forward perf-mode changes to the worker
 window.addEventListener('pk-perf-changed', e => {

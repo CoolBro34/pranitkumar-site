@@ -140,7 +140,8 @@ if (grid && document.body.dataset.page !== 'gallery') {
 window.addEventListener('hashchange', () => {
   document.body.style.overflow = '';
 });
-if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 
   // ═══════════════════════════════════════════════════════════════
   // CURSOR CONFIG — all visual properties live here, edit freely
@@ -200,6 +201,7 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   canvas.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:1000001;';
   document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
+  if (ctx) document.documentElement.classList.add('pk-custom-cursor-enabled');
 
   function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   resize();
@@ -213,6 +215,7 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   let es = 0, targetEs = 0;   // effectStrength: 0 = moving, 1 = idle/hover
   let prevEs = 0, bloomR = 0;
   let idleTimer = null;
+  let animationFrame = null;
 
   function startIdleCountdown() {
     clearTimeout(idleTimer);
@@ -232,7 +235,11 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     startIdleCountdown();
   });
   document.addEventListener('mouseleave', () => { isVisible = false; });
-  document.addEventListener('mouseenter', () => { isVisible = true; startIdleCountdown(); });
+  document.addEventListener('mouseenter', () => {
+    isVisible = true;
+    startIdleCountdown();
+    if (animationFrame === null) animationFrame = requestAnimationFrame(animate);
+  });
 
   const clickables = 'a, button, input, textarea, select, label, [role="button"]';
   document.querySelectorAll(clickables).forEach(el => {
@@ -322,9 +329,9 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     ringAngle += ringSpeed;
     wavePhase += C.WAVE_SPEED;
 
+    animationFrame = null;
+    if (!isVisible) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (!isVisible) { requestAnimationFrame(animate); return; }
 
     const drawR   = currentR + bloomR;
     const waveAmp = C.WAVE_AMPLITUDE * es;
@@ -389,10 +396,10 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
       ctx.globalAlpha = 1;
     }
 
-    requestAnimationFrame(animate);
+    if (isVisible) animationFrame = requestAnimationFrame(animate);
   }
 
   startIdleCountdown();
-  animate();
+  animationFrame = requestAnimationFrame(animate);
 }
  

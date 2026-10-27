@@ -15,6 +15,7 @@ let _skyData   = null;   // { star, ribbon, rays }
 
 let _cards     = [];     // [{ ctx, w, h, pal, blobs, lastT, visible }]
 let _perfMode  = false;
+let _reducedMotion = false;
 let _loopId    = null;
 let _running   = false;
 let _startTime = null;
@@ -301,36 +302,36 @@ function _drawCard(card, t) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// ANIMATION LOOP — worker-owned, no rAF (not available in workers)
-// Uses MessageChannel for ~60fps high-resolution scheduling
+// ANIMATION LOOP — worker-owned, capped at approximately 60 fps
+// A timer prevents a tight message loop from consuming an entire CPU core
 // ─────────────────────────────────────────────────────────────────
 
-let _port = null;
 
 function _loop() {
   if (!_running) return;
   const t = (performance.now() - _startTime) / 1000;
   _drawSky(t);
   _cards.forEach(c => _drawCard(c, t));
-  // Re-schedule via port for minimal latency
-  _port.postMessage(null);
+  // Cap the loop near 60 fps instead of spinning as fast as messages allow.
+  _loopId = setTimeout(_loop, 16);
 }
 
 function _startLoop() {
   if (_running) return;
+  if (_reducedMotion) {
+    // Render one still frame without starting the animation timer.
+    _drawSky(0);
+    _cards.forEach(c => _drawCard(c, 0));
+    return;
+  }
   _running = true;
   _startTime = performance.now();
-  // MessageChannel trick: port.onmessage fires as a microtask-adjacent
-  // macrotask — much tighter than setTimeout(fn, 0), ~1ms resolution
-  const { port1, port2 } = new MessageChannel();
-  _port = port1;
-  port2.onmessage = _loop;
-  port1.postMessage(null); // kick off
+  _loopId = setTimeout(_loop, 0); // draw the first frame immediately
 }
 
 function _stopLoop() {
   _running = false;
-  if (_port) { _port.close(); _port = null; }
+  if (_loopId !== null) { clearTimeout(_loopId); _loopId = null; }
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -344,8 +345,9 @@ self.onmessage = function(e) {
 
     // ── Initialize sky canvas ────────────────────────────────────
     case 'init-sky': {
-      const { canvas, vw, vh, isMobile, seed, perfMode } = payload;
+      const { canvas, vw, vh, isMobile, seed, perfMode, reducedMotion } = payload;
       _perfMode = perfMode;
+      _reducedMotion = !!reducedMotion;
       _skyCtx = canvas.getContext('2d');
       _skyW = vw; _skyH = vh;
       if (seed) {
@@ -386,6 +388,7 @@ self.onmessage = function(e) {
     case 'stop':
       _stopLoop();
       _skyCtx = null; _skyData = null;
+      _reducedMotion = false;
       _cards = [];
       _scratch = null; _scratchCtx = null; _scratchW = 0; _scratchH = 0;
       break;

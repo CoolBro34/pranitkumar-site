@@ -31,6 +31,7 @@ const CLOUD = {
   FLOAT_DELAY: [0,   2.8],
 };
 
+// These geometry settings are mirrored in aurora-worker.js; keep them in sync.
 const NIGHT = {
   RIBBON_ACCENT_COUNT: 2,
   CARD_BLOBS: [

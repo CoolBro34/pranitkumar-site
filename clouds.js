@@ -1,6 +1,12 @@
-// clouds.js
-// Handles all visual background effects for both day and night themes.
-// Storage is optional; effects still work if browser session storage is blocked.
+/**
+ * Canvas-based background effects for both site themes.
+ *
+ * Day mode draws a static sky and floating card clouds. Night mode sends
+ * OffscreenCanvas handles to aurora-worker.js when supported, with a
+ * main-thread fallback for browsers that cannot transfer canvases.
+ * Session storage only caches generated positions/seeds; it is not required
+ * for rendering.
+ */
 const _motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
 function _prefersReducedMotion() {
   return _motionPreference.matches;
@@ -127,6 +133,7 @@ function _makeCloudBg(el) {
 }
 
 function _initDayCards() {
+  // Wait for layout to settle before measuring cards for their canvas overlays.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       document.querySelectorAll('.card, .skills-grid p').forEach(_makeCloudBg);
@@ -577,6 +584,7 @@ function _cleanup() {
 // ─────────────────────────────────────────────────────────────────
 
 window.reinitEffects = function(themeKey) {
+  // Theme and motion changes rebuild only the visual-effect layer.
   _cleanup();
   if (themeKey === 'night') {
     _initNight();

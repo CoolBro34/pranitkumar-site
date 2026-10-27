@@ -53,7 +53,6 @@ main, footer { position: relative; z-index: 1; }
    LAYOUT — main, sections
    ============================================================ */
 main{max-width:1200px;margin:0 auto;padding:0 1.5rem}
-#about { scroll-margin-top: 0px; }
 .section { padding-top: 3.5rem; padding-bottom: 3.5rem; }
 .section-label{font-size:.78rem;color:var(--text-label);letter-spacing:.12em;margin:0 0 .6rem;font-family:'IBM Plex Mono',monospace}
 .grid-two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
@@ -72,7 +71,6 @@ main{max-width:1200px;margin:0 auto;padding:0 1.5rem}
 .chip-row{display:flex;flex-wrap:wrap;gap:.55rem}
 .chip{border:1px solid var(--chip-border);border-radius:999px;padding:.35rem .7rem;font-family:'IBM Plex Mono',monospace;font-size:.74rem;color:var(--chip-text);background:var(--chip-bg)}
 .hero-side{display:grid;gap:1rem}
-.scroll-indicator{position:absolute;right:0;bottom:1.1rem;font-size:.7rem;color:var(--text-muted);font-family:'IBM Plex Mono',monospace}
 
 /* ============================================================
    CARDS
@@ -224,7 +222,6 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   }
 
   .hero { grid-template-columns:1fr; min-height:auto; padding-top:1rem; }
-  .scroll-indicator { display:none; }
   .grid-two, .grid-projects, .ap-grid, .skills-grid { grid-template-columns:1fr; }
   .project-wide { grid-column:auto; }
   .skills-grid p { grid-template-columns:1fr; }
@@ -252,15 +249,8 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 }
 
 /* ============================================================
-   DESKTOP THEME TOGGLE GROUP (☼ ☾ ⌛)
-   Injected by theme.js just left of .contact-rail
+   THEME BUTTONS — injected by theme.js into the desktop rail and mobile topbar
    ============================================================ */
-.pk-theme-group {
-  display: flex;
-  align-items: center;
-  gap: .3rem;
-}
-
 .pk-theme-btn {
   background: transparent;
   border: 1px solid transparent;
@@ -295,31 +285,6 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
-}
-
-/* ============================================================
-   MOBILE THEME TOGGLE — single cycling button left of hamburger
-   ============================================================ */
-#theme-mobile-toggle {
-  display: none;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  width: 32px;
-  height: 32px;
-  font-size: 1rem;
-  color: var(--nav-text);
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  line-height: 1;
-  transition: border-color .2s ease, color .2s ease;
-}
-
-#theme-mobile-toggle:hover {
-  border-color: var(--accent);
-  color: var(--accent);
 }
 
 /* ============================================================
@@ -468,25 +433,10 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 }
 
 /* ============================================================
-   MOBILE — show mobile toggle, hide desktop group
+   MOBILE — theme popup layout
    ============================================================ */
 @media (max-width: 768px) {
-  .pk-theme-group {
-    display: none;
-  }
-
-  #theme-mobile-toggle {
-    display: flex;
-    margin-left: auto;
-    margin-right: .5rem;
-  }
-
-  /* Mobile toggle pushes hamburger to far right */
-  #nav-hamburger {
-    margin-left: 0;
-  }
-
-  .pk-popup-options {
+.pk-popup-options {
     flex-direction: column;
   }
 
@@ -618,13 +568,10 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 [data-theme="night"] .section-label { color: var(--text-label); }
 [data-theme="night"] .pk-coming-soon { color: var(--text-primary) !important; }
 /* ============================================================
-   MOBILE — hide desktop theme group, pk-right-rail adjustments
+   MOBILE — layout for theme controls injected by theme.js
    ============================================================ */
 @media (max-width: 768px) {
-  .pk-theme-group { display: none; }
-  /* mobile toggle is in the topbar before the hamburger */
-  #theme-mobile-toggle { display: none !important; }
-  .pk-right-rail { display: none; }
+.pk-right-rail { display: none; }
   #nav-hamburger { margin-left: 0; }
 
   /* Show the theme cycle button in the topbar on mobile */
@@ -654,7 +601,7 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
 [data-theme="night"] .social-row a:hover,
 [data-theme="night"] .contact-list a:hover { color: var(--accent); }
 
-/* Desktop: re-opened popup anchors to top-right */
+/* Desktop: when reopened, the theme popup anchors to the top-right. */
 #theme-popup.pk-popup-anchored {
   align-items: flex-start;
   justify-content: flex-end;
@@ -680,6 +627,7 @@ footer{text-align:center;padding:2rem 1rem 3rem;color:var(--text-muted);font-siz
     margin: 0 auto;
   }
 }
+/* Keep the final mobile override last: it resolves popup sizing on narrow viewports. */
 @media (max-width: 768px) {
 
   #theme-popup {

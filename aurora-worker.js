@@ -1,8 +1,11 @@
-// aurora-worker.js
-// Runs entirely off the main thread. Owns all night-mode drawing.
-// Receives OffscreenCanvas handles for sky + each card via postMessage.
-// Drives its own animation loop — zero main-thread cost during animation.
-
+/**
+ * Night-mode rendering worker.
+ *
+ * clouds.js transfers one OffscreenCanvas for the sky and one per eligible
+ * card, then sends lifecycle, visibility, and performance-mode messages.
+ * The worker owns the drawing loop; the main thread manages page layout and
+ * IntersectionObserver visibility. This file does not access the DOM.
+ */
 'use strict';
 
 // ─────────────────────────────────────────────────────────────────
@@ -335,7 +338,10 @@ function _stopLoop() {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// MESSAGE HANDLER — receives commands from main thread
+// MESSAGE HANDLER — protocol sent by clouds.js:
+// init-sky (canvas/size/seed/options), add-card (canvas/palette/blob data),
+// start/stop (lifecycle), visibility (card index + visible flag), perf-mode.
+// A generated sky seed is returned once so clouds.js can cache it in-session.
 // ─────────────────────────────────────────────────────────────────
 
 self.onmessage = function(e) {

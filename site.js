@@ -1,3 +1,10 @@
+/**
+ * Shared site interactions.
+ *
+ * Loaded after the page markup so the navigation and cursor hooks exist.
+ * Page-specific behavior is selected with body[data-page]. Theme colors are
+ * supplied by theme.js through window.SiteTheme and pk-theme-applied events.
+ */
 const body = document.body;
 const topbar = document.getElementById('topbar');
 const navLinks = Array.from(document.querySelectorAll('.site-nav a'));
@@ -21,8 +28,10 @@ if (body.dataset.page === 'home') {
     .filter(Boolean);
 
   function setActive(href) {
+    // The hero section is #about, but its navigation link points to #top.
+    const navTarget = href === '#about' ? '#top' : href;
     anchors.forEach(a => {
-      a.classList.toggle('active', a.getAttribute('href') === href);
+      a.classList.toggle('active', a.getAttribute('href') === navTarget);
     });
   }
 
@@ -59,40 +68,7 @@ if (body.dataset.page === 'home') {
   });
 }
 
-const grid = document.getElementById('grid');
-if (grid && document.body.dataset.page !== 'gallery') {
-  fetch('gallery/manifest.json')
-    .then((response) => response.json())
-    .then((images) => {
-      images.forEach((entry) => {
-        const filename = typeof entry === 'string' ? entry : entry.filename;
-        if (!filename) return;
-
-        const wrapper = document.createElement('figure');
-        wrapper.className = 'grid-item';
-
-        const image = document.createElement('img');
-        image.className = 'gallery-image';
-        image.src = filename.includes('/') ? filename : `gallery/${filename}`;
-        image.alt = 'Gallery photograph';
-        image.loading = 'lazy';
-        wrapper.appendChild(image);
-
-        if (typeof entry === 'object' && entry.caption) {
-          const caption = document.createElement('figcaption');
-          caption.textContent = entry.caption;
-          wrapper.appendChild(caption);
-        }
-
-        grid.appendChild(wrapper);
-      });
-    })
-    .catch(() => {
-      grid.textContent = 'Unable to load gallery images.';
-    });
-}
-
-
+// Keep the mobile-menu controller isolated from pages that lack its controls.
 (function () {
   const hamburger = document.getElementById('nav-hamburger');
   const overlay = document.getElementById('mobile-nav-overlay');
@@ -192,7 +168,7 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
     COL_DARK          : t.cursorDark    || '#1a4fd6',
     COL_GLOW          : t.cursorGlow    || '37,99,235',
   };
-  
+
   window.addEventListener('pk-theme-applied', (e) => {
   const t = e.detail;
   C.COL_PRIMARY = t.cursorPrimary || C.COL_PRIMARY;
@@ -407,4 +383,4 @@ if (window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
   startIdleCountdown();
   animationFrame = requestAnimationFrame(animate);
 }
- 
+

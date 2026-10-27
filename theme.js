@@ -1,4 +1,10 @@
-// theme.js
+/**
+ * Shared theme controller.
+ *
+ * Load tz-table.js before this file. Theme variables can be applied before
+ * body markup exists; buttons and the first-load popup are injected when the
+ * DOM is ready. Visual effects consume the theme/performance events emitted by this controller.
+ */
 
 // Storage can be unavailable in private or restricted browsing contexts.
 // Keep the page usable in-memory when persistence is blocked.
@@ -440,6 +446,7 @@ function _initThemeSystem() {
     onReady();
   }
 
+  // Auto mode checks periodically so the theme can follow local day/night changes.
   setInterval(() => {
     if (window.PK_THEME_MODE === 'auto') {
       const newKey = resolveThemeKey('auto');

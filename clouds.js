@@ -1,6 +1,12 @@
-// clouds.js
-// Handles all visual background effects for both day and night themes.
-// Storage is optional; effects still work if browser session storage is blocked.
+/**
+ * Canvas-based background effects for both site themes.
+ *
+ * Day mode draws a static sky and floating card clouds. Night mode sends
+ * OffscreenCanvas handles to aurora-worker.js when supported, with a
+ * main-thread fallback for browsers that cannot transfer canvases.
+ * Session storage only caches generated positions/seeds; it is not required
+ * for rendering.
+ */
 const _motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
 function _prefersReducedMotion() {
   return _motionPreference.matches;
@@ -31,6 +37,7 @@ const CLOUD = {
   FLOAT_DELAY: [0,   2.8],
 };
 
+// These geometry settings are mirrored in aurora-worker.js; keep them in sync.
 const NIGHT = {
   RIBBON_ACCENT_COUNT: 2,
   CARD_BLOBS: [
@@ -53,10 +60,13 @@ function rnd(a, b) { return a + Math.random() * (b - a); }
 // OFFSCREEN CANVAS SUPPORT DETECTION
 // ─────────────────────────────────────────────────────────────────
 
+// OffscreenCanvas support is not enough by itself; the HTML canvas must also be transferable.
 const _workerSupported = (
   typeof Worker !== 'undefined' &&
   typeof OffscreenCanvas !== 'undefined' &&
-  (() => { try { new OffscreenCanvas(1,1).getContext('2d'); return true; } catch(e) { return false; } })()
+  typeof HTMLCanvasElement !== 'undefined' &&
+  typeof HTMLCanvasElement.prototype.transferControlToOffscreen === 'function' &&
+  (() => { try { return !!new OffscreenCanvas(1, 1).getContext('2d'); } catch (_) { return false; } })()
 );
 
 // ─────────────────────────────────────────────────────────────────
@@ -126,6 +136,7 @@ function _makeCloudBg(el) {
 }
 
 function _initDayCards() {
+  // Wait for layout to settle before measuring cards for their canvas overlays.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       document.querySelectorAll('.card, .skills-grid p').forEach(_makeCloudBg);
@@ -576,6 +587,7 @@ function _cleanup() {
 // ─────────────────────────────────────────────────────────────────
 
 window.reinitEffects = function(themeKey) {
+  // Theme and motion changes rebuild only the visual-effect layer.
   _cleanup();
   if (themeKey === 'night') {
     _initNight();

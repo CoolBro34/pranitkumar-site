@@ -329,7 +329,7 @@
     </section>
   </main>
 
-  <footer>© 2025 Pranit Kumar</footer>
+  <footer>© 2026 Pranit Kumar</footer>
 
   <script>
     // Topbar scroll
@@ -338,6 +338,8 @@
       topbar.classList.toggle('scrolled', window.scrollY > 8);
     });
 
+    // Fictional prank alerts all lead to the same Rickroll URL; they are not real opportunities.
+    // Keep these links isolated from real applications or recruiting flows.
     // ---- RICKROLL POPUP ENGINE ----
     const RICKROLL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&autoplay=1';
     const POPUP_W = 270;
@@ -464,6 +466,7 @@
       el.addEventListener('animationend', () => el.remove(), { once: true });
     }
 
+    // Stagger the first three popups so they animate in rather than appearing at once.
     function spawnBatch() {
       spawnPopup();
       setTimeout(spawnPopup, 200);

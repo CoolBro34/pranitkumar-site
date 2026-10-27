@@ -1,5 +1,7 @@
 name: Deploy to GitHub Pages
 
+# No build step is needed: this repository serves static HTML/CSS/JS and assets directly.
+
 on:
   push:
     branches: [main]       # runs on every push to main
@@ -10,7 +12,8 @@ permissions:
   pages: write
   id-token: write
 
-# Only one deployment runs at a time; any in-progress run is cancelled
+# This should remain the only Pages deployment workflow to avoid competing publishes.
+# A newer main-branch push supersedes an in-progress deployment.
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -32,7 +35,8 @@ jobs:
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .           # uploads the entire repo root — change to ./src or ./public if needed
+          # Site pages and their relative asset paths live at the repository root.
+          path: .
 
       - name: Deploy
         id: deploy

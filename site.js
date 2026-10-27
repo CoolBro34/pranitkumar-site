@@ -68,7 +68,7 @@ if (body.dataset.page === 'home') {
   });
 }
 
-// Gallery rendering lives in gallery.js; this file only owns shared site interactions.
+// Keep the mobile-menu controller isolated from pages that lack its controls.
 (function () {
   const hamburger = document.getElementById('nav-hamburger');
   const overlay = document.getElementById('mobile-nav-overlay');

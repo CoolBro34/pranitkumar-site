@@ -12,7 +12,12 @@ syncBar();
 if (body.dataset.page === 'home') {
   const anchors = navLinks.filter(link => link.getAttribute('href').startsWith('#'));
   const sections = anchors
-    .map(a => document.querySelector(a.getAttribute('href')))
+    .map(a => {
+      const href = a.getAttribute('href');
+      // The About control points to the true top anchor; track the hero section
+      // for active-nav state so the link still reflects the visible content.
+      return document.querySelector(href === '#top' ? '#about' : href);
+    })
     .filter(Boolean);
 
   function setActive(href) {
@@ -25,7 +30,7 @@ if (body.dataset.page === 'home') {
   // regardless of what the intersection observer says
   function checkTop() {
     if (window.scrollY < 60) {
-      setActive('#about');
+      setActive('#top');
       return true;
     }
     return false;

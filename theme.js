@@ -343,14 +343,11 @@ function _injectThemeUI() {
         window.PK_PERF_MODE = !window.PK_PERF_MODE;
         _writeLocalStorage('pk-perf-mode', window.PK_PERF_MODE ? '1' : '0');
         _syncPerfPopupBtn();
-        // Re-init effects if night is active
         const perfBtn = document.getElementById('pk-nav-perf-btn');
         if (perfBtn) perfBtn.classList.toggle('pk-theme-active', window.PK_PERF_MODE);
-        if (document.documentElement.dataset.theme === 'night' &&
-            typeof window.reinitEffects === 'function') {
-          hideThemePopup();
-          window.reinitEffects('night');
-        }
+        if (document.documentElement.dataset.theme === 'night') hideThemePopup();
+        // Update the running worker without rebuilding its canvases.
+        window.dispatchEvent(new CustomEvent('pk-perf-changed', { detail: window.PK_PERF_MODE }));
       });
     }
 
@@ -390,10 +387,8 @@ function _injectThemeUI() {
       _writeLocalStorage('pk-perf-mode', window.PK_PERF_MODE ? '1' : '0');
       perfBtn.classList.toggle('pk-theme-active', window.PK_PERF_MODE);
       _syncPerfPopupBtn();
-      if (document.documentElement.dataset.theme === 'night' &&
-          typeof window.reinitEffects === 'function') {
-        window.reinitEffects('night');
-      }
+      // Update the running worker without rebuilding its canvases.
+      window.dispatchEvent(new CustomEvent('pk-perf-changed', { detail: window.PK_PERF_MODE }));
     });
     rail.appendChild(perfBtn);
 

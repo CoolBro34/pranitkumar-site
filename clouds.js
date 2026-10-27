@@ -2,13 +2,13 @@
 // Handles all visual background effects for both day and night themes.
 // Storage is optional; effects still work if browser session storage is blocked.
 function _sessionGet(key) {
-  try { return window._sessionGet(key); } catch (_) { return null; }
+  try { return window.sessionStorage.getItem(key); } catch (_) { return null; }
 }
 function _sessionSet(key, value) {
-  try { window._sessionSet(key, value); } catch (_) { /* caching is optional */ }
+  try { window.sessionStorage.setItem(key, value); } catch (_) { /* caching is optional */ }
 }
 function _sessionRemove(key) {
-  try { window._sessionRemove(key); } catch (_) { /* caching is optional */ }
+  try { window.sessionStorage.removeItem(key); } catch (_) { /* caching is optional */ }
 }
 
 // Day:   cloud blob backgrounds on cards + static canvas sky clouds

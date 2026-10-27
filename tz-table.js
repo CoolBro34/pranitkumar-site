@@ -1,3 +1,9 @@
+/**
+ * Time-zone coordinate lookup used by theme.js to estimate local daylight.
+ * Keys are IANA time-zone identifiers; each entry exposes numeric lat/lon
+ * fields. Keep the keys in sync with Intl.DateTimeFormat().resolvedOptions()
+ * output. This data is a lookup aid, not a precise city geocoder.
+ */
 const TZ_TABLE = {
   "Europe/Andorra": {
     "lat": 42.5,

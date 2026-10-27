@@ -140,7 +140,8 @@ if (grid && document.body.dataset.page !== 'gallery') {
 window.addEventListener('hashchange', () => {
   document.body.style.overflow = '';
 });
-if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 
   // ═══════════════════════════════════════════════════════════════
   // CURSOR CONFIG — all visual properties live here, edit freely

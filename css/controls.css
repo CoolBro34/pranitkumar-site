@@ -1,0 +1,97 @@
+/* ============================================================
+   THEME CONTROLS — rail buttons, mobile button, theme popup.
+   Everything here is injected by js/theme/ui.js.
+   ============================================================ */
+
+/* ---- Desktop rail buttons ---- */
+.pk-theme-btn {
+  width: 28px; height: 28px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid transparent; border-radius: 999px;
+  font-size: .9rem; line-height: 1; vertical-align: middle;
+  color: var(--nav-text); cursor: pointer;
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
+}
+.pk-theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pk-theme-btn.pk-theme-active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* SVGs are block-level to remove the inline baseline gap. */
+.pk-theme-btn svg, #pk-overlay-theme-btn svg, .pk-popup-icon svg { display: block; flex-shrink: 0; }
+
+/* ---- Mobile topbar button (hidden on desktop) ---- */
+#pk-overlay-theme-btn {
+  display: none; flex-shrink: 0; z-index: 100005;
+  width: 34px; height: 34px;
+  align-items: center; justify-content: center;
+  background: transparent; border: 1px solid var(--accent); border-radius: 999px;
+  color: var(--accent); cursor: pointer;
+}
+
+/* ---- Popup: anchored top-right on desktop, centred sheet on mobile ---- */
+#theme-popup {
+  position: fixed; inset: 0; z-index: 999998;
+  display: flex; align-items: flex-start; justify-content: flex-end;
+  padding: 4.5rem 1.5rem 0 0;
+  background: transparent; backdrop-filter: none;
+  opacity: 0; pointer-events: none; transition: opacity .35s ease;
+}
+#theme-popup.pk-popup-visible { opacity: 1; pointer-events: all; }
+
+.pk-popup-inner {
+  max-width: 480px; width: calc(100vw - 3rem);
+  padding: 2.5rem 2rem 2rem; text-align: center;
+  background: var(--card-bg, rgba(255, 255, 255, 0.95));
+  border: 1px solid var(--card-border, rgba(255, 255, 255, 0.95));
+  border-radius: 20px; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(20px);
+}
+.pk-popup-title { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3vw, 1.8rem); font-weight: 700; color: var(--text-primary); margin: 0 0 .5rem; }
+.pk-popup-sub   { font-family: 'IBM Plex Mono', monospace; font-size: .74rem; color: var(--text-muted); letter-spacing: .06em; margin: 0 0 .4rem; text-align: center; }
+.pk-popup-reload-note { font-family: 'IBM Plex Mono', monospace; font-size: .66rem; color: var(--text-muted); letter-spacing: .05em; text-align: center; margin: 0 0 1.1rem; opacity: .7; }
+
+.pk-popup-options { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.pk-popup-btn {
+  flex: 1; min-width: 110px; padding: 1.2rem 1rem 1rem;
+  display: flex; flex-direction: column; align-items: center; gap: .35rem;
+  background: transparent; border: 1.5px solid var(--card-border, rgba(0, 0, 0, 0.12)); border-radius: 14px;
+  cursor: pointer;
+  transition: border-color .2s ease, background .2s ease, transform .15s ease;
+}
+.pk-popup-btn:hover { border-color: var(--accent); background: var(--chip-bg); transform: translateY(-2px); }
+.pk-popup-icon  { font-size: 1.8rem; line-height: 1; }
+.pk-popup-label { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: .85rem; color: var(--text-primary); }
+.pk-popup-desc  { font-family: 'IBM Plex Mono', monospace; font-size: .65rem; color: var(--text-muted); letter-spacing: .05em; }
+
+/* ---- Performance row ---- */
+.pk-popup-divider { border: none; border-top: 1px solid var(--card-border, rgba(0, 0, 0, 0.1)); margin: 1.5rem 0 1rem; }
+.pk-popup-perf-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; text-align: left; margin-bottom: .75rem; }
+.pk-popup-perf-text  { display: flex; flex-direction: column; gap: .2rem; }
+.pk-popup-perf-label { display: flex; align-items: center; gap: .4rem; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: .82rem; color: var(--text-primary); }
+.pk-popup-perf-desc  { font-family: 'IBM Plex Mono', monospace; font-size: .64rem; color: var(--text-muted); letter-spacing: .04em; }
+.pk-perf-toggle-btn {
+  flex-shrink: 0; padding: .3rem .8rem;
+  font-family: 'IBM Plex Mono', monospace; font-size: .72rem; font-weight: 500; color: var(--text-muted);
+  background: var(--chip-bg, rgba(0, 0, 0, 0.06)); border: 1.5px solid var(--card-border, rgba(0, 0, 0, 0.12)); border-radius: 999px;
+  cursor: pointer; transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+.pk-perf-toggle-btn.pk-perf-active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ---- Mobile ---- */
+@media (max-width: 768px) {
+  #pk-overlay-theme-btn { display: flex; margin-left: auto; margin-right: .5rem; }
+
+  /* Popup becomes a centred modal sheet over a dimmed, blurred backdrop. */
+  #theme-popup {
+    width: 100vw; height: 100dvh; padding: 0; margin: 0; overflow: hidden;
+    align-items: center; justify-content: center;
+    background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(4px);
+  }
+  .pk-popup-inner { position: relative; width: min(92vw, 420px); max-width: 92vw; margin: 0 auto; }
+
+  .pk-popup-options { flex-direction: column; }
+  .pk-popup-btn { flex-direction: row; justify-content: flex-start; gap: .75rem; padding: .9rem 1rem; min-width: unset; text-align: left; }
+  .pk-popup-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+  .pk-popup-perf-row { flex-direction: column; align-items: stretch; gap: .5rem; }
+  .pk-perf-toggle-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: .75rem 1rem; font-size: .85rem; text-align: center; }
+}

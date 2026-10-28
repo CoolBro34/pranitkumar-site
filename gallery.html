@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery | Pranit Kumar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <!-- Pre-paint theme kernel (classic scripts, must block): sets <html data-theme> before first paint. -->
+  <script src="js/data/tz-table.js"></script>
+  <script src="js/boot/theme-boot.js"></script>
+
+  <!-- Styles, in cascade order: tokens → base → effects → nav → components → controls → night overrides. -->
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/effects.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/controls.css">
+  <link rel="stylesheet" href="css/night.css">
+  <!-- Fetch the whole ES-module graph in parallel instead of discovering it level by level. Regenerate if imports change (see README). -->
+  <link rel="modulepreload" href="js/core/dom.js">
+  <link rel="modulepreload" href="js/core/motion.js">
+  <link rel="modulepreload" href="js/core/random.js">
+  <link rel="modulepreload" href="js/core/session-seed.js">
+  <link rel="modulepreload" href="js/core/storage.js">
+  <link rel="modulepreload" href="js/cursor/config.js">
+  <link rel="modulepreload" href="js/cursor/orb.js">
+  <link rel="modulepreload" href="js/effects/card-decor.js">
+  <link rel="modulepreload" href="js/effects/day.js">
+  <link rel="modulepreload" href="js/effects/index.js">
+  <link rel="modulepreload" href="js/effects/night-backends.js">
+  <link rel="modulepreload" href="js/effects/night.js">
+  <link rel="modulepreload" href="js/main.js">
+  <link rel="modulepreload" href="js/nav/active-link.js">
+  <link rel="modulepreload" href="js/nav/mobile-menu.js">
+  <link rel="modulepreload" href="js/nav/topbar.js">
+  <link rel="modulepreload" href="js/night/config.js">
+  <link rel="modulepreload" href="js/night/generators.js">
+  <link rel="modulepreload" href="js/night/renderer.js">
+  <link rel="modulepreload" href="js/theme/controller.js">
+  <link rel="modulepreload" href="js/theme/icons.js">
+  <link rel="modulepreload" href="js/theme/kernel.js">
+  <link rel="modulepreload" href="js/theme/state.js">
+  <link rel="modulepreload" href="js/theme/ui.js">
+  <link rel="modulepreload" href="js/pages/gallery.js">
+</head>
+<body data-page="gallery">
+  <div id="sky-bg" aria-hidden="true"></div>
+
+  <header class="topbar" id="topbar">
+    <a class="brand" href="/">PK</a>
+    <button id="nav-hamburger" class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="index.html#top">About</a>
+      <a href="index.html#education">Education</a>
+      <a href="index.html#distinctions">Distinctions</a>
+      <a href="index.html#extracurriculars">Extracurriculars</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#skills">Skills</a>
+      <a href="index.html#experience">Experience</a>
+      <a href="gallery.html">Gallery</a>
+    </nav>
+    <!-- js/theme/ui.js adds the theme/performance buttons next to Contact. -->
+    <a class="contact-rail" href="index.html#contact">Contact <span>↗</span></a>
+  </header>
+
+  <!-- Links are generated from .site-nav by js/nav/mobile-menu.js. -->
+  <div id="mobile-nav-overlay" aria-hidden="true"><nav aria-label="Mobile"></nav></div>
+
+  <main class="section">
+    <p class="section-label">// GALLERY</p>
+    <h1 class="gallery-title">Photography &amp; Projects.</h1>
+    <a class="gallery-handle" href="https://instagram.com/pranit.pics" target="_blank" rel="noopener">@pranit.pics ↗</a>
+
+    <!-- js/pages/gallery.js fills this grid from gallery/manifest.json. -->
+    <div class="grid" id="grid"></div>
+
+    <p class="coming-soon">More coming soon.</p>
+  </main>
+
+  <footer>© 2026 Pranit Kumar</footer>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

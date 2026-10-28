@@ -1,0 +1,75 @@
+/* ============================================================
+   THEME TOKENS — single source of truth for every colour.
+
+   :root                    → DAY palette (also what no-JS visitors get)
+   :root[data-theme=night]  → NIGHT palette (overrides day tokens)
+
+   `data-theme` is set before first paint by js/boot/theme-boot.js, so there
+   is never a flash of the wrong palette. The cursor tokens are read back by
+   js/cursor/ whenever the theme changes.
+   ============================================================ */
+:root {
+  /* Sky gradient behind everything */
+  --sky-top:    #5ba3e0;
+  --sky-bottom: #c9e8ff;
+
+  /* Glass cards */
+  --card-bg:     rgba(255, 255, 255, 0.82);
+  --card-border: rgba(255, 255, 255, 0.95);
+  --card-shadow: 0 8px 32px rgba(30, 80, 160, 0.13);
+
+  /* Text */
+  --text-primary:   #0d0d0d;
+  --text-secondary: #374151;
+  --text-muted:     #6b7280;
+  --text-label:     #1e3a5f;
+
+  /* Navigation */
+  --nav-text:            #0d0d0d;
+  --nav-active:          #1e3a5f;
+  --nav-scrolled-bg:     rgba(162, 207, 254, 0.90);
+  --nav-scrolled-border: rgba(255, 255, 255, 0.5);
+  --overlay-bg:          #a2cffe;   /* mobile menu backdrop */
+
+  /* Accent + chips */
+  --accent:      #1e3a5f;
+  --chip-bg:     rgba(255, 255, 255, 0.55);
+  --chip-border: rgba(37, 99, 235, 0.35);
+  --chip-text:   #1f2937;
+
+  /* Custom cursor orb (read by js/cursor/) */
+  --cursor-primary: #1e3a5f;
+  --cursor-light:   #4a7aa8;
+  --cursor-dark:    #0f1f33;
+  --cursor-glow:    30, 58, 95;     /* bare r,g,b — used inside rgba() */
+}
+
+:root[data-theme="night"] {
+  --sky-top:    #010407;
+  --sky-bottom: #061530;
+
+  --card-bg:     rgba(4, 8, 22, 0.85);
+  --card-border: rgba(0, 210, 160, 0.22);
+  --card-shadow: 0 8px 32px rgba(0, 210, 160, 0.10);
+
+  --text-primary:   #eef5ff;
+  --text-secondary: #9ab8d8;
+  --text-muted:     #6a8aaa;
+  --text-label:     #00d2a0;
+
+  --nav-text:            #ddeeff;
+  --nav-active:          #00d2a0;
+  --nav-scrolled-bg:     rgba(1, 4, 9, 0.88);
+  --nav-scrolled-border: rgba(0, 210, 160, 0.20);
+  --overlay-bg:          #010d1e;
+
+  --accent:      #03fcf0;
+  --chip-bg:     rgba(0, 210, 160, 0.07);
+  --chip-border: rgba(0, 210, 160, 0.35);
+  --chip-text:   #00d2a0;
+
+  --cursor-primary: #03fcf0;
+  --cursor-light:   #7ffef8;
+  --cursor-dark:    #01a89e;
+  --cursor-glow:    3, 252, 240;
+}

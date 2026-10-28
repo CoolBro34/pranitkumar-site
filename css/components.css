@@ -1,0 +1,115 @@
+/* ============================================================
+   COMPONENTS — hero, cards, chips, education, projects, skills,
+   gallery CTA/grid, contact list. Mobile reflow sits under each block.
+   ============================================================ */
+
+/* ---- Hero ---- */
+.hero {
+  min-height: calc(100vh - 4.2rem);
+  display: grid; grid-template-columns: 1.65fr 1fr; gap: 2rem;
+  align-items: start; position: relative;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(4rem, 10vw, 9rem);
+  line-height: .95; margin: 0 0 1.25rem;
+  font-weight: 900; letter-spacing: -.03em;
+}
+.tagline {
+  font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400;
+  font-size: clamp(1.1rem, 2.2vw, 1.2rem);
+  max-width: 480px; color: var(--text-secondary);
+}
+.social-row { display: flex; gap: 1rem; margin: 1.4rem 0; }
+.social-row a { color: var(--text-primary); font-weight: 600; text-decoration: none; }
+.social-row a:hover { color: var(--accent); }
+.chip-row { display: flex; flex-wrap: wrap; gap: .55rem; }
+.chip {
+  border: 1px solid var(--chip-border); border-radius: 999px; padding: .35rem .7rem;
+  font-family: 'IBM Plex Mono', monospace; font-size: .74rem;
+  color: var(--chip-text); background: var(--chip-bg);
+}
+.hero-side { display: grid; gap: 1rem; }
+
+@media (max-width: 768px) {
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+}
+
+/* ---- Cards (their background is painted by js/effects/) ---- */
+.card { border-radius: 12px; padding: 1.1rem 1.2rem; position: relative; }
+.card h3 { margin: .35rem 0 .45rem; font-size: clamp(1rem, 2.5vw, 1.2rem); }
+.label { font-size: .7rem; color: var(--text-muted); letter-spacing: .11em; }
+.meta  { font-size: .76rem; color: var(--text-muted); margin: .2rem 0 0; }
+.role  { font-size: .72rem; letter-spacing: .08em; color: var(--text-muted); text-transform: uppercase; margin-top: 0; }
+
+/* ---- Education: AP scores ---- */
+.ap-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: .9rem; }
+.ap-year { font-size: .7rem; letter-spacing: .1em; color: var(--text-muted); margin: .3rem 0; }
+.ap-row  { display: flex; justify-content: space-between; gap: .8rem; font-size: .75rem; margin: .2rem 0; color: var(--chip-text); }
+
+/* ---- Projects ---- */
+.grid-projects { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.project-wide  { grid-column: 1 / -1; }
+.link-pill {
+  display: inline-flex; border: 1px solid var(--text-primary); border-radius: 999px;
+  padding: .4rem .75rem; font-family: 'IBM Plex Mono', monospace; font-size: .76rem;
+  text-decoration: none; color: var(--text-primary);
+}
+.link-pill:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---- Skills ---- */
+.skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem 1rem; }
+.skills-grid p {
+  display: grid; grid-template-columns: 170px 1fr; gap: .8rem; align-items: start;
+  margin: 0; padding: 1rem; border-radius: 12px; position: relative;
+}
+.skills-grid span { font-size: .75rem; color: var(--text-muted); letter-spacing: .08em; }
+
+/* ---- Gallery call-to-action (home) ---- */
+.section-gallery-cta {
+  text-align: center; border-radius: 12px; padding: 5rem 1rem; position: relative;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow); backdrop-filter: blur(12px);
+}
+.section-gallery-cta h2, .gallery-title { font-family: 'Playfair Display', serif; }
+.gallery-cta { font-size: clamp(1.2rem, 3.5vw, 2rem); font-weight: 700; text-decoration: none; color: var(--text-primary); }
+.gallery-cta:hover { color: var(--accent); }
+/* Chained selector keeps the handle muted on hover in both themes. */
+.section-gallery-cta a.handle-link:hover { color: var(--text-muted); }
+.handle-link {
+  display: block; margin-top: 1rem; text-decoration: none;
+  font-family: 'IBM Plex Mono', monospace; font-size: .74rem; color: var(--text-muted);
+}
+
+/* ---- Gallery page ---- */
+.gallery-title { font-size: clamp(2.8rem, 6vw, 5rem); margin: 0 0 1.2rem; }
+.gallery-handle {
+  display: inline-block; margin-bottom: 2.5rem; text-decoration: none;
+  font-family: 'IBM Plex Mono', monospace; font-size: .78rem; letter-spacing: .08em; color: var(--accent);
+}
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; }
+.grid-item { margin: 0; border-radius: 12px; overflow: hidden; position: relative; }
+.gallery-image { width: 100%; height: 340px; object-fit: cover; display: block; }
+.gallery-error { font-family: 'IBM Plex Mono', monospace; font-size: .78rem; color: var(--text-muted); }
+.coming-soon {
+  font-family: 'Playfair Display', serif; font-style: italic; text-align: center;
+  font-size: clamp(1.8rem, 4vw, 3rem); color: var(--text-muted);
+  margin-top: 4rem; padding-bottom: 2rem;
+}
+
+/* ---- Contact ---- */
+.contact-list { list-style: none; margin: 0; padding: 0; max-width: 680px; }
+.contact-list li { display: grid; grid-template-columns: 130px 1fr; padding: 1rem 0; border-bottom: 1px solid var(--nav-scrolled-border); }
+.contact-list span, .contact-list a { font-size: clamp(1rem, 2.2vw, 1.1rem); text-decoration: none; color: var(--text-primary); }
+.contact-list a:hover { color: var(--accent); }
+
+/* ---- Mobile reflow ---- */
+@media (max-width: 768px) {
+  .grid-projects, .ap-grid, .skills-grid { grid-template-columns: 1fr; }
+  .project-wide { grid-column: auto; }
+  .skills-grid p { grid-template-columns: 1fr; }
+  .section-gallery-cta { padding: 2rem 1rem; }
+}
+
+/* Tight link row under a short project card (matches the PCB card spacing). */
+.link-row-tight { margin-top: .75rem; }

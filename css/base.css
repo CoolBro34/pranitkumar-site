@@ -1,0 +1,77 @@
+/* ============================================================
+   BASE — reset, document, typography, page container
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* The orb cursor (js/cursor/) replaces the system cursor only when active. */
+html.pk-custom-cursor-enabled *,
+html.pk-custom-cursor-enabled *::before,
+html.pk-custom-cursor-enabled *::after { cursor: none !important; }
+
+html { scroll-behavior: smooth; min-height: 100%; }
+
+body {
+  margin: 0;
+  background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+a { color: inherit; }
+/* Deliberately low specificity: any component that sets its own hover colour wins. */
+a:hover { color: var(--accent); }
+
+h1, h2, h3 { font-family: 'Playfair Display', serif; color: var(--text-primary); }
+h2 { font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 1.5rem; }
+p, li { color: var(--text-secondary); }
+ul { margin: .5rem 0 0 1.1rem; padding: 0; display: grid; gap: .4rem; }
+
+/* Mono typography shared by labels, metadata and the footer. */
+.label, .meta, .ap-year, .ap-row, .skills-grid span, .role, footer {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ---- Page container & sections (sit above the fixed sky canvas) ---- */
+main, footer { position: relative; z-index: 1; }
+main { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+.section { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+.section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .78rem;
+  color: var(--text-label);
+  letter-spacing: .12em;
+  margin: 0 0 .6rem;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem 1rem 3rem;
+  color: var(--text-muted);
+  font-size: .75rem;
+}
+
+/* Shared layout helpers */
+.grid-two  { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.stack     { display: grid; gap: 1rem; }
+.card-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
+
+@media (max-width: 768px) {
+  .section { padding-top: 2rem; padding-bottom: 2rem; }
+  .grid-two { grid-template-columns: 1fr; }
+}
+
+/* Touch devices keep the system cursor. */
+@media (hover: none), (pointer: coarse) { * { cursor: auto !important; } }
+
+/* Reduced motion: effectively disable animation/transition but keep controls usable. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

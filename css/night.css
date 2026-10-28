@@ -1,0 +1,31 @@
+/* ============================================================
+   NIGHT OVERRIDES — only rules that differ from the base look.
+   Loaded last so equal-specificity rules here win over components.
+
+   Cascade notes (intentional, verified against the original build):
+   • `[data-theme=night] p, li` out-ranks single-class colours, so in night
+     every paragraph (.meta, .role, .ap-*, .label …) reads as --text-secondary.
+   • `[data-theme=night] a:hover` out-ranks .link-pill (so pills don't get an
+     accent border on hover at night) and .site-nav a:hover (cyan hover).
+   ============================================================ */
+
+/* Cards that have no canvas aurora get a CSS glass surface. */
+[data-theme="night"] .hero-side .card,
+[data-theme="night"] .grid-item {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+[data-theme="night"] .link-pill {
+  border-color: var(--card-border);
+  color: var(--chip-text);
+  background: var(--card-bg);
+}
+
+[data-theme="night"] p,
+[data-theme="night"] li           { color: var(--text-secondary); }
+[data-theme="night"] .tagline     { color: var(--text-primary); }
+[data-theme="night"] .section-label { color: var(--text-label); }
+[data-theme="night"] .coming-soon { color: var(--text-primary); }
+[data-theme="night"] a:hover      { color: var(--accent); }

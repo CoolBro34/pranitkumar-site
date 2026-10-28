@@ -1,0 +1,92 @@
+/* ============================================================
+   NAVIGATION — sticky topbar, desktop links, mobile overlay.
+   js/theme/ui.js injects `.pk-right-rail` (theme buttons + Contact).
+   js/nav/mobile-menu.js builds the overlay links and sets --i / --n
+   on them so the stagger below needs no per-item rules.
+   ============================================================ */
+.topbar {
+  position: sticky; top: 0; z-index: 100002;
+  display: flex; align-items: center;
+  padding: 1rem 2rem; background: transparent;
+}
+.topbar.scrolled {
+  border-bottom: 1px solid var(--nav-scrolled-border);
+  backdrop-filter: blur(12px);
+  background: var(--nav-scrolled-bg);
+}
+
+.brand, .contact-rail, .site-nav a {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500; font-size: .75rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  text-decoration: none; color: var(--nav-text);
+}
+.brand { font-size: 1.1rem; font-weight: 800; letter-spacing: .16em; }
+.contact-rail span { color: var(--accent); }
+
+.pk-right-rail { display: flex; align-items: center; gap: .5rem; margin-left: auto; }
+
+/* Links are centred on the viewport regardless of brand / rail widths. */
+.site-nav {
+  display: flex; gap: 1.2rem; align-items: center;
+  position: absolute; left: 50%; transform: translateX(-50%);
+}
+.site-nav a { padding: .2rem 0; border-bottom: 1px solid transparent; }
+.site-nav a:hover, .site-nav a.active {
+  color: var(--nav-active); border-bottom: 1px solid var(--nav-active);
+}
+
+.menu-toggle { display: none; border: none; background: transparent; font-size: 1.4rem; }
+
+/* ---- Mobile overlay (hidden until opened) ---- */
+#mobile-nav-overlay {
+  display: none; position: fixed; inset: 0;
+  width: 100vw; height: 100vh; z-index: 100000;
+  background: var(--overlay-bg);
+  flex-direction: column; align-items: center; justify-content: center;
+}
+
+@keyframes overlayIn  { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes overlayOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-12px); } }
+
+@media (max-width: 768px) {
+  .topbar { padding: 1rem; z-index: 100006; }  /* stay above the overlay */
+  .site-nav a, .contact-rail, .pk-right-rail { display: none; }
+
+  /* Hamburger → X */
+  #nav-hamburger {
+    display: flex; flex-direction: column; justify-content: space-between;
+    width: 28px; height: 20px; padding: 0; margin-left: 0;
+    background: none; border: none; position: relative; z-index: 100005;
+  }
+  #nav-hamburger span {
+    display: block; width: 100%; height: 2px; border-radius: 2px;
+    background: var(--text-primary); transform-origin: center;
+    transition: transform .25s ease, opacity .2s ease;
+  }
+  #nav-hamburger.is-open span:nth-child(1) { transform: rotate(45deg) translateY(6px); }
+  #nav-hamburger.is-open span:nth-child(2) { opacity: 0; }
+  #nav-hamburger.is-open span:nth-child(3) { transform: rotate(-45deg) translateY(-6px); }
+
+  #mobile-nav-overlay.open, #mobile-nav-overlay.closing { display: flex; z-index: 100003; }
+  #mobile-nav-overlay.open    { animation: overlayIn  .28s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+  #mobile-nav-overlay.closing { animation: overlayOut .25s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+  #mobile-nav-overlay nav { display: flex; flex-direction: column; align-items: center; gap: 2rem; }
+  #mobile-nav-overlay nav a {
+    display: block; opacity: 0;
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase; text-decoration: none;
+    color: var(--text-primary);
+    animation: overlayIn .28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  #mobile-nav-overlay nav a:hover, #mobile-nav-overlay nav a.active { color: var(--accent); }
+
+  /* Stagger: opening cascades top→bottom, closing cascades bottom→top.
+     --i is the link's 0-based index, --n the link count. */
+  #mobile-nav-overlay.open nav a { animation-delay: calc((var(--i) + 1) * .04s); }
+  #mobile-nav-overlay.closing nav a {
+    animation: overlayOut .25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: calc((var(--n) - 1 - var(--i)) * .04s);
+  }
+}

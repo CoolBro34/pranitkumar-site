@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#061530">
+  <meta name="description" content="Page not found. Returning to Pranit Kumar's homepage.">
+  <meta http-equiv="refresh" content="5;url=/">
+  <title>Page Not Found | Pranit Kumar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <!-- Pre-paint theme kernel (classic scripts, must block): sets <html data-theme> before first paint. -->
+  <script src="/js/data/tz-table.js"></script>
+  <script src="/js/boot/theme-boot.js"></script>
+
+  <!-- Styles, in cascade order: tokens → base → effects → nav → components → controls → night overrides. -->
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/effects.css">
+  <link rel="stylesheet" href="/css/nav.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/controls.css">
+  <link rel="stylesheet" href="/css/night.css">
+  <link rel="stylesheet" href="/css/pages/error.css">
+  <!-- Fetch the whole ES-module graph in parallel instead of discovering it level by level. Regenerate if imports change (see README). -->
+  <link rel="modulepreload" href="/js/core/dom.js">
+  <link rel="modulepreload" href="/js/core/motion.js">
+  <link rel="modulepreload" href="/js/core/random.js">
+  <link rel="modulepreload" href="/js/core/session-seed.js">
+  <link rel="modulepreload" href="/js/core/storage.js">
+  <link rel="modulepreload" href="/js/cursor/config.js">
+  <link rel="modulepreload" href="/js/cursor/orb.js">
+  <link rel="modulepreload" href="/js/effects/card-decor.js">
+  <link rel="modulepreload" href="/js/effects/day.js">
+  <link rel="modulepreload" href="/js/effects/index.js">
+  <link rel="modulepreload" href="/js/effects/night-backends.js">
+  <link rel="modulepreload" href="/js/effects/night.js">
+  <link rel="modulepreload" href="/js/main.js">
+  <link rel="modulepreload" href="/js/nav/active-link.js">
+  <link rel="modulepreload" href="/js/nav/mobile-menu.js">
+  <link rel="modulepreload" href="/js/nav/topbar.js">
+  <link rel="modulepreload" href="/js/night/config.js">
+  <link rel="modulepreload" href="/js/night/generators.js">
+  <link rel="modulepreload" href="/js/night/renderer.js">
+  <link rel="modulepreload" href="/js/theme/controller.js">
+  <link rel="modulepreload" href="/js/theme/icons.js">
+  <link rel="modulepreload" href="/js/theme/kernel.js">
+  <link rel="modulepreload" href="/js/theme/state.js">
+  <link rel="modulepreload" href="/js/theme/ui.js">
+  <link rel="modulepreload" href="/js/pages/not-found.js">
+</head>
+<body data-page="404">
+  <div id="sky-bg" aria-hidden="true"></div>
+
+  <header class="topbar" id="topbar">
+    <a class="brand" href="/" aria-label="Pranit Kumar home">PK</a>
+    <a class="contact-rail" href="/#contact">Contact <span>↗</span></a>
+  </header>
+
+  <main class="error-page">
+    <section class="error-card" aria-labelledby="error-title">
+      <p class="section-label">// LOST IN SPACE</p>
+      <h1 class="error-code" aria-label="404">404</h1>
+      <h2 class="error-title" id="error-title">This page drifted off course.</h2>
+      <p class="error-copy">The page you’re looking for doesn’t exist, or may have moved. Let’s get you back to familiar orbit.</p>
+      <p class="redirect-note" role="status">Returning to the homepage in 5 seconds…</p>
+      <div class="redirect-track" aria-hidden="true"><div class="redirect-progress"></div></div>
+      <a class="home-link" href="/">Return home <span aria-hidden="true">↗</span></a>
+    </section>
+  </main>
+
+  <footer>© 2026 Pranit Kumar</footer>
+
+  <!-- Root-absolute so the page works at any missing URL depth. js/pages/not-found.js adds the JS redirect fallback. -->
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

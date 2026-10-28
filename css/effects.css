@@ -1,0 +1,48 @@
+/* ============================================================
+   EFFECTS — hooks for the canvas/DOM layers created by js/effects/
+   (sky, card clouds, card aurora, theme-switch flash, cursor)
+   ============================================================ */
+
+/* Fixed full-viewport sky; page content (z-index:1) floats above it. */
+#sky-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.pk-sky-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* Wrapper that lifts a card's real content above its decorative layer. */
+.pk-card-content { position: relative; z-index: 1; }
+
+/* DAY — blurred cloud behind a card. Geometry is set per card by JS. */
+.pk-cloud-bg {
+  position: absolute; z-index: 0; overflow: visible;
+  pointer-events: none; filter: blur(10px);
+}
+.pk-cloud-blob {
+  position: absolute; border-radius: 50%;
+  background: var(--card-bg, rgba(255, 255, 255, 0.85));
+}
+@keyframes cloudFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+/* NIGHT — per-card aurora canvas. */
+.pk-aurora-canvas {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; border-radius: 12px; pointer-events: none;
+}
+
+/* Custom cursor canvas (top-most layer). */
+.pk-cursor-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1000001; }
+
+/* Brief black flash that masks the day↔night swap. */
+#theme-transition-overlay {
+  position: fixed; inset: 0; z-index: 999999;
+  background: #000; opacity: 0; pointer-events: none;
+  transition: opacity .28s ease;
+}
+
+@media (max-width: 768px) {
+  /* iOS ignores background-attachment:fixed, so pin the gradient with a fixed layer. */
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+  }
+  /* Day uses a solid body colour under that layer; night keeps the base gradient. */
+  html:not([data-theme="night"]) body { background: var(--sky-bottom); }
+}
